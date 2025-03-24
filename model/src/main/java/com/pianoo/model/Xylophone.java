@@ -1,4 +1,5 @@
 package com.pianoo.model;
+//fonction sinusoidales ?
 
-public class Xylophone {
+public class Xylophone implements IXylophone {
 }
