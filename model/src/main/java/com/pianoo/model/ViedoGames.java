@@ -1,4 +1,4 @@
 package com.pianoo.model;
 
-public class ViedoGames {
+public class ViedoGames implements IVideoGames{
 }
