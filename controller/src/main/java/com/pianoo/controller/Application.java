@@ -9,6 +9,7 @@ public class Application {
         player = new MusicPlayer();
         instrumentActuel = "Piano"; // Instrument par défaut
         recordDB = new Record();
+        //hello world
     }
 
     public void choisirInstrument(String instrument) {
