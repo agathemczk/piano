@@ -10,6 +10,7 @@ public class Application {
         instrumentActuel = "Piano"; // Instrument par défaut
         recordDB = new Record();
         //test2
+        //test3
     }
 
     public void choisirInstrument(String instrument) {
