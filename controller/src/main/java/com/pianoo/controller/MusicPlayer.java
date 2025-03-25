@@ -28,5 +28,20 @@ public class MusicPlayer implements IMusicPlayer {
         return 12 * baseOctave + key; // Calcule la note MIDI en fonction de l’octave
     }
 
+    @Override
+    public void setInstrument(final String instrument) {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+    @Override
+    public void addEffect() {
+
+    }
+
 
 }
