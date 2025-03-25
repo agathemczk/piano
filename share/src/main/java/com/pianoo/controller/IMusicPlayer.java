@@ -1,7 +1,18 @@
 package com.pianoo.controller;
 
+import javax.sound.midi.*;
+import java.util.HashMap;
+
 public interface IMusicPlayer {
-    void playNote(int midiNote);
+
+    public Synthesizer synth = null;
+    public MidiChannel channel = null;
+    //public instrumentMap<String, MidiChannel>();
+
+    void playNote(int midiNote); //int Instru instru, int msTime
     void stopNote(int midiNote);
     int getMidiNote(int baseOctave, int key);
+    void setInstrument(String instrument);
+    void close();
+    void addEffect();
 }
