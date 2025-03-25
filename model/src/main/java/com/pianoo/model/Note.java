@@ -1,26 +1,30 @@
 package com.pianoo.model;
 
-public class Note {
-    private String nom;
-    private int midi;
-    private double duree; // en secondes
+import javax.sound.midi.Instrument;
 
-    public Note(String nom, double duree) {
-        this.nom = nom;
-        this.midi = Frequencies.getMidi(nom);
-        this.duree = duree;
-    }
+public class Note implements INote {
 
-    public int getMidi() {
-        return midi;
-    }
+    String name;
+    int midi;
+    double time;
 
-    public int getDureeMs() {
-        return (int) (duree * 1000);
+    @Override
+    public String getName() {
+        return "";
     }
 
     @Override
-    public String toString() {
-        return nom + " (MIDI: " + midi + ") - " + duree + "s";
+    public int getMidi() {
+        return 0;
+    }
+
+    @Override
+    public double getTime() {
+        return 0;
+    }
+
+    @Override
+    public Instrument getInstrument() {
+        return null;
     }
 }

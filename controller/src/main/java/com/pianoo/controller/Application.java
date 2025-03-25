@@ -1,40 +1,47 @@
 package com.pianoo.controller;
 
-public class Application {
-    private MusicPlayer player;
-    private String instrumentActuel;
-    private Record recordDB;
+import com.pianoo.model.IInstrument;
+import com.pianoo.model.IPartition;
+import com.pianoo.model.IRecord;
+import com.pianoo.view.IMainMenu;
 
-    public Application() {
-        player = new MusicPlayer();
-        instrumentActuel = "Piano"; // Instrument par défaut
-        recordDB = new Record();
-        //hello world
+import javax.sound.midi.Instrument;
+
+public class Application implements IApplication {
+
+    private IInstrument activeInstrument;
+    private IMainMenu mainMenu;
+    private IMusicPlayer player;
+    private IRecord record;
+    private boolean isRecording;
+
+    @Override
+    public void start() {
+
     }
 
-    public void choisirInstrument(String instrument) {
-        instrumentActuel = instrument;
-        player.changerInstrument(instrument);
+    @Override
+    public void chosseInstrument(final IInstrument instrument) {
+
     }
 
-    public void commencerEnregistrement() {
-        recordDB.commencerEnregistrement();
+    @Override
+    public void goingToRecord(final boolean isRecording) {
+
     }
 
-    public void arreterEnregistrement(String nomFichier) {
-        recordDB.arreterEnregistrement(nomFichier);
+    @Override
+    public void saveRecord(final String fileName) {
+
     }
 
-    public void jouerNote(String note) {
-        long startTime = System.currentTimeMillis();
-        int midi = FrequenceNotes.getMidi(note);
+    @Override
+    public void loadAndPlayParition(final IPartition partition) {
 
-        if (midi > 0) {
-            player.jouerNote(midi, 500);
-        }
+    }
 
-        long duree = System.currentTimeMillis() - startTime; // Temps appuyé
+    @Override
+    public void quit() {
 
-        recordDB.ajouterNote(instrumentActuel, note, duree / 1000.0);
     }
 }

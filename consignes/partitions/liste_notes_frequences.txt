@@ -1,7 +1,6 @@
 vous pouvez en trouver d'autres ici :
 https://musicordes.fr/tableau-frequences-numero-de-note-midi/
 
-
     "B0": 31,
     "C1": 33,
     "C#1": 35,  # or "Db1": 35
