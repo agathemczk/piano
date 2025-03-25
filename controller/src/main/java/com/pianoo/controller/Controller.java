@@ -1,14 +1,19 @@
 package com.pianoo.controller;
 
 import com.pianoo.model.IModel;
+import com.pianoo.view.IMainMenu;
 import com.pianoo.view.IView;
 
 public class Controller implements IController{
     private IMusicPlayer musicPlayer;
+    private IMainMenu mainMenu;
 
-    public Controller(IMusicPlayer musicPlayer) {
+    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu) {
         this.musicPlayer = musicPlayer;
+        this.mainMenu = mainMenu;
+        this.mainMenu.setVisible(true);
     }
+
 
     @Override
     public void start() {
