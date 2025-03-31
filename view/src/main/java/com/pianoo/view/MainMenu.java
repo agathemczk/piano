@@ -34,7 +34,7 @@ public class MainMenu extends JFrame implements IMainMenu {
                             drawOrgue(g);
                             break;
                         case 4:
-                            drawKazoo(g);
+                            drawDrums(g);
                             break;
                         case 5:
                             drawCat(g);
@@ -156,16 +156,92 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.fillRect(160, 70, 80, 20);
     }
 
-    private void drawKazoo(Graphics g){
+    private void drawDrums(Graphics g) {
+        // Dessiner la base du tambour (cercle)
+        g.setColor(Color.RED); // Couleur du tambour
+        g.fillOval(100, 150, 200, 100); // Le corps du tambour (cercle)
 
+        // Dessiner la partie supérieure du tambour (cercle supérieur)
+        g.setColor(Color.WHITE); // Couleur de la surface du tambour
+        g.fillOval(100, 130, 200, 20); // La surface supérieure du tambour
+
+        // Dessiner les cordes du tambour
+        g.setColor(Color.BLACK);
+        g.drawLine(100, 150, 100, 250); // Cordes à gauche
+        g.drawLine(300, 150, 300, 250); // Cordes à droite
+
+        // Dessiner les baguettes (2 baguettes)
+        g.setColor(Color.BLUE); // Couleur des baguettes
+        g.fillRect(140, 100, 10, 80); // Première baguette (à gauche)
+        g.fillRect(250, 100, 10, 80); // Deuxième baguette (à droite)
     }
 
-    private void drawCat(Graphics g){
+    private void drawCat(Graphics g) {
+        // Dessiner la tête du chat (un disque noir)
+        g.setColor(Color.GRAY);
+        g.fillOval(150, 100, 100, 100); // Tête du chat
 
+        // Dessiner et faire pivoter l'oreille gauche
+        int[] x1 = {160, 130, 180}; // Points originaux de l'oreille gauche
+        int[] y1 = {90, 120, 120};
+        drawRotatedEar(g, x1, y1, 70); // Rotation de 70° pour l'oreille gauche
+
+        // Dessiner et faire pivoter l'oreille droite
+        int[] x2 = {240, 260, 220}; // Points originaux de l'oreille droite
+        int[] y2 = {93, 123, 123};
+        drawRotatedEar(g, x2, y2, -70); // Rotation de 70° pour l'oreille droite
+
+        // Yeux du chat (deux cercles blancs)
+        g.setColor(Color.WHITE);
+        g.fillOval(160, 100, 30, 30); // Œil gauche
+        g.fillOval(210, 100, 30, 30); // Œil droit
+
+        // Pupilles du chat (petits cercles noirs)
+        g.setColor(Color.BLACK);
+        g.fillOval(170, 110, 10, 10); // Pupille gauche
+        g.fillOval(220, 110, 10, 10); // Pupille droite
+
+        // Nez du chat (petit triangle rose)
+        g.setColor(Color.PINK);
+        int[] x3 = {200, 210, 190};
+        int[] y3 = {150, 170, 170};
+        g.fillPolygon(x3, y3, 3); // Nez
+
+        // Bouche du chat (courbe)
+        g.setColor(Color.BLACK);
+        g.drawLine(200, 170, 200, 180); // Ligne centrale de la bouche
+        g.drawArc(195, 180, 10, 10, 0, -180); // Sourire gauche
+        g.drawArc(200, 180, 10, 10, 0, -180); // Sourire droit
+
+        // Moustaches du chat (lignes)
+        g.drawLine(140, 160, 100, 150); // Moustache gauche haut
+        g.drawLine(140, 170, 100, 170); // Moustache gauche bas
+        g.drawLine(260, 160, 300, 150); // Moustache droite haut
+        g.drawLine(260, 170, 300, 170); // Moustache droite bas
     }
 
+    // Fonction pour dessiner une oreille avec rotation autour de son centre
+    private void drawRotatedEar(Graphics g, int[] x, int[] y, double angleDegrees) {
+        double angle = Math.toRadians(angleDegrees); // Convertir l'angle en radians
 
+        // Calculer le centre du triangle (milieu de l'oreille)
+        int centerX = (x[0] + x[1] + x[2]) / 3;
+        int centerY = (y[0] + y[1] + y[2]) / 3;
 
+        // Appliquer la transformation de rotation autour du centre du triangle
+        for (int i = 0; i < 3; i++) {
+            int tempX = x[i] - centerX;  // Déplacer par rapport au centre
+            int tempY = y[i] - centerY;
+
+            // Appliquer la rotation
+            x[i] = (int) (centerX + tempX * Math.cos(angle) - tempY * Math.sin(angle));
+            y[i] = (int) (centerY + tempX * Math.sin(angle) + tempY * Math.cos(angle));
+        }
+
+        // Dessiner l'oreille après rotation
+        g.setColor(Color.GRAY);
+        g.fillPolygon(x, y, 3); // Dessiner le triangle tourné
+    }
 
 
 
