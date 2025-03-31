@@ -4,8 +4,8 @@ import java.util.Map;
 
 public interface IInstrument {
     String name = "";
-    Map<String, ISound> sound;
+    Map<String, ISound> sound = Map.of();
 
-    public Instrument(String name, Map<String, Sound> sound);
-    void displayIntrumentInterface(Instrument instrument);
+    public void Instrument(String name, Map<String, ISound> sound);
+    void displayIntrumentInterface(IInstrument instrument);
 }
