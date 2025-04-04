@@ -58,38 +58,55 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawPiano(Graphics g) {
+        // Définir la police et la taille du texte
         g.setFont(new Font("Arial", Font.BOLD, 24));
         g.drawString("PIANO", 160, 30);
 
-        int pianoWidth = 7 * 20;
-        int pianoHeight = 50;
+        // Taille du piano (largeur et hauteur)
+        int pianoWidth = 7 * 40; // 7 touches blanches, chaque touche fait 40px de largeur
+        int pianoHeight = 100; // Hauteur des touches
 
-        int panelWidth = 200;
+        // Taille du panneau pour afficher le piano
+        int panelWidth = 400;
         int panelHeight = 150;
 
-        int x = (panelWidth / 2) - (pianoWidth / 3);
-        int y = (panelHeight / 2) + (pianoWidth / 4);
+        // Position du piano dans le panneau
+        int x = (panelWidth / 2) - (pianoWidth / 2);
+        int y = (panelHeight+50) - (pianoHeight);
 
+        // Dessiner le fond du piano (la base des touches blanches)
         g.setColor(Color.WHITE);
         g.fillRect(x, y, pianoWidth, pianoHeight);
         g.setColor(Color.BLACK);
         g.drawRect(x, y, pianoWidth, pianoHeight);
 
-        int keyWidth = pianoWidth / 7;
-        for (int j = 0; j < 7; j++) {
-            if (j != 2 && j != 6) {
-                int blackKeyX = x + (j + 1) * keyWidth - keyWidth / 4;
-                g.setColor(Color.BLACK);
-                g.fillRect(blackKeyX, y, keyWidth / 2, pianoHeight / 2);
-            }
-        }
+        // Largeur d'une touche blanche
+        int keyWidth = pianoWidth / 7; // 7 touches blanches au total
 
-        g.setColor(Color.BLACK);
+        // Dessiner les touches blanches
         for (int i = 0; i < 7; i++) {
             int whiteKeyX = x + i * keyWidth;
+            g.setColor(Color.WHITE);
+            g.fillRect(whiteKeyX, y, keyWidth, pianoHeight);
+            g.setColor(Color.BLACK);
             g.drawRect(whiteKeyX, y, keyWidth, pianoHeight);
         }
+
+        // Dessiner les touches noires
+        int blackKeyWidth = keyWidth / 2; // Largeur d'une touche noire
+        int blackKeyHeight = pianoHeight / 2; // Hauteur des touches noires
+
+        for (int i = 0; i < 7; i++) {
+            // Position des touches noires
+            // Pas de touches noires après les touches E et B
+            if (i != 2 && i != 6) {
+                int blackKeyX = x + i * keyWidth + keyWidth - blackKeyWidth / 2;
+                g.setColor(Color.BLACK);
+                g.fillRect(blackKeyX, y, blackKeyWidth, blackKeyHeight);
+            }
+        }
     }
+
 
     private void drawXylophone(Graphics g) {
         g.setFont(new Font("Arial", Font.BOLD, 24));
