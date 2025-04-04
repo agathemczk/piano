@@ -99,7 +99,7 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.fillRect(85, 60, 30, 200);
 
 
-        g.setColor(Color.ORANGE); // Couleur orange
+        g.setColor(Color.ORANGE);
         g.fillRect(125, 70, 30, 180);
 
 
@@ -125,14 +125,14 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.setFont(new Font("Arial", Font.BOLD, 24));
         g.drawString("VIDEO GAMES", 120, 30);
 
-        int pacmanX = 110;
-        int pacmanY = 135;
+        int pacmanX = 180;
+        int pacmanY = 130;
         int pacmanRadius = 50;
 
         g.setColor(Color.YELLOW);
-        g.fillArc(pacmanX - pacmanRadius, pacmanY - pacmanRadius, pacmanRadius * 2, pacmanRadius * 2, 35, 290);
+        g.fillArc(pacmanX - pacmanRadius, pacmanY - pacmanRadius, pacmanRadius * 3, pacmanRadius * 3, 35, 290);
 
-        int pupilRadius = 5;
+        int pupilRadius = 10;
         int eyeX = pacmanX + 20;
         int eyeY = pacmanY - 30;
         g.setColor(Color.BLACK);
