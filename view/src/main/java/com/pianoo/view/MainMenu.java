@@ -157,24 +157,38 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawDrums(Graphics g) {
-        // Dessiner la base du tambour (cercle)
-        g.setColor(Color.RED); // Couleur du tambour
-        g.fillOval(100, 150, 200, 100); // Le corps du tambour (cercle)
+        // Dessiner la base du tambour (rectangle)
+        g.setColor(Color.RED);
+        g.fillRect(100, 150, 200, 100); // Le corps du tambour (rectangle)
+
+        g.setColor(Color.RED);
+        g.fillOval(100, 240, 200, 20); // La surface inférieure du tambour
 
         // Dessiner la partie supérieure du tambour (cercle supérieur)
-        g.setColor(Color.WHITE); // Couleur de la surface du tambour
-        g.fillOval(100, 130, 200, 20); // La surface supérieure du tambour
+        g.setColor(Color.WHITE);
+        g.fillOval(100, 140, 200, 20); // La surface supérieure du tambour
+
 
         // Dessiner les cordes du tambour
         g.setColor(Color.BLACK);
-        g.drawLine(100, 150, 100, 250); // Cordes à gauche
-        g.drawLine(300, 150, 300, 250); // Cordes à droite
+        g.drawLine(100, 150, 100, 250);
+        g.drawLine(300, 150, 300, 250);
+        g.drawLine(150, 158, 150, 258);
+        g.drawLine(200, 160, 200, 260);
+        g.drawLine(250, 158, 250, 258);
 
-        // Dessiner les baguettes (2 baguettes)
-        g.setColor(Color.BLUE); // Couleur des baguettes
-        g.fillRect(140, 100, 10, 80); // Première baguette (à gauche)
-        g.fillRect(250, 100, 10, 80); // Deuxième baguette (à droite)
+
+        g.setColor(new Color(139, 69, 19));
+
+        // Première baguette inclinée (à gauche)
+        g.fillRect(140, 100, 5, 120);
+        g.fillOval(140 - 5, 100 - 5, 15, 15);
+
+        // Deuxième baguette inclinée (à droite)
+        g.fillRect(250, 100, 5, 120);
+        g.fillOval(250 - 5, 100 - 5, 15, 15);
     }
+
 
     private void drawCat(Graphics g) {
         // Dessiner la tête du chat (un disque noir)
