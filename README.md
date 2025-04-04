@@ -7,6 +7,7 @@ to do:
 relier modele au controller pour les frequencies
 action boutons : controller
 view : visu des instru
+model : jouer les sons
 
 quitter (controller -> view)
 retour (controller -> view)
