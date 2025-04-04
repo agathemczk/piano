@@ -2,6 +2,7 @@ package com.pianoo.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Font;
 
 public class MainMenu extends JFrame implements IMainMenu {
     public MainMenu() {
@@ -57,6 +58,9 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawPiano(Graphics g) {
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("PIANO", 160, 30);
+
         int pianoWidth = 7 * 20;
         int pianoHeight = 50;
 
@@ -88,39 +92,39 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawXylophone(Graphics g) {
-        int numBars = 7;
-        int barWidth = 20;
-        int initialHeight = 30;
-        int spacing = 5;
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("XYLOPHONE", 130, 30);
 
-        int panelWidth = 200;
-        int panelHeight = 150;
-
-        int x = (panelWidth / 2) - (numBars * (barWidth + spacing) - spacing) / 2;
-        int y = (panelHeight / 2) + 20;
-
-        // Couleurs des barres
-        int[] colors = {Color.RED.getRGB(), Color.ORANGE.getRGB(), Color.YELLOW.getRGB(), Color.GREEN.getRGB(),
-                Color.CYAN.getRGB(), Color.BLUE.getRGB(), Color.MAGENTA.getRGB()};
+        g.setColor(Color.RED);
+        g.fillRect(85, 60, 30, 200);
 
 
-        for (int i = 0; i < numBars; i++) {
-            int currentHeight = initialHeight - (i * 3);
-            g.setColor(new Color(colors[i]));
-            g.fillRect(x + i * (barWidth + spacing), y - currentHeight, barWidth, currentHeight);
-        }
+        g.setColor(Color.ORANGE); // Couleur orange
+        g.fillRect(125, 70, 30, 180);
 
-        // Dessin de la moitié basse (symétrie axiale)
-        int ybis = y + initialHeight + 5; // Décalage vertical ajusté pour que la moitié basse soit collée à la moitié haute
 
-        for (int i = 0; i < numBars; i++) {
-            int currentHeight = initialHeight - (i * 3);
-            g.setColor(new Color(colors[i]));
-            g.fillRect(x + i * (barWidth + spacing), ybis + currentHeight, barWidth, currentHeight);
-        }
+        g.setColor(Color.YELLOW);
+        g.fillRect(165, 80, 30, 160);
+
+
+        g.setColor(Color.GREEN);
+        g.fillRect(205, 90, 30, 140);
+
+
+        g.setColor(Color.BLUE);
+        g.fillRect(245, 100, 30, 120);
+
+
+        g.setColor(new Color(128, 0, 128));
+        g.fillRect(285, 110, 30, 100);
     }
 
+
+
     private void drawVideoGames(Graphics g) {
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("VIDEO GAMES", 120, 30);
+
         int pacmanX = 110;
         int pacmanY = 135;
         int pacmanRadius = 50;
@@ -136,6 +140,9 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawOrgue(Graphics g) {
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("ORGAN", 160, 30);
+
         g.setColor(new Color(200, 200, 255));
         g.fillRect(100, 150, 200, 250);
 
@@ -157,6 +164,8 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawDrums(Graphics g) {
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("DRUMS", 160, 30);
         // Dessiner la base du tambour (rectangle)
         g.setColor(Color.RED);
         g.fillRect(100, 150, 200, 100); // Le corps du tambour (rectangle)
