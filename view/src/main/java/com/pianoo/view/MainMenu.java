@@ -3,8 +3,12 @@ package com.pianoo.view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainMenu extends JFrame implements IMainMenu {
+    private IOnInstrumentSelectedListener listener;
+
     public MainMenu() {
         setTitle("MusicaLau - Menu Principal");
         setSize(800, 600);
@@ -41,11 +45,23 @@ public class MainMenu extends JFrame implements IMainMenu {
                             drawCat(g);
                             break;
                         default:
-                            // draw
                             break;
                     }
                 }
             };
+
+            // Ajouter un écouteur pour la section Piano
+            if (index == 0) { // Piano
+                instrumentPanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (listener != null) {
+                            listener.onInstrumentSelected("Piano");
+                        }
+                    }
+                });
+            }
+
             instrumentPanel.setBackground(Color.LIGHT_GRAY);
             instrumentPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
             instrumentPanel.setPreferredSize(new Dimension(200, 150));
@@ -57,20 +73,36 @@ public class MainMenu extends JFrame implements IMainMenu {
         add(panel, BorderLayout.CENTER);
     }
 
+    @Override
+    public JPanel getContentPane() {
+        return (JPanel) super.getContentPane(); // Utilise directement la méthode de JFrame
+    }
+
+    @Override
+    public void revalidate() {
+        super.revalidate(); // Utilise directement la méthode de JFrame
+    }
+
+    @Override
+    public void repaint() {
+        super.repaint(); // Utilise directement la méthode de JFrame
+    }
+
+    public void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener) {
+        this.listener = listener;
+    }
+
     private void drawPiano(Graphics g) {
-        // Définir la police et la taille du texte
         g.setFont(new Font("Arial", Font.BOLD, 24));
         g.drawString("PIANO", 160, 30);
 
-        // Taille du piano (largeur et hauteur)
-        int pianoWidth = 7 * 40; // 7 touches blanches, chaque touche fait 40px de largeur
-        int pianoHeight = 100; // Hauteur des touches
+        int pianoWidth = 7 * 40;
+        int pianoHeight = 100;
 
-        // Taille du panneau pour afficher le piano
         int panelWidth = 400;
         int panelHeight = 150;
 
-        // Position du piano dans le panneau
+
         int x = (panelWidth / 2) - (pianoWidth / 2);
         int y = (panelHeight+50) - (pianoHeight);
 
@@ -97,8 +129,6 @@ public class MainMenu extends JFrame implements IMainMenu {
         int blackKeyHeight = pianoHeight / 2; // Hauteur des touches noires
 
         for (int i = 0; i < 7; i++) {
-            // Position des touches noires
-            // Pas de touches noires après les touches E et B
             if (i != 2 && i != 6) {
                 int blackKeyX = x + i * keyWidth + keyWidth - blackKeyWidth / 2;
                 g.setColor(Color.BLACK);
@@ -231,15 +261,12 @@ public class MainMenu extends JFrame implements IMainMenu {
         int[] y2 = {93, 123, 123};
         drawRotatedEar(g, x2, y2, -70); // Rotation de 70° pour l'oreille droite
 
-        // Yeux du chat (deux cercles blancs)
-        g.setColor(Color.WHITE);
-        g.fillOval(160, 100, 30, 30); // Œil gauche
-        g.fillOval(210, 100, 30, 30); // Œil droit
+
 
         // Pupilles du chat (petits cercles noirs)
         g.setColor(Color.BLACK);
-        g.fillOval(170, 110, 10, 10); // Pupille gauche
-        g.fillOval(220, 110, 10, 10); // Pupille droite
+        g.fillOval(170, 130, 10, 10); // Pupille gauche
+        g.fillOval(220, 130, 10, 10); // Pupille droite
 
         // Nez du chat (petit triangle rose)
         g.setColor(Color.PINK);
@@ -286,3 +313,5 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
 }
+
+
