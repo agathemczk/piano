@@ -15,29 +15,25 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
 
-        JLabel redX = new JLabel("✖");
-        redX.setForeground(Color.RED);
-        redX.setHorizontalAlignment(SwingConstants.RIGHT);
-        redX.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        redX.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                // Code ici pour revenir au menu principal
-                Container parent = getParent();
-                if (parent instanceof JFrame) {
-                    JFrame frame = (JFrame) parent;
-                    frame.setContentPane(new MainMenu()); // Revenir au menu
-                    frame.revalidate();
-                    frame.repaint();
-                }
-            }
-        });
-        topPanel.add(redX, BorderLayout.EAST);
-
+// Sélecteur d'octaves à gauche
         Integer[] octaves = new Integer[]{2, 3, 4, 5, 6, 7};
         octaveSelector = new JComboBox<>(octaves);
         octaveSelector.setSelectedItem(3);
         topPanel.add(octaveSelector, BorderLayout.WEST);
+
+// Bouton rond pour fermer à droite avec une marge
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.addActionListener(e -> System.out.println("Fermer Piano"));
+
+        JPanel closeButtonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        closeButtonWrapper.setOpaque(false);
+        closeButtonWrapper.add(closeButton);
+
+        topPanel.add(closeButtonWrapper, BorderLayout.EAST);
+
+// Ajout du panneau supérieur
         add(topPanel, BorderLayout.NORTH);
 
         pianoPanel = new JPanel() {
