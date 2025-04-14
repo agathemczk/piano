@@ -9,17 +9,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-
 public class OrgueView extends JPanel {
 
-    private final int WHITE_KEY_WIDTH = 30;
-    private final int WHITE_KEY_HEIGHT = 120;
-    private final int BLACK_KEY_WIDTH = 20;
-    private final int BLACK_KEY_HEIGHT = 80;
-
-    private final int OCTAVE_COUNT = 5;
     private final int WHITE_KEYS_PER_OCTAVE = 7;
-    private final int TOTAL_WHITE_KEYS = OCTAVE_COUNT * WHITE_KEYS_PER_OCTAVE;
+    private final int OCTAVE_COUNT = 5;
+    private final int TOTAL_WHITE_KEYS = WHITE_KEYS_PER_OCTAVE * OCTAVE_COUNT;
 
     private final Set<Integer> BLACK_KEY_OFFSETS = Set.of(1, 3, 6, 8, 10);
     private final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
@@ -27,9 +21,7 @@ public class OrgueView extends JPanel {
     private final java.util.List<PianoKey> keys = new ArrayList<>();
 
     public OrgueView() {
-        setPreferredSize(new Dimension(1800, 800)); // La taille de la fenêtre pourra être redimensionnée
-        setLayout(null); // Utilisation de null layout pour permettre un positionnement libre
-
+        setBackground(Color.DARK_GRAY);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -48,28 +40,36 @@ public class OrgueView extends JPanel {
         super.paintComponent(g);
         keys.clear();
 
-        int width = getWidth();
-        int height = getHeight();
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
 
-        // Le haut du clavier commence juste après la bordure du panneau
-        int yOffset = height / 4; // Déplacer le clavier vers le bas pour qu'il ait un peu d'espace en haut
+        int margin = 20;
+        int buttonHeight = 40;
+        int availableHeight = panelHeight - buttonHeight - (3 * margin);
 
-        // Laisser un espace entre les deux claviers, et les adapter à la largeur
-        int keyboardWidth = width - 40; // Espacement de 20px de chaque côté
-        int xOffset = 20;
+        int availableWidth = panelWidth - 2 * margin;
+        int keyWidth = availableWidth / TOTAL_WHITE_KEYS;
+        int keyHeight = availableHeight / 2;
+        int blackKeyWidth = (int) (keyWidth * 0.66);
+        int blackKeyHeight = (int) (keyHeight * 0.66);
 
-        drawKeyboard(g, xOffset, yOffset, keyboardWidth);
-        drawKeyboard(g, xOffset, yOffset + WHITE_KEY_HEIGHT + 40, keyboardWidth); // Le second clavier est en dessous
+        // Clavier supérieur
+        int y1 = buttonHeight + margin;
+        drawKeyboard(g, margin, y1, keyWidth, keyHeight, blackKeyWidth, blackKeyHeight);
+
+        // Clavier inférieur
+        int y2 = y1 + keyHeight + margin;
+        drawKeyboard(g, margin, y2, keyWidth, keyHeight, blackKeyWidth, blackKeyHeight);
     }
 
-    private void drawKeyboard(Graphics g, int xOffset, int yOffset, int keyboardWidth) {
+    private void drawKeyboard(Graphics g, int xOffset, int yOffset, int keyWidth, int keyHeight, int blackKeyWidth, int blackKeyHeight) {
         int currentWhite = 0;
 
-        // --- Étape 1 : Touches blanches
+        // Touches blanches
         for (int octave = 0; octave < OCTAVE_COUNT; octave++) {
             for (int i = 0; i < WHITE_KEYS_PER_OCTAVE; i++) {
-                int x = xOffset + currentWhite * WHITE_KEY_WIDTH;
-                Rectangle rect = new Rectangle(x, yOffset, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
+                int x = xOffset + currentWhite * keyWidth;
+                Rectangle rect = new Rectangle(x, yOffset, keyWidth, keyHeight);
                 String note = WHITE_KEY_NAMES[i] + octave;
                 keys.add(new PianoKey(rect, false, note));
 
@@ -78,30 +78,30 @@ public class OrgueView extends JPanel {
                 g.setColor(Color.BLACK);
                 g.drawRect(rect.x, rect.y, rect.width, rect.height);
 
-                // Dessiner le nom de la note
                 g.setFont(new Font("Arial", Font.PLAIN, 10));
-                g.drawString(note, rect.x + 10, rect.y + rect.height - 10);
+                g.drawString(note, rect.x + keyWidth / 3, rect.y + keyHeight - 10);
 
                 currentWhite++;
             }
         }
 
-        // --- Étape 2 : Touches noires
+        // Touches noires
         currentWhite = 0;
         for (int octave = 0; octave < OCTAVE_COUNT; octave++) {
             for (int note = 0; note < 12; note++) {
                 if (BLACK_KEY_OFFSETS.contains(note)) {
                     if (currentWhite >= TOTAL_WHITE_KEYS - 1) break;
 
-                    int x = xOffset + currentWhite * WHITE_KEY_WIDTH + (WHITE_KEY_WIDTH - BLACK_KEY_WIDTH / 2);
-                    Rectangle rect = new Rectangle(x, yOffset, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
-                    String noteName = "♯" + (currentWhite % 7) + octave; // Temporaire
+                    int x = xOffset + currentWhite * keyWidth + (keyWidth - blackKeyWidth / 2);
+                    Rectangle rect = new Rectangle(x, yOffset, blackKeyWidth, blackKeyHeight);
+                    String noteName = "♯" + (currentWhite % 7) + octave;
 
                     keys.add(new PianoKey(rect, true, noteName));
 
                     g.setColor(Color.BLACK);
                     g.fillRect(rect.x, rect.y, rect.width, rect.height);
                 }
+
                 if (!BLACK_KEY_OFFSETS.contains(note)) {
                     currentWhite++;
                 }
@@ -126,18 +126,56 @@ public class OrgueView extends JPanel {
         }
     }
 
-    // Test
+    // --- BOUTON FERMER ARRONDI ---
+    private static class RoundCloseButton extends JButton {
+        public RoundCloseButton() {
+            setPreferredSize(new Dimension(24, 24));
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setToolTipText("Fermer");
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(Color.RED);
+            g2.fillOval(0, 0, getWidth(), getHeight());
+
+            g2.setStroke(new BasicStroke(2f));
+            g2.setColor(Color.WHITE);
+            int pad = 6;
+            g2.drawLine(pad, pad, getWidth() - pad, getHeight() - pad);
+            g2.drawLine(getWidth() - pad, pad, pad, getHeight() - pad);
+
+            g2.dispose();
+        }
+    }
+
+    // --- MAIN ---
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Orgue 5 octaves interactif");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame();
+            frame.setTitle("Orgue - Vue Paysage (2 claviers piano)");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(900, 400);
+            frame.setLocationRelativeTo(null);
+            frame.setLayout(new BorderLayout());
 
-        // Créer la vue de l'orgue
-        OrgueView orgueView = new OrgueView();
-        frame.add(orgueView, BorderLayout.CENTER);
+            // Panel principal avec bouton en haut
+            JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+            topPanel.setOpaque(false);
+            RoundCloseButton closeButton = new RoundCloseButton();
+            closeButton.addActionListener(e -> System.exit(0));
+            topPanel.add(closeButton);
 
-        // Ajuster la taille et rendre la fenêtre visible
-        frame.setSize(1150, 500); // Définir la taille initiale de la fenêtre
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+            OrgueView orgueView = new OrgueView();
+
+            frame.add(topPanel, BorderLayout.NORTH);
+            frame.add(orgueView, BorderLayout.CENTER);
+
+            frame.setVisible(true);
+        });
     }
 }
