@@ -1,0 +1,121 @@
+package com.pianoo.view;
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class XylophoneFrame extends JFrame {
+
+    private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
+    private static final Color[] COLORS = {
+            Color.RED, Color.ORANGE, Color.YELLOW,
+            Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA
+    };
+
+    public XylophoneFrame() {
+        setTitle("Xylophone - Vue Paysage");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(900, 400);
+        setLocationRelativeTo(null);
+
+        // ===== Panel principal avec BorderLayout =====
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(Color.DARK_GRAY);
+
+        // ===== Header avec bouton rond rouge =====
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.setOpaque(false);
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.addActionListener(e -> dispose());
+        topPanel.add(closeButton);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        // ===== Xylophone centré =====
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+
+        JPanel xylophonePanel = new JPanel();
+        xylophonePanel.setLayout(new BoxLayout(xylophonePanel, BoxLayout.X_AXIS));
+        xylophonePanel.setOpaque(false);
+
+        int baseHeight = 250;
+        int width = 90;
+
+        for (int i = 0; i < NOTES.length; i++) {
+            JButton noteButton = new JButton(NOTES[i]);
+            noteButton.setBackground(COLORS[i]);
+            noteButton.setOpaque(true);
+            noteButton.setBorderPainted(false);
+            noteButton.setFont(new Font("Arial", Font.BOLD, 20));
+
+            int buttonHeight = baseHeight - (i * 15);
+            noteButton.setPreferredSize(new Dimension(width, buttonHeight));
+            noteButton.setMaximumSize(new Dimension(width, buttonHeight));
+            noteButton.setMinimumSize(new Dimension(width, buttonHeight));
+
+            final int index = i;
+            noteButton.addActionListener(e -> playNote(NOTES[index]));
+
+            JPanel wrapper = new JPanel();
+            wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+            wrapper.setOpaque(false);
+            wrapper.add(Box.createVerticalGlue());
+            wrapper.add(noteButton);
+            wrapper.add(Box.createVerticalGlue());
+
+            xylophonePanel.add(wrapper);
+
+            if (i < NOTES.length - 1) {
+                xylophonePanel.add(Box.createRigidArea(new Dimension(5, 0)));
+            }
+        }
+
+        centerPanel.add(xylophonePanel);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        add(mainPanel);
+    }
+
+    private void playNote(String note) {
+        System.out.println("Joue la note : " + note);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new XylophoneFrame().setVisible(true));
+    }
+
+    // ===== Classe personnalisée pour bouton rond avec croix =====
+    private static class RoundCloseButton extends JButton {
+
+        public RoundCloseButton() {
+            setPreferredSize(new Dimension(24, 24));
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setToolTipText("Fermer");
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+
+            // Anti-aliasing pour courbes lisses
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Fond rouge en rond
+            g2.setColor(Color.RED);
+            g2.fillOval(0, 0, getWidth(), getHeight());
+
+            // Croix blanche
+            g2.setStroke(new BasicStroke(2f));
+            g2.setColor(Color.WHITE);
+            int pad = 6;
+            g2.drawLine(pad, pad, getWidth() - pad, getHeight() - pad);
+            g2.drawLine(getWidth() - pad, pad, pad, getHeight() - pad);
+
+            g2.dispose();
+        }
+    }
+}
