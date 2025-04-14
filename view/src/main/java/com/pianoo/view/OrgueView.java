@@ -8,7 +8,6 @@ import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
 public class OrgueView extends JPanel {
 
     private final int WHITE_KEYS_PER_OCTAVE = 7;
