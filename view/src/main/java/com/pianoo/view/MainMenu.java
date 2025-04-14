@@ -2,7 +2,6 @@ package com.pianoo.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -19,8 +18,12 @@ public class MainMenu extends JFrame implements IMainMenu {
         panel.setLayout(new GridLayout(2, 3, 20, 20)); // Grille 2x3 pour 6 cases
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        for (int i = 0; i < 6; i++) {
+        String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
+
+        for (int i = 0; i < instruments.length; i++) {
             int index = i;
+            String instrumentName = instruments[i];
+
             JPanel instrumentPanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -50,17 +53,14 @@ public class MainMenu extends JFrame implements IMainMenu {
                 }
             };
 
-            // Ajouter un écouteur pour la section Piano
-            if (index == 0) { // Piano
-                instrumentPanel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (listener != null) {
-                            listener.onInstrumentSelected("Piano");
-                        }
+            instrumentPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (listener != null) {
+                        listener.onInstrumentSelected(instrumentName);
                     }
-                });
-            }
+                }
+            });
 
             instrumentPanel.setBackground(Color.LIGHT_GRAY);
             instrumentPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));

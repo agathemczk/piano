@@ -1,12 +1,9 @@
 package com.pianoo.view;
 
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class XylophoneFrame extends JFrame {
+public class XylophoneFrame extends JPanel implements IXylophoneFrame {
 
     private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] COLORS = {
@@ -15,22 +12,16 @@ public class XylophoneFrame extends JFrame {
     };
 
     public XylophoneFrame() {
-        setTitle("Xylophone - Vue Paysage");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 400);
-        setLocationRelativeTo(null);
-
-        // ===== Panel principal avec BorderLayout =====
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.DARK_GRAY);
+        setLayout(new BorderLayout());
+        setBackground(Color.DARK_GRAY);
 
         // ===== Header avec bouton rond rouge =====
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.setOpaque(false);
         RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> dispose());
+        closeButton.addActionListener(e -> System.out.println("Fermer Xylophone"));
         topPanel.add(closeButton);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
+        add(topPanel, BorderLayout.NORTH);
 
         // ===== Xylophone centré =====
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -73,17 +64,16 @@ public class XylophoneFrame extends JFrame {
         }
 
         centerPanel.add(xylophonePanel);
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-
-        add(mainPanel);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     private void playNote(String note) {
         System.out.println("Joue la note : " + note);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new XylophoneFrame().setVisible(true));
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 
     // ===== Classe personnalisée pour bouton rond avec croix =====
