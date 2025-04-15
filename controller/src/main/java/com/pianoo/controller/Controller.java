@@ -7,7 +7,7 @@ import com.pianoo.model.IVideoGames;
 //import com.pianoo.model.IDrums;
 
 
-public class Controller implements IController, IOnInstrumentSelectedListener {
+public class Controller implements IController, IOnInstrumentSelectedListener, IQuitButtonSelectedListener {
     private IMusicPlayer musicPlayer;
     private IMainMenu mainMenu;
     private IPianoFrame pianoFrame;
@@ -24,6 +24,14 @@ public class Controller implements IController, IOnInstrumentSelectedListener {
         this.videoGamesFrame = videoGamesFrame;
         this.mainMenu.setInstrumentSelectedListener(this);
         this.mainMenu.setVisible(true);
+        this.videoGamesFrame.setQuitButtonSelectedListener(this);
+    }
+
+    @Override
+    public void onQuitButtonSelected(String quitButton) {
+        if ("Quit".equals(quitButton)) {
+            openMainMenu();
+        }
     }
 
     @Override
@@ -42,9 +50,6 @@ public class Controller implements IController, IOnInstrumentSelectedListener {
         }
         if ("Drums".equals(instrumentName)) {
             openDrums();
-        }
-        if ("Quit".equals(instrumentName)) {
-            System.exit(0);
         }
     }
 
@@ -80,6 +85,13 @@ public class Controller implements IController, IOnInstrumentSelectedListener {
         mainMenu.getContentPane().add(pianoFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
+    }
+
+    private void openMainMenu() {
+        mainMenu.getContentPane().removeAll(); // Supprime tous les composants existants
+        mainMenu.getContentPane().add(mainMenu.getPanel()); // Ajoute le composant principal
+        mainMenu.revalidate(); // Revalide la disposition
+        mainMenu.repaint(); // Redessine l'interface
     }
 
     @Override
@@ -119,4 +131,5 @@ public class Controller implements IController, IOnInstrumentSelectedListener {
         int midiNote = musicPlayer.getMidiNote(octave, key);
         musicPlayer.stopNote(midiNote);
     }
+
 }

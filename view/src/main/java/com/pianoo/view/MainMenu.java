@@ -7,18 +7,36 @@ import java.awt.event.MouseEvent;
 
 public class MainMenu extends JFrame implements IMainMenu {
     private IOnInstrumentSelectedListener listener;
+    private JPanel mainPanel;
 
     public MainMenu() {
         setTitle("MusicaLau - Menu Principal");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout()); // Assurez-vous d'utiliser BorderLayout
 
+
+        // Initialisation de mainPanel
+        mainPanel = new JPanel(new BorderLayout());
+        setContentPane(mainPanel); // Définit mainPanel comme le conteneur principal
+
+
+        // ===== Panneau supérieur avec la croix rouge =====
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.setOpaque(false); // Transparent pour ne pas masquer le fond
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.addActionListener(e -> System.exit(0));
+        topPanel.add(closeButton);
+        add(topPanel, BorderLayout.NORTH); // Ajout en haut de la fenêtre
+
+        // ===== Panneau principal =====
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 3, 20, 20)); // Grille 2x3 pour 6 cases
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
+
 
         for (int i = 0; i < instruments.length; i++) {
             int index = i;
@@ -69,9 +87,19 @@ public class MainMenu extends JFrame implements IMainMenu {
             panel.add(instrumentPanel);
         }
 
-        setLayout(new BorderLayout());
-        add(panel, BorderLayout.CENTER);
+        mainPanel.add(panel, BorderLayout.CENTER);
     }
+
+
+    public void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return mainPanel;
+    }
+
 
     @Override
     public JPanel getContentPane() {
@@ -86,10 +114,6 @@ public class MainMenu extends JFrame implements IMainMenu {
     @Override
     public void repaint() {
         super.repaint(); // Utilise directement la méthode de JFrame
-    }
-
-    public void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener) {
-        this.listener = listener;
     }
 
     private void drawPiano(Graphics g) {

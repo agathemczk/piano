@@ -6,7 +6,12 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
+
 public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
+    private JPanel panel;
+    private IQuitButtonSelectedListener listener;
+    private RoundCloseButton closeButton;
+
 
     private static final String[] GAME_IMAGES = {
             "BellaCiaoView.jpg",
@@ -19,13 +24,27 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
 
     public VideoGamesFrame() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(240, 240, 240));
-        setBorder(BorderFactory.createEmptyBorder(40, 20, 20, 20));
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 150, 0));
+
+        // Panneau supérieur avec la croix rouge
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.addActionListener(e -> listener.onQuitButtonSelected("Quit")); // Notifie via l'interface
+
+        JPanel closeButtonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        closeButtonWrapper.setOpaque(false);
+        closeButtonWrapper.add(closeButton);
+
+        topPanel.add(closeButtonWrapper, BorderLayout.EAST);
+        add(topPanel);
 
         // Ajout des rangées de jeux
         add(createGameRow(0, 2)); // Ligne du haut
         add(Box.createRigidArea(new Dimension(0, 30)));
         add(createGameRow(3, 5)); // Ligne du bas
+
     }
 
     private JPanel createGameRow(int start, int end) {
@@ -86,6 +105,12 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public void setQuitButtonSelectedListener(IQuitButtonSelectedListener listener) {
+        this.listener = listener;
+        closeButton.addActionListener(e -> listener.onQuitButtonSelected("Quit"));
     }
 
     private static class RoundButton extends JButton {

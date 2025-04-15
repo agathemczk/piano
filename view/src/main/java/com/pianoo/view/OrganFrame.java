@@ -18,7 +18,14 @@ public class OrganFrame extends JPanel implements IOrganFrame {
     private final java.util.List<PianoKey> keys = new ArrayList<>();
 
     public OrganFrame() {
-        setBackground(Color.DARK_GRAY);
+        setLayout(new BorderLayout());
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.setOpaque(false);
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.addActionListener(e -> System.out.println("Fermer Xylophone"));
+        topPanel.add(closeButton);
+        add(topPanel, BorderLayout.NORTH);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

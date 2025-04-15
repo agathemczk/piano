@@ -1,6 +1,7 @@
 package com.pianoo.view;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.function.Consumer;
 
 public interface IMainMenu {
@@ -10,4 +11,5 @@ public interface IMainMenu {
     void revalidate();       // Ajoutez cette méthode si elle manque
     void repaint();
 
+    JPanel getPanel();
 }

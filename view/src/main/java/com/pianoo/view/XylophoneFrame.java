@@ -13,7 +13,6 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
 
     public XylophoneFrame() {
         setLayout(new BorderLayout());
-        setBackground(Color.DARK_GRAY);
 
         // ===== Header avec bouton rond rouge =====
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
