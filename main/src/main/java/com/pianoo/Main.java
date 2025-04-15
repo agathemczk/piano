@@ -5,6 +5,8 @@ import com.pianoo.view.MainMenu;
 import com.pianoo.view.IPianoFrame;
 import com.pianoo.view.PianoFrame;
 
+import java.util.HashSet;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -15,7 +17,7 @@ public class Main {
         mainMenu.setVisible(true);
 
         IController controller = new Controller(musicPlayer, mainMenu, pianoFrame);
-        IPianoController pianoController = new PianoController(pianoFrame, controller);
+        IPianoController pianoController = new PianoController(pianoFrame, controller, new HashSet<>());
         controller.start();
     }
 }

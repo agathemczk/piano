@@ -4,34 +4,68 @@ import com.pianoo.view.IPianoFrame;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PianoController implements IPianoController, KeyListener {
 
     private final IPianoFrame view;
     private final IController controller;
+    private final Set<Character> keysPressed;
 
-    public PianoController(IPianoFrame view, IController controller) {
+    public PianoController(IPianoFrame view, IController controller, final Set<Character> keysPressed) {
         this.view = view;
         this.controller = controller;
+        this.keysPressed = new HashSet<>();
         this.view.addKeyListenerToFrame(this);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int note = mapKeyToNote(e.getKeyChar());
-        int octave = 5; // À rendre dynamique via la vue plus tard
+        char key = Character.toUpperCase(e.getKeyChar());
+
+        if (keysPressed.contains(key)) return; // touche déjà enfoncée → on ne rejoue pas la note
+
+        keysPressed.add(key); // on marque la touche comme enfoncée
+
+        int note = -1;
+        int octave = view.getSelectedOctave();
+
+        switch (key) {
+            case 'A': note = 0; break; // Do
+            case 'Z': note = 2; break; // Ré
+            case 'E': note = 4; break; // Mi
+            case 'R': note = 5; break; // Fa
+            case 'T': note = 7; break; // Sol
+            case 'Y': note = 9; break; // La
+            case 'U': note = 11; break; // Si
+        }
 
         if (note != -1) {
             controller.onKeyPressed(note, octave);
         } else {
-            System.out.println("Touche non assignée : " + e.getKeyChar());
+            System.out.println("Touche non assignée : " + key);
         }
     }
 
+
     @Override
     public void keyReleased(KeyEvent e) {
-        int note = mapKeyToNote(e.getKeyChar());
-        int octave = 5;
+        char key = Character.toUpperCase(e.getKeyChar());
+        keysPressed.remove(key);
+
+        int note = -1;
+        int octave = view.getSelectedOctave();
+
+        switch (key) {
+            case 'A': note = 0; break;
+            case 'Z': note = 2; break;
+            case 'E': note = 4; break;
+            case 'R': note = 5; break;
+            case 'T': note = 7; break;
+            case 'Y': note = 9; break;
+            case 'U': note = 11; break;
+        }
 
         if (note != -1) {
             controller.onKeyReleased(note, octave);
@@ -41,18 +75,5 @@ public class PianoController implements IPianoController, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         // non utilisé
-    }
-
-    private int mapKeyToNote(char keyChar) {
-        return switch (Character.toUpperCase(keyChar)) {
-            case 'A' -> 0;  // Do
-            case 'Z' -> 2;  // Ré
-            case 'E' -> 4;  // Mi
-            case 'R' -> 5;  // Fa
-            case 'T' -> 7;  // Sol
-            case 'Y' -> 9;  // La
-            case 'U' -> 11; // Si
-            default -> -1;
-        };
     }
 }
