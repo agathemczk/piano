@@ -11,4 +11,5 @@ public interface IController {
     void setModel(IModel model);
     void onKeyPressed(int key, int octave);
     void onKeyReleased(int key, int octave);
+    void onInstrumentSelected(String instrumentName);
 }

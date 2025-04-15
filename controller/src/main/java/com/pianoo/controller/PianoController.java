@@ -5,46 +5,54 @@ import com.pianoo.view.IPianoFrame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class PianoController implements KeyListener {
+public class PianoController implements IPianoController, KeyListener {
 
     private final IPianoFrame view;
+    private final IController controller;
 
-    public PianoController(IPianoFrame view) {
+    public PianoController(IPianoFrame view, IController controller) {
         this.view = view;
-        this.view.addKeyListenerToFrame((KeyListener) this);
+        this.controller = controller;
+        this.view.addKeyListenerToFrame(this);
     }
-    
+
     @Override
     public void keyPressed(KeyEvent e) {
-        char key = Character.toUpperCase(e.getKeyChar());
+        int note = mapKeyToNote(e.getKeyChar());
+        int octave = 5; // À rendre dynamique via la vue plus tard
 
-        switch (key) {
-            case 'A':
-                System.out.println("Do");
-                break;
-            case 'Z':
-                System.out.println("Ré");
-                break;
-            case 'E':
-                System.out.println("Mi");
-                break;
-            case 'R':
-                System.out.println("Fa");
-                break;
-            case 'T':
-                System.out.println("Sol");
-                break;
-            case 'Y':
-                System.out.println("La");
-                break;
-            case 'U':
-                System.out.println("Si");
-                break;
-            default:
-                System.out.println("Touche non assignée : " + key);
+        if (note != -1) {
+            controller.onKeyPressed(note, octave);
+        } else {
+            System.out.println("Touche non assignée : " + e.getKeyChar());
         }
     }
 
-    @Override public void keyTyped(KeyEvent e) {}
-    @Override public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int note = mapKeyToNote(e.getKeyChar());
+        int octave = 5;
+
+        if (note != -1) {
+            controller.onKeyReleased(note, octave);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // non utilisé
+    }
+
+    private int mapKeyToNote(char keyChar) {
+        return switch (Character.toUpperCase(keyChar)) {
+            case 'A' -> 0;  // Do
+            case 'Z' -> 2;  // Ré
+            case 'E' -> 4;  // Mi
+            case 'R' -> 5;  // Fa
+            case 'T' -> 7;  // Sol
+            case 'Y' -> 9;  // La
+            case 'U' -> 11; // Si
+            default -> -1;
+        };
+    }
 }

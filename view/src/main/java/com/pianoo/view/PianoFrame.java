@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
+public class PianoFrame extends JPanel implements IPianoFrame {
 
     private final JPanel pianoPanel;
     private final JComboBox<Integer> octaveSelector;
@@ -14,6 +14,7 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         setSize(800, 600);
         setLayout(new BorderLayout());
 
+        // Partie haute : croix rouge + sélection d’octave
         JPanel topPanel = new JPanel(new BorderLayout());
 
         JLabel redX = new JLabel("✖");
@@ -22,16 +23,15 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         redX.setCursor(new Cursor(Cursor.HAND_CURSOR));
         redX.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                // Code ici pour revenir au menu principal
-                Container parent = getParent();
-                if (parent instanceof JFrame) {
-                    JFrame frame = (JFrame) parent;
+                Container parent = SwingUtilities.getWindowAncestor(PianoFrame.this);
+                if (parent instanceof JFrame frame) {
                     frame.setContentPane(new MainMenu()); // Revenir au menu
                     frame.revalidate();
                     frame.repaint();
                 }
             }
         });
+
         topPanel.add(redX, BorderLayout.EAST);
 
         Integer[] octaves = new Integer[]{2, 3, 4, 5, 6, 7};
@@ -40,6 +40,7 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         topPanel.add(octaveSelector, BorderLayout.WEST);
         add(topPanel, BorderLayout.NORTH);
 
+        // Piano graphique
         pianoPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -47,13 +48,13 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
                 drawPiano(g, (int) octaveSelector.getSelectedItem());
             }
         };
+        pianoPanel.setFocusable(true);
         add(pianoPanel, BorderLayout.CENTER);
 
         octaveSelector.addActionListener(e -> pianoPanel.repaint());
 
-        addKeyListener(this);
         setFocusable(true);
-        pianoPanel.setFocusable(true);
+        requestFocusInWindow();
     }
 
     private void drawPiano(Graphics g, int octaves) {
@@ -80,65 +81,25 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         }
     }
 
-    // Gestion des touches
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // Optionnel
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        char key = Character.toUpperCase(e.getKeyChar());
-
-        switch (key) {
-            case 'A':
-                System.out.println("Do");
-                break;
-            case 'Z':
-                System.out.println("Ré");
-                break;
-            case 'E':
-                System.out.println("Mi");
-                break;
-            case 'R':
-                System.out.println("Fa");
-                break;
-            case 'T':
-                System.out.println("Sol");
-                break;
-            case 'Y':
-                System.out.println("La");
-                break;
-            case 'U':
-                System.out.println("Si");
-                break;
-            default:
-                System.out.println("Touche non assignée : " + key);
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // Optionnel
-    }
-
+    // === Interface IPianoFrame ===
     @Override
     public JPanel getPanel() {
-        return this; // Retourne l'instance actuelle de PianoFrame
+        return this;
     }
 
     @Override
-    public void addKeyListenerToFrame(final KeyListener listener) {
-        addKeyListener(listener); // Ajoute un KeyListener au panneau
+    public void addKeyListenerToFrame(KeyListener listener) {
+        this.addKeyListener(listener);
+        pianoPanel.addKeyListener(listener);
     }
 
     @Override
-    public void startPiano() {
-        setVisible(true); // Affiche le panneau du piano
+    public void setKeyListener(com.pianoo.controller.IController controller) {
+        // plus utilisé
     }
 
     @Override
-    public void stopPiano() {
-        setVisible(false); // Cache le panneau du piano
+    public int getSelectedOctave() {
+        return (int) octaveSelector.getSelectedItem();
     }
 }
