@@ -51,7 +51,10 @@ public class PianoFrame extends JPanel implements IPianoFrame {
         pianoPanel.setFocusable(true);
         add(pianoPanel, BorderLayout.CENTER);
 
-        octaveSelector.addActionListener(e -> pianoPanel.repaint());
+        octaveSelector.addActionListener(e -> {
+            pianoPanel.repaint();
+            pianoPanel.requestFocusInWindow(); // 🔥 Reprend le focus clavier ici
+        });
 
         setFocusable(true);
         requestFocusInWindow();
