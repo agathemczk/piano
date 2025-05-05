@@ -6,7 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MainMenu extends JFrame implements IMainMenu {
-    private IOnInstrumentSelectedListener listener;
+    private IOnChoiceSelectedListener listener;
     private JPanel mainPanel;
 
     public MainMenu() {
@@ -23,12 +23,12 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
         // ===== Panneau supérieur avec la croix rouge =====
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        /*JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.setOpaque(false); // Transparent pour ne pas masquer le fond
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.addActionListener(e -> System.exit(0));
         topPanel.add(closeButton);
-        add(topPanel, BorderLayout.NORTH); // Ajout en haut de la fenêtre
+        add(topPanel, BorderLayout.NORTH); // Ajout en haut de la fenêtre*/
 
         // ===== Panneau principal =====
         JPanel panel = new JPanel();
@@ -76,6 +76,7 @@ public class MainMenu extends JFrame implements IMainMenu {
                 public void mouseClicked(MouseEvent e) {
                     if (listener != null) {
                         listener.onInstrumentSelected(instrumentName);
+                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
                     }
                 }
             });
@@ -91,15 +92,21 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
 
-    public void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener) {
+    public void setInstrumentSelectedListener(IOnChoiceSelectedListener listener) {
         this.listener = listener;
     }
 
     @Override
     public JPanel getPanel() {
-        return mainPanel;
+        return mainPanel; // Retourne directement le panneau principal
     }
 
+    @Override
+    public void add(final JPanel panel) {
+        mainPanel.add(panel, BorderLayout.CENTER); // Ajoute le panneau au conteneur principal
+        mainPanel.revalidate(); // Revalide le conteneur principal
+        mainPanel.repaint(); // Repeint le conteneur principal
+    }
 
     @Override
     public JPanel getContentPane() {

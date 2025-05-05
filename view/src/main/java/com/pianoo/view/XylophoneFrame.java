@@ -15,12 +15,12 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
         setLayout(new BorderLayout());
 
         // ===== Header avec bouton rond rouge =====
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        /*JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.setOpaque(false);
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.addActionListener(e -> System.out.println("Fermer Xylophone"));
         topPanel.add(closeButton);
-        add(topPanel, BorderLayout.NORTH);
+        add(topPanel, BorderLayout.NORTH);*/
 
         // ===== Xylophone centré =====
         JPanel centerPanel = new JPanel(new GridBagLayout());

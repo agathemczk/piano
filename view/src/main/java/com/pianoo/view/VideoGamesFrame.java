@@ -9,7 +9,7 @@ import java.net.URL;
 
 public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
     private JPanel panel;
-    private IQuitButtonSelectedListener listener;
+    private IMenuNavigationListener listener;
     private RoundCloseButton closeButton;
 
 
@@ -27,7 +27,7 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         setBorder(BorderFactory.createEmptyBorder(0, 0, 150, 0));
 
         // Panneau supérieur avec la croix rouge
-        JPanel topPanel = new JPanel(new BorderLayout());
+        /*JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
         RoundCloseButton closeButton = new RoundCloseButton();
@@ -38,7 +38,7 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         closeButtonWrapper.add(closeButton);
 
         topPanel.add(closeButtonWrapper, BorderLayout.EAST);
-        add(topPanel);
+        add(topPanel);*/
 
         // Ajout des rangées de jeux
         add(createGameRow(0, 2)); // Ligne du haut
@@ -107,11 +107,11 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         return this;
     }
 
-    @Override
+    /*@Override
     public void setQuitButtonSelectedListener(IQuitButtonSelectedListener listener) {
         this.listener = listener;
         closeButton.addActionListener(e -> listener.onQuitButtonSelected("Quit"));
-    }
+    }*/
 
     private static class RoundButton extends JButton {
         public RoundButton(ImageIcon icon) {

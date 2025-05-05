@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 
 public class OrganFrame extends JPanel implements IOrganFrame {
 
+    private IMenuNavigationListener listener; // Ajout du champ pour stocker le contrôleur
     private final int WHITE_KEYS_PER_OCTAVE = 7;
     private final int OCTAVE_COUNT = 5;
     private final int TOTAL_WHITE_KEYS = WHITE_KEYS_PER_OCTAVE * OCTAVE_COUNT;
@@ -17,12 +18,25 @@ public class OrganFrame extends JPanel implements IOrganFrame {
 
     private final java.util.List<PianoKey> keys = new ArrayList<>();
 
+    // Constructeur de la classe OrganFrame
     public OrganFrame() {
         setLayout(new BorderLayout());
+
+        // ===== Panneau supérieur avec la croix rouge =====
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.setOpaque(false);
+
+        // Ajout du bouton RoundCloseButton
         RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> System.out.println("Fermer Xylophone"));
+        closeButton.setListener(() -> {
+            if (listener != null) {
+                listener.onReturnMainMenu(); // Notifie le contrôleur
+            }
+        });
+
+        topPanel.add(closeButton);
+        add(topPanel, BorderLayout.NORTH);
+
         topPanel.add(closeButton);
         add(topPanel, BorderLayout.NORTH);
 
@@ -39,6 +53,12 @@ public class OrganFrame extends JPanel implements IOrganFrame {
         });
     }
 
+    // Méthode pour définir le listener
+    public void setListener(IMenuNavigationListener listener) {
+        this.listener = listener;
+    }
+
+    // Méthode pour dessiner le clavier
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -66,6 +86,7 @@ public class OrganFrame extends JPanel implements IOrganFrame {
         drawKeyboard(g, margin, y2, keyWidth, keyHeight, blackKeyWidth, blackKeyHeight);
     }
 
+    // Méthode pour dessiner le clavier
     private void drawKeyboard(Graphics g, int xOffset, int yOffset, int keyWidth, int keyHeight, int blackKeyWidth, int blackKeyHeight) {
         int currentWhite = 0;
 
@@ -114,6 +135,7 @@ public class OrganFrame extends JPanel implements IOrganFrame {
         }
     }
 
+    // Classe pour représenter les touches du clavier
     private static class PianoKey {
         Rectangle bounds;
         boolean isBlack;

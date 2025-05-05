@@ -24,14 +24,14 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         topPanel.add(octaveSelector, BorderLayout.WEST);
 
 // Bouton rond pour fermer à droite avec une marge
-        RoundCloseButton closeButton = new RoundCloseButton();
+        /*RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.addActionListener(e -> System.out.println("Fermer Piano"));
 
         JPanel closeButtonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         closeButtonWrapper.setOpaque(false);
         closeButtonWrapper.add(closeButton);
 
-        topPanel.add(closeButtonWrapper, BorderLayout.EAST);
+        topPanel.add(closeButtonWrapper, BorderLayout.EAST);*/
 
 // Ajout du panneau supérieur
         add(topPanel, BorderLayout.NORTH);

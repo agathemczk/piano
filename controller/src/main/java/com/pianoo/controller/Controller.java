@@ -2,36 +2,33 @@ package com.pianoo.controller;
 
 import com.pianoo.model.IModel;
 import com.pianoo.view.*;
-import com.pianoo.model.IVideoGames;
 
 //import com.pianoo.model.IDrums;
 
 
-public class Controller implements IController, IOnInstrumentSelectedListener, IQuitButtonSelectedListener {
+public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener {
     private IMusicPlayer musicPlayer;
     private IMainMenu mainMenu;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
     private IVideoGamesFrame videoGamesFrame;
+    private IRoundCloseButton roundCloseButton;
 
-    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame) {
+
+    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IRoundCloseButton roundCloseButton) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
         this.xylophoneFrame = xylophoneFrame;
         this.videoGamesFrame = videoGamesFrame;
+        this.roundCloseButton = roundCloseButton;
         this.mainMenu.setInstrumentSelectedListener(this);
         this.mainMenu.setVisible(true);
-        this.videoGamesFrame.setQuitButtonSelectedListener(this);
-    }
+        this.roundCloseButton.setListener(this);
+        this.organFrame.setListener(this);
 
-    @Override
-    public void onQuitButtonSelected(String quitButton) {
-        if ("Quit".equals(quitButton)) {
-            openMainMenu();
-        }
     }
 
     @Override
@@ -46,6 +43,7 @@ public class Controller implements IController, IOnInstrumentSelectedListener, I
             openVideoGames();
         }
         if ("Organ".equals(instrumentName)) {
+            System.out.println("Organ");
             openOrgan();
         }
         if ("Drums".equals(instrumentName)) {
@@ -53,45 +51,51 @@ public class Controller implements IController, IOnInstrumentSelectedListener, I
         }
     }
 
+    @Override
+    public void onReturnMainMenu() {
+        openMainMenu();
+    }
+
     private void openPiano() {
-        mainMenu.getContentPane().removeAll();
-        mainMenu.getContentPane().add(pianoFrame.getPanel());
+        mainMenu.removeAll();
+        mainMenu.add(pianoFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openXylophone() {
-        mainMenu.getContentPane().removeAll();
-        mainMenu.getContentPane().add(xylophoneFrame.getPanel());
+        mainMenu.removeAll();
+        mainMenu.add(xylophoneFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openVideoGames() {
-        mainMenu.getContentPane().removeAll();
-        mainMenu.getContentPane().add(videoGamesFrame.getPanel());
+        mainMenu.removeAll();
+        mainMenu.add(videoGamesFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openOrgan() {
-        mainMenu.getContentPane().removeAll();
-        mainMenu.getContentPane().add(organFrame.getPanel());
+        mainMenu.removeAll();
+        mainMenu.add(organFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
+
     private void openDrums() {
-        mainMenu.getContentPane().removeAll();
-        mainMenu.getContentPane().add(pianoFrame.getPanel());
+        mainMenu.removeAll();
+        mainMenu.add(pianoFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openMainMenu() {
-        mainMenu.getContentPane().removeAll(); // Supprime tous les composants existants
-        mainMenu.getContentPane().add(mainMenu.getPanel()); // Ajoute le composant principal
-        mainMenu.revalidate(); // Revalide la disposition
-        mainMenu.repaint(); // Redessine l'interface
+        mainMenu.removeAll(); // Supprime tous les composants existants
+        mainMenu.add(mainMenu.getPanel()); // Ajoute le menu principal
+        mainMenu.revalidate(); // Revalide le conteneur pour appliquer les changements
+        mainMenu.repaint(); // Redessine le conteneur
     }
 
     @Override

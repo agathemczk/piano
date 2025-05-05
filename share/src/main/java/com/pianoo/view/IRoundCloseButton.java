@@ -1,8 +1,5 @@
 package com.pianoo.view;
 
-import javax.swing.*;
-
-public interface IOrganFrame {
-    JPanel getPanel();
+public interface IRoundCloseButton {
     void setListener(IMenuNavigationListener listener);
 }
