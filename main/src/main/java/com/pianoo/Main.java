@@ -14,10 +14,12 @@ public class Main {
         MainMenu mainMenu = new MainMenu();
         IPianoFrame pianoFrame = new PianoFrame();
 
-        mainMenu.setVisible(true);
-
-        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame);
+        IController controller = new Controller(musicPlayer);
         IPianoController pianoController = new PianoController(pianoFrame, controller, new HashSet<>());
+
+        controller.setMainMenu(mainMenu);
+        controller.setPianoFrame(pianoFrame);
+
         controller.start();
     }
 }

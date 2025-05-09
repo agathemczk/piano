@@ -1,4 +1,5 @@
 package com.pianoo.view;
+import com.pianoo.controller.IController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.MouseEvent;
 
 public class MainMenu extends JFrame implements IMainMenu {
     private IOnInstrumentSelectedListener listener;
+    private IController controller;
 
     public MainMenu() {
         setTitle("MusicaLau - Menu Principal");
@@ -50,11 +52,11 @@ public class MainMenu extends JFrame implements IMainMenu {
                 }
             };
 
-            // Ajouter un écouteur pour la section Piano
             if (index == 0) { // Piano
                 instrumentPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        System.out.println("Piano cliqué");
                         if (listener != null) {
                             listener.onInstrumentSelected("Piano");
                         }
@@ -75,17 +77,17 @@ public class MainMenu extends JFrame implements IMainMenu {
 
     @Override
     public JPanel getContentPane() {
-        return (JPanel) super.getContentPane(); // Utilise directement la méthode de JFrame
+        return (JPanel) super.getContentPane();
     }
 
     @Override
     public void revalidate() {
-        super.revalidate(); // Utilise directement la méthode de JFrame
+        super.revalidate();
     }
 
     @Override
     public void repaint() {
-        super.repaint(); // Utilise directement la méthode de JFrame
+        super.repaint();
     }
 
     public void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener) {
@@ -106,16 +108,13 @@ public class MainMenu extends JFrame implements IMainMenu {
         int x = (panelWidth / 2) - (pianoWidth / 2);
         int y = (panelHeight+50) - (pianoHeight);
 
-        // Dessiner le fond du piano (la base des touches blanches)
         g.setColor(Color.WHITE);
         g.fillRect(x, y, pianoWidth, pianoHeight);
         g.setColor(Color.BLACK);
         g.drawRect(x, y, pianoWidth, pianoHeight);
 
-        // Largeur d'une touche blanche
-        int keyWidth = pianoWidth / 7; // 7 touches blanches au total
+        int keyWidth = pianoWidth / 7;
 
-        // Dessiner les touches blanches
         for (int i = 0; i < 7; i++) {
             int whiteKeyX = x + i * keyWidth;
             g.setColor(Color.WHITE);
@@ -124,9 +123,8 @@ public class MainMenu extends JFrame implements IMainMenu {
             g.drawRect(whiteKeyX, y, keyWidth, pianoHeight);
         }
 
-        // Dessiner les touches noires
-        int blackKeyWidth = keyWidth / 2; // Largeur d'une touche noire
-        int blackKeyHeight = pianoHeight / 2; // Hauteur des touches noires
+        int blackKeyWidth = keyWidth / 2;
+        int blackKeyHeight = pianoHeight / 2;
 
         for (int i = 0; i < 7; i++) {
             if (i != 2 && i != 6) {
@@ -310,6 +308,9 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.fillPolygon(x, y, 3); // Dessiner le triangle tourné
     }
 
+    public void setController(IController controller) {
+        this.controller = controller;
+    }
 
 
 }

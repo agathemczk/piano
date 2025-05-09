@@ -1,22 +1,51 @@
 package com.pianoo.view;
 
+import com.pianoo.controller.IController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PianoFrame extends JPanel implements IPianoFrame {
 
     private final JPanel pianoPanel;
     private final JComboBox<Integer> octaveSelector;
     private final int WHITE_KEYS_PER_OCTAVE = 7;
+    private IController controller;
+    private final int REFERENCE_OCTAVE = 4;
+
+    private class NoteKey {
+        final int note;
+        final int octave;
+
+        NoteKey(int note, int octave) {
+            this.note = note;
+            this.octave = octave;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NoteKey noteKey = (NoteKey) o;
+            return note == noteKey.note && octave == noteKey.octave;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * note + octave;
+        }
+    }
+
+    private final Map<NoteKey, Boolean> activeKeys = new HashMap<>();
 
     public PianoFrame() {
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        // Partie haute : croix rouge + sélection d’octave
         JPanel topPanel = new JPanel(new BorderLayout());
-
         JLabel redX = new JLabel("✖");
         redX.setForeground(Color.RED);
         redX.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -25,22 +54,20 @@ public class PianoFrame extends JPanel implements IPianoFrame {
             public void mouseClicked(MouseEvent e) {
                 Container parent = SwingUtilities.getWindowAncestor(PianoFrame.this);
                 if (parent instanceof JFrame frame) {
-                    frame.setContentPane(new MainMenu()); // Revenir au menu
+                    frame.setContentPane(new MainMenu());
                     frame.revalidate();
                     frame.repaint();
                 }
             }
         });
-
         topPanel.add(redX, BorderLayout.EAST);
 
         Integer[] octaves = new Integer[]{2, 3, 4, 5, 6, 7};
         octaveSelector = new JComboBox<>(octaves);
-        octaveSelector.setSelectedItem(3);
+        octaveSelector.setSelectedItem(4);
         topPanel.add(octaveSelector, BorderLayout.WEST);
         add(topPanel, BorderLayout.NORTH);
 
-        // Piano graphique
         pianoPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -53,11 +80,47 @@ public class PianoFrame extends JPanel implements IPianoFrame {
 
         octaveSelector.addActionListener(e -> {
             pianoPanel.repaint();
-            pianoPanel.requestFocusInWindow(); // 🔥 Reprend le focus clavier ici
+            pianoPanel.requestFocusInWindow();
         });
 
         setFocusable(true);
         requestFocusInWindow();
+
+        pianoPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                int selectedOctaves = getSelectedOctave();
+
+                int[] noteAndOctave = getNoteAndOctaveFromMouseClick(x, y, selectedOctaves);
+                int note = noteAndOctave[0];
+                int octave = noteAndOctave[1];
+
+                if (note != -1) {
+                    controller.onKeyPressed(note, octave);
+                    highlightKey(note, octave);
+                    pianoPanel.repaint();
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                int selectedOctaves = getSelectedOctave();
+
+                int[] noteAndOctave = getNoteAndOctaveFromMouseClick(x, y, selectedOctaves);
+                int note = noteAndOctave[0];
+                int octave = noteAndOctave[1];
+
+                if (note != -1) {
+                    controller.onKeyReleased(note, octave);
+                    resetKey(note, octave);
+                    pianoPanel.repaint();
+                }
+            }
+        });
     }
 
     private void drawPiano(Graphics g, int octaves) {
@@ -65,26 +128,91 @@ public class PianoFrame extends JPanel implements IPianoFrame {
         int whiteKeyWidth = getWidth() / totalWhiteKeys;
         int whiteKeyHeight = getHeight();
 
-        for (int i = 0; i < totalWhiteKeys; i++) {
-            g.setColor(Color.WHITE);
-            g.fillRect(i * whiteKeyWidth, 0, whiteKeyWidth, whiteKeyHeight);
-            g.setColor(Color.BLACK);
-            g.drawRect(i * whiteKeyWidth, 0, whiteKeyWidth, whiteKeyHeight);
+        int firstOctave = REFERENCE_OCTAVE - octaves / 2;
+
+        for (int o = 0; o < octaves; o++) {
+            int currentOctave = firstOctave + o;
+
+            for (int i = 0; i < WHITE_KEYS_PER_OCTAVE; i++) {
+                int whiteKeyIndex = o * WHITE_KEYS_PER_OCTAVE + i;
+                int[] whiteNotes = {0, 2, 4, 5, 7, 9, 11};
+                int note = whiteNotes[i];
+
+                NoteKey noteKey = new NoteKey(note, currentOctave);
+                boolean isActive = activeKeys.getOrDefault(noteKey, false);
+
+                if (isActive) {
+                    g.setColor(new Color(200, 200, 200));
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+
+                g.fillRect(whiteKeyIndex * whiteKeyWidth, 0, whiteKeyWidth, whiteKeyHeight);
+                g.setColor(Color.BLACK);
+                g.drawRect(whiteKeyIndex * whiteKeyWidth, 0, whiteKeyWidth, whiteKeyHeight);
+
+                if (i == 0) {
+                    g.setColor(Color.GRAY);
+                    g.drawString("O:" + currentOctave, whiteKeyIndex * whiteKeyWidth + 3, whiteKeyHeight - 10);
+                }
+            }
         }
 
         int[] blackKeyPositions = {0, 1, 3, 4, 5};
+        int[] blackNotes = {1, 3, 6, 8, 10};
+
         for (int o = 0; o < octaves; o++) {
-            for (int i : blackKeyPositions) {
-                int x = (o * WHITE_KEYS_PER_OCTAVE + i + 1) * whiteKeyWidth - (whiteKeyWidth / 4);
+            int currentOctave = firstOctave + o;
+
+            for (int i = 0; i < blackKeyPositions.length; i++) {
+                int note = blackNotes[i];
+                int keyIndex = o * WHITE_KEYS_PER_OCTAVE + blackKeyPositions[i];
+                int x = (keyIndex + 1) * whiteKeyWidth - (whiteKeyWidth / 4);
                 int width = whiteKeyWidth / 2;
                 int height = (int) (whiteKeyHeight * 0.6);
-                g.setColor(Color.BLACK);
+
+                NoteKey noteKey = new NoteKey(note, currentOctave);
+                boolean isActive = activeKeys.getOrDefault(noteKey, false);
+
+                if (isActive) {
+                    g.setColor(new Color(80, 80, 80));
+                } else {
+                    g.setColor(Color.BLACK);
+                }
                 g.fillRect(x, 0, width, height);
+                g.setColor(Color.DARK_GRAY);
+                g.drawRect(x, 0, width, height);
             }
         }
     }
 
-    // === Interface IPianoFrame ===
+    public void highlightKey(int note, int octave) {
+        NoteKey noteKey = new NoteKey(note, octave);
+        activeKeys.put(noteKey, true);
+        pianoPanel.repaint();
+    }
+
+    public void resetKey(int note, int octave) {
+        NoteKey noteKey = new NoteKey(note, octave);
+        activeKeys.put(noteKey, false);
+        pianoPanel.repaint();
+    }
+
+    @Override
+    public void highlightKey(int note) {
+        highlightKey(note, getSelectedOctave());
+    }
+
+    @Override
+    public void resetKey(int note) {
+        resetKey(note, getSelectedOctave());
+    }
+
+    private boolean isBlackKey(int note) {
+        int noteValue = note % 12;
+        return noteValue == 1 || noteValue == 3 || noteValue == 6 || noteValue == 8 || noteValue == 10;
+    }
+
     @Override
     public JPanel getPanel() {
         return this;
@@ -97,12 +225,50 @@ public class PianoFrame extends JPanel implements IPianoFrame {
     }
 
     @Override
-    public void setKeyListener(com.pianoo.controller.IController controller) {
-        // plus utilisé
+    public void setKeyListener(final IController controller) {
+        this.controller = controller;
+    }
+
+    @Override
+    public void setController(final IController controller) {
+        this.controller = controller;
     }
 
     @Override
     public int getSelectedOctave() {
         return (int) octaveSelector.getSelectedItem();
+    }
+
+    private int[] getNoteAndOctaveFromMouseClick(int x, int y, int totalOctaves) {
+        int totalWhiteKeys = WHITE_KEYS_PER_OCTAVE * totalOctaves;
+        int whiteKeyWidth = getWidth() / totalWhiteKeys;
+        int whiteKeyHeight = getHeight();
+
+        int clickedWhiteKeyIndex = x / whiteKeyWidth;
+        int relativeOctave = clickedWhiteKeyIndex / WHITE_KEYS_PER_OCTAVE;
+        int halfOctaves = totalOctaves / 2;
+        int absoluteOctave = REFERENCE_OCTAVE - halfOctaves + relativeOctave;
+        int posInOctave = clickedWhiteKeyIndex % WHITE_KEYS_PER_OCTAVE;
+        int[] whiteNotes = {0, 2, 4, 5, 7, 9, 11};
+        int[] blackKeyPositions = {0, 1, 3, 4, 5};
+        int[] blackNotes = {1, 3, 6, 8, 10};
+
+        for (int i = 0; i < blackKeyPositions.length; i++) {
+            int octaveOffset = relativeOctave * WHITE_KEYS_PER_OCTAVE;
+            int keyIndex = octaveOffset + blackKeyPositions[i];
+            int blackX = (keyIndex + 1) * whiteKeyWidth - (whiteKeyWidth / 4);
+            int blackWidth = whiteKeyWidth / 2;
+            int blackHeight = (int) (whiteKeyHeight * 0.6);
+
+            if (x >= blackX && x <= blackX + blackWidth && y <= blackHeight) {
+                return new int[] {blackNotes[i], absoluteOctave};
+            }
+        }
+
+        if (posInOctave >= 0 && posInOctave < whiteNotes.length) {
+            return new int[] {whiteNotes[posInOctave], absoluteOctave};
+        }
+
+        return new int[] {-1, -1};
     }
 }

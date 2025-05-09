@@ -4,7 +4,9 @@ import com.pianoo.view.IPianoFrame;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class PianoController implements IPianoController, KeyListener {
@@ -12,68 +14,60 @@ public class PianoController implements IPianoController, KeyListener {
     private final IPianoFrame view;
     private final IController controller;
     private final Set<Character> keysPressed;
+    private final Map<Character, Integer> keyToNoteMap;
 
     public PianoController(IPianoFrame view, IController controller, final Set<Character> keysPressed) {
         this.view = view;
         this.controller = controller;
         this.keysPressed = new HashSet<>();
         this.view.addKeyListenerToFrame(this);
+
+        this.keyToNoteMap = new HashMap<>();
+        keyToNoteMap.put('A', 0);
+        keyToNoteMap.put('W', 1);
+        keyToNoteMap.put('Z', 2);
+        keyToNoteMap.put('X', 3);
+        keyToNoteMap.put('E', 4);
+        keyToNoteMap.put('R', 5);
+        keyToNoteMap.put('C', 6);
+        keyToNoteMap.put('T', 7);
+        keyToNoteMap.put('V', 8);
+        keyToNoteMap.put('Y', 9);
+        keyToNoteMap.put('B', 10);
+        keyToNoteMap.put('U', 11);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         char key = Character.toUpperCase(e.getKeyChar());
+        if (keysPressed.contains(key)) return;
 
-        if (keysPressed.contains(key)) return; // touche déjà enfoncée → on ne rejoue pas la note
+        Integer note = keyToNoteMap.get(key);
+        if (note != null) {
+            int octave = view.getSelectedOctave();
+            keysPressed.add(key);
 
-        keysPressed.add(key); // on marque la touche comme enfoncée
-
-        int note = -1;
-        int octave = view.getSelectedOctave();
-
-        switch (key) {
-            case 'A': note = 0; break; // Do
-            case 'Z': note = 2; break; // Ré
-            case 'E': note = 4; break; // Mi
-            case 'R': note = 5; break; // Fa
-            case 'T': note = 7; break; // Sol
-            case 'Y': note = 9; break; // La
-            case 'U': note = 11; break; // Si
-        }
-
-        if (note != -1) {
             controller.onKeyPressed(note, octave);
-        } else {
-            System.out.println("Touche non assignée : " + key);
+            view.highlightKey(note, octave);
         }
     }
-
 
     @Override
     public void keyReleased(KeyEvent e) {
         char key = Character.toUpperCase(e.getKeyChar());
         keysPressed.remove(key);
 
-        int note = -1;
-        int octave = view.getSelectedOctave();
+        Integer note = keyToNoteMap.get(key);
+        if (note != null) {
+            int octave = view.getSelectedOctave();
 
-        switch (key) {
-            case 'A': note = 0; break;
-            case 'Z': note = 2; break;
-            case 'E': note = 4; break;
-            case 'R': note = 5; break;
-            case 'T': note = 7; break;
-            case 'Y': note = 9; break;
-            case 'U': note = 11; break;
-        }
-
-        if (note != -1) {
             controller.onKeyReleased(note, octave);
+            view.resetKey(note, octave);
         }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // non utilisé
+        // Not used
     }
 }

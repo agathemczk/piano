@@ -11,23 +11,36 @@ import java.awt.event.KeyListener;
 
 public class Controller implements IController, IOnInstrumentSelectedListener, KeyListener {
 
-    private final IMusicPlayer musicPlayer;
-    private final IMainMenu mainMenu;
-    private final IPianoFrame pianoFrame;
+    private final IMusicPlayer musicPlayer;;
+    private IPianoFrame pianoFrame;
+    private IPianoController pianoController;
+    private IMainMenu mainMenu;
 
-    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame) {
+    private static final int KEYBOARD_OCTAVE = 4;
+
+    public Controller(IMusicPlayer musicPlayer) {
         this.musicPlayer = musicPlayer;
-        this.mainMenu = mainMenu;
-        this.pianoFrame = pianoFrame;
-        this.mainMenu.setInstrumentSelectedListener(this);
-        this.mainMenu.setVisible(true);
     }
+
 
     @Override
     public void onInstrumentSelected(String instrumentName) {
         if ("Piano".equalsIgnoreCase(instrumentName)) {
             openPiano();
         }
+    }
+
+    @Override
+    public void setMainMenu(final IMainMenu mainMenu) {
+        this.mainMenu = mainMenu;
+        this.mainMenu.setInstrumentSelectedListener(this);
+        this.mainMenu.setVisible(true);
+    }
+
+    @Override
+    public void setPianoFrame(final IPianoFrame pianoFrame) {
+        this.pianoFrame = pianoFrame;
+        this.pianoFrame.setController(this);
     }
 
     private void openPiano() {
@@ -41,32 +54,34 @@ public class Controller implements IController, IOnInstrumentSelectedListener, K
 
     @Override
     public void start() {
-
+        // Lancement de l'application si besoin
     }
 
     @Override
     public void stop() {
-
+        // Fermeture ou nettoyage
     }
 
     @Override
     public IView getView() {
         return null;
+        // À implémenter si nécessaire
     }
 
     @Override
     public void setView(final IView view) {
-
+        // À implémenter si nécessaire
     }
 
     @Override
     public IModel getModel() {
         return null;
+        // À implémenter si nécessaire
     }
 
     @Override
     public void setModel(final IModel model) {
-
+        // À implémenter si nécessaire
     }
 
     @Override
@@ -85,7 +100,7 @@ public class Controller implements IController, IOnInstrumentSelectedListener, K
     public void keyPressed(KeyEvent e) {
         int key = convertKeyToNote(e.getKeyCode());
         if (key >= 0) {
-            onKeyPressed(key, 3); // Octave en dur (à dynamiser si nécessaire)
+            onKeyPressed(key, KEYBOARD_OCTAVE);
         }
     }
 
@@ -93,7 +108,7 @@ public class Controller implements IController, IOnInstrumentSelectedListener, K
     public void keyReleased(KeyEvent e) {
         int key = convertKeyToNote(e.getKeyCode());
         if (key >= 0) {
-            onKeyReleased(key, 3);
+            onKeyReleased(key, KEYBOARD_OCTAVE);
         }
     }
 
@@ -113,5 +128,10 @@ public class Controller implements IController, IOnInstrumentSelectedListener, K
             case KeyEvent.VK_U -> 6;
             default -> -1;
         };
+
+    }
+
+    public void setPianoController(IPianoController pianoController) {
+        this.pianoController = pianoController;
     }
 }
