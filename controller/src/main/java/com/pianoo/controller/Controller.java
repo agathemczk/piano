@@ -57,45 +57,50 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openPiano() {
-        mainMenu.removeAll();
-        mainMenu.add(pianoFrame.getPanel());
+        mainMenu.getContentPane().removeAll();
+        mainMenu.getContentPane().add(pianoFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openXylophone() {
-        mainMenu.removeAll();
-        mainMenu.add(xylophoneFrame.getPanel());
+        mainMenu.getContentPane().removeAll();
+        mainMenu.getContentPane().add(xylophoneFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openVideoGames() {
-        mainMenu.removeAll();
-        mainMenu.add(videoGamesFrame.getPanel());
+        mainMenu.getContentPane().removeAll();
+        mainMenu.getContentPane().add(videoGamesFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openOrgan() {
-        mainMenu.removeAll();
-        mainMenu.add(organFrame.getPanel());
+        mainMenu.getContentPane().removeAll();
+        mainMenu.getContentPane().add(organFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openDrums() {
-        mainMenu.removeAll();
-        mainMenu.add(pianoFrame.getPanel());
+        mainMenu.getContentPane().removeAll();
+        mainMenu.getContentPane().add(pianoFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
 
     private void openMainMenu() {
-        mainMenu.removeAll(); // Supprime tous les composants existants
-        mainMenu.add(mainMenu.getPanel()); // Ajoute le menu principal
-        mainMenu.revalidate(); // Revalide le conteneur pour appliquer les changements
-        mainMenu.repaint(); // Redessine le conteneur
+        // Vider le contentPane
+        mainMenu.getContentPane().removeAll();
+
+        // Reconfigurer l'interface
+        mainMenu.initializeUI();
+
+        // Rafraîchir l'affichage
+        mainMenu.revalidate();
+        mainMenu.repaint();
     }
 
     @Override

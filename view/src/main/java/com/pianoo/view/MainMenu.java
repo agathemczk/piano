@@ -18,7 +18,7 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
         // Initialisation de mainPanel
-        mainPanel = new JPanel(new BorderLayout());
+        this.mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel); // Définit mainPanel comme le conteneur principal
 
 
@@ -97,10 +97,77 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     @Override
-    public JPanel getPanel() {
-        return mainPanel; // Retourne directement le panneau principal
+    public JPanel getMainPanel() {
+        return mainPanel; // Retourne le panel indépendant
     }
 
+    public void initializeUI() {
+        // Récupérer le contentPane
+        Container contentPane = this.getContentPane();
+
+        // Définir le layout du contentPane
+        contentPane.setLayout(new BorderLayout());
+
+        // Créer le panneau des instruments
+        JPanel instrumentsPanel = new JPanel(new GridLayout(2, 3, 20, 20));
+        instrumentsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Réutiliser exactement le même code que dans le constructeur
+        String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
+
+        for (int i = 0; i < instruments.length; i++) {
+            final int index = i;
+            final String instrumentName = instruments[i];
+
+            JPanel instrumentPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    switch (index) {
+                        case 0:
+                            drawPiano(g);
+                            break;
+                        case 1:
+                            drawXylophone(g);
+                            break;
+                        case 2:
+                            drawVideoGames(g);
+                            break;
+                        case 3:
+                            drawOrgue(g);
+                            break;
+                        case 4:
+                            drawDrums(g);
+                            break;
+                        case 5:
+                            drawCat(g);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            };
+
+            instrumentPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (listener != null) {
+                        listener.onInstrumentSelected(instrumentName);
+                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
+                    }
+                }
+            });
+
+            instrumentPanel.setBackground(Color.LIGHT_GRAY);
+            instrumentPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            instrumentPanel.setPreferredSize(new Dimension(200, 150));
+
+            instrumentsPanel.add(instrumentPanel);
+        }
+
+        // Ajouter le panneau d'instruments au contentPane
+        contentPane.add(instrumentsPanel, BorderLayout.CENTER);
+    }
     @Override
     public void add(final JPanel panel) {
         mainPanel.add(panel, BorderLayout.CENTER); // Ajoute le panneau au conteneur principal
