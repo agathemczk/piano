@@ -6,8 +6,9 @@ import java.util.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class OrgueView extends JPanel {
+public class OrganFrame extends JPanel implements IOrganFrame {
 
+    private IMenuNavigationListener listener; // Ajout du champ pour stocker le contrôleur
     private final int WHITE_KEYS_PER_OCTAVE = 7;
     private final int OCTAVE_COUNT = 5;
     private final int TOTAL_WHITE_KEYS = WHITE_KEYS_PER_OCTAVE * OCTAVE_COUNT;
@@ -17,8 +18,28 @@ public class OrgueView extends JPanel {
 
     private final java.util.List<PianoKey> keys = new ArrayList<>();
 
-    public OrgueView() {
-        setBackground(Color.DARK_GRAY);
+    // Constructeur de la classe OrganFrame
+    public OrganFrame() {
+        setLayout(new BorderLayout());
+
+        // ===== Panneau supérieur avec la croix rouge =====
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.setOpaque(false);
+
+        // Ajout du bouton RoundCloseButton
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.setListener(() -> {
+            if (listener != null) {
+                listener.onReturnMainMenu(); // Notifie le contrôleur
+            }
+        });
+
+        topPanel.add(closeButton);
+        add(topPanel, BorderLayout.NORTH);
+
+        topPanel.add(closeButton);
+        add(topPanel, BorderLayout.NORTH);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -32,6 +53,12 @@ public class OrgueView extends JPanel {
         });
     }
 
+    // Méthode pour définir le listener
+    public void setListener(IMenuNavigationListener listener) {
+        this.listener = listener;
+    }
+
+    // Méthode pour dessiner le clavier
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -59,6 +86,7 @@ public class OrgueView extends JPanel {
         drawKeyboard(g, margin, y2, keyWidth, keyHeight, blackKeyWidth, blackKeyHeight);
     }
 
+    // Méthode pour dessiner le clavier
     private void drawKeyboard(Graphics g, int xOffset, int yOffset, int keyWidth, int keyHeight, int blackKeyWidth, int blackKeyHeight) {
         int currentWhite = 0;
 
@@ -107,6 +135,7 @@ public class OrgueView extends JPanel {
         }
     }
 
+    // Classe pour représenter les touches du clavier
     private static class PianoKey {
         Rectangle bounds;
         boolean isBlack;
@@ -123,56 +152,8 @@ public class OrgueView extends JPanel {
         }
     }
 
-    // --- BOUTON FERMER ARRONDI ---
-    private static class RoundCloseButton extends JButton {
-        public RoundCloseButton() {
-            setPreferredSize(new Dimension(24, 24));
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-            setToolTipText("Fermer");
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(Color.RED);
-            g2.fillOval(0, 0, getWidth(), getHeight());
-
-            g2.setStroke(new BasicStroke(2f));
-            g2.setColor(Color.WHITE);
-            int pad = 6;
-            g2.drawLine(pad, pad, getWidth() - pad, getHeight() - pad);
-            g2.drawLine(getWidth() - pad, pad, pad, getHeight() - pad);
-
-            g2.dispose();
-        }
-    }
-
-    // --- MAIN ---
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();
-            frame.setTitle("Orgue - Vue Paysage (2 claviers piano)");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(900, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setLayout(new BorderLayout());
-
-            // Panel principal avec bouton en haut
-            JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-            topPanel.setOpaque(false);
-            RoundCloseButton closeButton = new RoundCloseButton();
-            closeButton.addActionListener(e -> System.exit(0));
-            topPanel.add(closeButton);
-
-            OrgueView orgueView = new OrgueView();
-
-            frame.add(topPanel, BorderLayout.NORTH);
-            frame.add(orgueView, BorderLayout.CENTER);
-
-            frame.setVisible(true);
-        });
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 }

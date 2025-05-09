@@ -1,10 +1,11 @@
 package com.pianoo.view;
 
-
 import javax.swing.*;
 import java.awt.*;
 
-public class XylophoneFrame extends JFrame {
+public class XylophoneFrame extends JPanel implements IXylophoneFrame {
+
+    private IMenuNavigationListener listener;
 
     private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] COLORS = {
@@ -13,21 +14,30 @@ public class XylophoneFrame extends JFrame {
     };
 
     public XylophoneFrame() {
-        setTitle("Xylophone - Vue Paysage");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 400);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.DARK_GRAY);
-
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // Création du panneau supérieur
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
-        RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> dispose());
-        topPanel.add(closeButton);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        // Bouton rond pour fermer à droite
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.setListener(() -> {
+            if (listener != null) {
+                listener.onReturnMainMenu(); // Notifie le contrôleur
+            }
+        });
+
+        // Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+
+        // Ajout du panneau supérieur au frame
+        add(topPanel, BorderLayout.NORTH);
+
+        // ===== Xylophone centré =====
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setOpaque(false);
 
@@ -68,49 +78,20 @@ public class XylophoneFrame extends JFrame {
         }
 
         centerPanel.add(xylophonePanel);
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-
-        add(mainPanel);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     private void playNote(String note) {
         System.out.println("Joue la note : " + note);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new XylophoneFrame().setVisible(true));
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 
-    // ===== Classe personnalisée pour bouton rond avec croix =====
-    private static class RoundCloseButton extends JButton {
-
-        public RoundCloseButton() {
-            setPreferredSize(new Dimension(24, 24));
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-            setToolTipText("Fermer");
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-
-            // Anti-aliasing pour courbes lisses
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Fond rouge en rond
-            g2.setColor(Color.RED);
-            g2.fillOval(0, 0, getWidth(), getHeight());
-
-            // Croix blanche
-            g2.setStroke(new BasicStroke(2f));
-            g2.setColor(Color.WHITE);
-            int pad = 6;
-            g2.drawLine(pad, pad, getWidth() - pad, getHeight() - pad);
-            g2.drawLine(getWidth() - pad, pad, pad, getHeight() - pad);
-
-            g2.dispose();
-        }
+    public void setListener(IMenuNavigationListener listener) {
+        this.listener = listener;
     }
+
 }
