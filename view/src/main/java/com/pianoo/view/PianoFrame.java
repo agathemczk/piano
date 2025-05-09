@@ -7,6 +7,7 @@ import java.awt.event.*;
 public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
 
     private final JPanel pianoPanel;
+    private IMenuNavigationListener listener;
     private final JComboBox<Integer> octaveSelector;
     private final int WHITE_KEYS_PER_OCTAVE = 7;
 
@@ -24,14 +25,19 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         topPanel.add(octaveSelector, BorderLayout.WEST);
 
 // Bouton rond pour fermer à droite avec une marge
-        /*RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> System.out.println("Fermer Piano"));
+        // Bouton rond pour fermer à droite avec une marge
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.setListener(() -> {
+            if (listener != null) {
+                listener.onReturnMainMenu(); // Notifie le contrôleur
+            }
+        });
 
-        JPanel closeButtonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-        closeButtonWrapper.setOpaque(false);
-        closeButtonWrapper.add(closeButton);
-
-        topPanel.add(closeButtonWrapper, BorderLayout.EAST);*/
+// Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
 
 // Ajout du panneau supérieur
         add(topPanel, BorderLayout.NORTH);
@@ -50,6 +56,10 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         addKeyListener(this);
         setFocusable(true);
         pianoPanel.setFocusable(true);
+    }
+
+    public void setListener(IMenuNavigationListener listener) {
+        this.listener = listener;
     }
 
     private void drawPiano(Graphics g, int octaves) {

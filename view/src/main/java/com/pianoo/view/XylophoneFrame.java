@@ -5,6 +5,8 @@ import java.awt.*;
 
 public class XylophoneFrame extends JPanel implements IXylophoneFrame {
 
+    private IMenuNavigationListener listener;
+
     private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] COLORS = {
             Color.RED, Color.ORANGE, Color.YELLOW,
@@ -14,13 +16,26 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
     public XylophoneFrame() {
         setLayout(new BorderLayout());
 
-        // ===== Header avec bouton rond rouge =====
-        /*JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // Création du panneau supérieur
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
+
+        // Bouton rond pour fermer à droite
         RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> System.out.println("Fermer Xylophone"));
-        topPanel.add(closeButton);
-        add(topPanel, BorderLayout.NORTH);*/
+        closeButton.setListener(() -> {
+            if (listener != null) {
+                listener.onReturnMainMenu(); // Notifie le contrôleur
+            }
+        });
+
+        // Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+
+        // Ajout du panneau supérieur au frame
+        add(topPanel, BorderLayout.NORTH);
 
         // ===== Xylophone centré =====
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -73,6 +88,10 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    public void setListener(IMenuNavigationListener listener) {
+        this.listener = listener;
     }
 
 }

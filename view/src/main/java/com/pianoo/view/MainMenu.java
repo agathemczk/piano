@@ -23,12 +23,30 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
         // ===== Panneau supérieur avec la croix rouge =====
-        /*JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.setOpaque(false); // Transparent pour ne pas masquer le fond
+
+        // Initialisation de mainPanel
+        this.mainPanel = new JPanel(new BorderLayout());
+        setContentPane(mainPanel);
+
+        // ===== Panneau supérieur avec la croix rouge =====
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
+        // Bouton de fermeture
         RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> System.exit(0));
-        topPanel.add(closeButton);
-        add(topPanel, BorderLayout.NORTH); // Ajout en haut de la fenêtre*/
+        closeButton.setListener(() -> {
+            System.exit(0); // Quitte l'application
+        });
+
+        // Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+
+        // Ajouter le panneau supérieur au frame
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
 
         // ===== Panneau principal =====
         JPanel panel = new JPanel();
@@ -94,11 +112,6 @@ public class MainMenu extends JFrame implements IMainMenu {
 
     public void setInstrumentSelectedListener(IOnChoiceSelectedListener listener) {
         this.listener = listener;
-    }
-
-    @Override
-    public JPanel getMainPanel() {
-        return mainPanel; // Retourne le panel indépendant
     }
 
     public void initializeUI() {

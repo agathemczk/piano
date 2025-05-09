@@ -26,19 +26,26 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(0, 0, 150, 0));
 
-        // Panneau supérieur avec la croix rouge
-        /*JPanel topPanel = new JPanel(new BorderLayout());
+        // Création du panneau supérieur
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
+        // Bouton rond pour fermer à droite
         RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.addActionListener(e -> listener.onQuitButtonSelected("Quit")); // Notifie via l'interface
+        closeButton.setListener(() -> {
+            if (listener != null) {
+                listener.onReturnMainMenu(); // Notifie le contrôleur
+            }
+        });
 
-        JPanel closeButtonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        closeButtonWrapper.setOpaque(false);
-        closeButtonWrapper.add(closeButton);
+        // Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
 
-        topPanel.add(closeButtonWrapper, BorderLayout.EAST);
-        add(topPanel);*/
+        // Ajout du panneau supérieur au frame
+        add(topPanel, BorderLayout.NORTH);
 
         // Ajout des rangées de jeux
         add(createGameRow(0, 2)); // Ligne du haut
@@ -107,11 +114,10 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         return this;
     }
 
-    /*@Override
-    public void setQuitButtonSelectedListener(IQuitButtonSelectedListener listener) {
+    public void setListener(IMenuNavigationListener listener) {
         this.listener = listener;
-        closeButton.addActionListener(e -> listener.onQuitButtonSelected("Quit"));
-    }*/
+    }
+
 
     private static class RoundButton extends JButton {
         public RoundButton(ImageIcon icon) {

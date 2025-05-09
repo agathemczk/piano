@@ -28,6 +28,10 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.mainMenu.setVisible(true);
         this.roundCloseButton.setListener(this);
         this.organFrame.setListener(this);
+        this.pianoFrame.setListener(this);
+        this.xylophoneFrame.setListener(this);
+        this.videoGamesFrame.setListener(this);
+
 
     }
 

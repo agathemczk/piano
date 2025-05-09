@@ -9,8 +9,6 @@ public interface IMainMenu {
     void revalidate();       // Ajoutez cette méthode si elle manque
     void repaint();
 
-    JPanel getMainPanel();
-
     void removeAll();
 
     void add(JPanel panel);
