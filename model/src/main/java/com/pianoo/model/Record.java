@@ -4,12 +4,10 @@ public class Record implements IRecord {
 
     @Override
     public void addNote(final IInstrument instrument, final INote note) {
-
     }
 
     @Override
     public void emptyIngRecord() {
-
     }
 
     @Override

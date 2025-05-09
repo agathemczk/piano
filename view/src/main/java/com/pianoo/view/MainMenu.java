@@ -14,47 +14,34 @@ public class MainMenu extends JFrame implements IMainMenu {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout()); // Assurez-vous d'utiliser BorderLayout
+        setLayout(new BorderLayout());
 
-
-        // Initialisation de mainPanel
-        this.mainPanel = new JPanel(new BorderLayout());
-        setContentPane(mainPanel); // Définit mainPanel comme le conteneur principal
-
-
-        // ===== Panneau supérieur avec la croix rouge =====
-
-        // Initialisation de mainPanel
         this.mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
 
-        // ===== Panneau supérieur avec la croix rouge =====
+        this.mainPanel = new JPanel(new BorderLayout());
+        setContentPane(mainPanel);
+
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        // Bouton de fermeture
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
-            System.exit(0); // Quitte l'application
+            System.exit(0);
         });
 
-        // Ajouter le bouton au panneau supérieur
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
         buttonPanel.add(closeButton);
         topPanel.add(buttonPanel, BorderLayout.EAST);
 
-        // Ajouter le panneau supérieur au frame
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-
-        // ===== Panneau principal =====
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 3, 20, 20)); // Grille 2x3 pour 6 cases
+        panel.setLayout(new GridLayout(2, 3, 20, 20));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
-
 
         for (int i = 0; i < instruments.length; i++) {
             int index = i;
@@ -94,7 +81,6 @@ public class MainMenu extends JFrame implements IMainMenu {
                 public void mouseClicked(MouseEvent e) {
                     if (listener != null) {
                         listener.onInstrumentSelected(instrumentName);
-                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
                     }
                 }
             });
@@ -109,23 +95,17 @@ public class MainMenu extends JFrame implements IMainMenu {
         mainPanel.add(panel, BorderLayout.CENTER);
     }
 
-
     public void setInstrumentSelectedListener(IOnChoiceSelectedListener listener) {
         this.listener = listener;
     }
 
     public void initializeUI() {
-        // Récupérer le contentPane
         Container contentPane = this.getContentPane();
-
-        // Définir le layout du contentPane
         contentPane.setLayout(new BorderLayout());
 
-        // Créer le panneau des instruments
         JPanel instrumentsPanel = new JPanel(new GridLayout(2, 3, 20, 20));
         instrumentsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Réutiliser exactement le même code que dans le constructeur
         String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
 
         for (int i = 0; i < instruments.length; i++) {
@@ -166,7 +146,6 @@ public class MainMenu extends JFrame implements IMainMenu {
                 public void mouseClicked(MouseEvent e) {
                     if (listener != null) {
                         listener.onInstrumentSelected(instrumentName);
-                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
                     }
                 }
             });
@@ -178,29 +157,29 @@ public class MainMenu extends JFrame implements IMainMenu {
             instrumentsPanel.add(instrumentPanel);
         }
 
-        // Ajouter le panneau d'instruments au contentPane
         contentPane.add(instrumentsPanel, BorderLayout.CENTER);
     }
+
     @Override
     public void add(final JPanel panel) {
-        mainPanel.add(panel, BorderLayout.CENTER); // Ajoute le panneau au conteneur principal
-        mainPanel.revalidate(); // Revalide le conteneur principal
-        mainPanel.repaint(); // Repeint le conteneur principal
+        mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     @Override
     public JPanel getContentPane() {
-        return (JPanel) super.getContentPane(); // Utilise directement la méthode de JFrame
+        return (JPanel) super.getContentPane();
     }
 
     @Override
     public void revalidate() {
-        super.revalidate(); // Utilise directement la méthode de JFrame
+        super.revalidate();
     }
 
     @Override
     public void repaint() {
-        super.repaint(); // Utilise directement la méthode de JFrame
+        super.repaint();
     }
 
     private void drawPiano(Graphics g) {
@@ -213,20 +192,16 @@ public class MainMenu extends JFrame implements IMainMenu {
         int panelWidth = 400;
         int panelHeight = 150;
 
-
         int x = (panelWidth / 2) - (pianoWidth / 2);
         int y = (panelHeight+50) - (pianoHeight);
 
-        // Dessiner le fond du piano (la base des touches blanches)
         g.setColor(Color.WHITE);
         g.fillRect(x, y, pianoWidth, pianoHeight);
         g.setColor(Color.BLACK);
         g.drawRect(x, y, pianoWidth, pianoHeight);
 
-        // Largeur d'une touche blanche
-        int keyWidth = pianoWidth / 7; // 7 touches blanches au total
+        int keyWidth = pianoWidth / 7;
 
-        // Dessiner les touches blanches
         for (int i = 0; i < 7; i++) {
             int whiteKeyX = x + i * keyWidth;
             g.setColor(Color.WHITE);
@@ -235,9 +210,8 @@ public class MainMenu extends JFrame implements IMainMenu {
             g.drawRect(whiteKeyX, y, keyWidth, pianoHeight);
         }
 
-        // Dessiner les touches noires
-        int blackKeyWidth = keyWidth / 2; // Largeur d'une touche noire
-        int blackKeyHeight = pianoHeight / 2; // Hauteur des touches noires
+        int blackKeyWidth = keyWidth / 2;
+        int blackKeyHeight = pianoHeight / 2;
 
         for (int i = 0; i < 7; i++) {
             if (i != 2 && i != 6) {
@@ -248,7 +222,6 @@ public class MainMenu extends JFrame implements IMainMenu {
         }
     }
 
-
     private void drawXylophone(Graphics g) {
         g.setFont(new Font("Arial", Font.BOLD, 24));
         g.drawString("XYLOPHONE", 130, 30);
@@ -256,28 +229,21 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.setColor(Color.RED);
         g.fillRect(85, 60, 30, 200);
 
-
         g.setColor(Color.ORANGE);
         g.fillRect(125, 70, 30, 180);
-
 
         g.setColor(Color.YELLOW);
         g.fillRect(165, 80, 30, 160);
 
-
         g.setColor(Color.GREEN);
         g.fillRect(205, 90, 30, 140);
-
 
         g.setColor(Color.BLUE);
         g.fillRect(245, 100, 30, 120);
 
-
         g.setColor(new Color(128, 0, 128));
         g.fillRect(285, 110, 30, 100);
     }
-
-
 
     private void drawVideoGames(Graphics g) {
         g.setFont(new Font("Arial", Font.BOLD, 24));
@@ -324,19 +290,16 @@ public class MainMenu extends JFrame implements IMainMenu {
     private void drawDrums(Graphics g) {
         g.setFont(new Font("Arial", Font.BOLD, 24));
         g.drawString("DRUMS", 160, 30);
-        // Dessiner la base du tambour (rectangle)
-        g.setColor(Color.RED);
-        g.fillRect(100, 150, 200, 100); // Le corps du tambour (rectangle)
 
         g.setColor(Color.RED);
-        g.fillOval(100, 240, 200, 20); // La surface inférieure du tambour
+        g.fillRect(100, 150, 200, 100);
 
-        // Dessiner la partie supérieure du tambour (cercle supérieur)
+        g.setColor(Color.RED);
+        g.fillOval(100, 240, 200, 20);
+
         g.setColor(Color.WHITE);
-        g.fillOval(100, 140, 200, 20); // La surface supérieure du tambour
+        g.fillOval(100, 140, 200, 20);
 
-
-        // Dessiner les cordes du tambour
         g.setColor(Color.BLACK);
         g.drawLine(100, 150, 100, 250);
         g.drawLine(300, 150, 300, 250);
@@ -344,83 +307,62 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.drawLine(200, 160, 200, 260);
         g.drawLine(250, 158, 250, 258);
 
-
         g.setColor(new Color(139, 69, 19));
 
-        // Première baguette inclinée (à gauche)
         g.fillRect(140, 100, 5, 120);
         g.fillOval(140 - 5, 100 - 5, 15, 15);
 
-        // Deuxième baguette inclinée (à droite)
         g.fillRect(250, 100, 5, 120);
         g.fillOval(250 - 5, 100 - 5, 15, 15);
     }
 
-
     private void drawCat(Graphics g) {
-        // Dessiner la tête du chat (un disque noir)
         g.setColor(Color.GRAY);
-        g.fillOval(150, 100, 100, 100); // Tête du chat
+        g.fillOval(150, 100, 100, 100);
 
-        // Dessiner et faire pivoter l'oreille gauche
-        int[] x1 = {160, 130, 180}; // Points originaux de l'oreille gauche
+        int[] x1 = {160, 130, 180};
         int[] y1 = {90, 120, 120};
-        drawRotatedEar(g, x1, y1, 70); // Rotation de 70° pour l'oreille gauche
+        drawRotatedEar(g, x1, y1, 70);
 
-        // Dessiner et faire pivoter l'oreille droite
-        int[] x2 = {240, 260, 220}; // Points originaux de l'oreille droite
+        int[] x2 = {240, 260, 220};
         int[] y2 = {93, 123, 123};
-        drawRotatedEar(g, x2, y2, -70); // Rotation de 70° pour l'oreille droite
+        drawRotatedEar(g, x2, y2, -70);
 
-
-
-        // Pupilles du chat (petits cercles noirs)
         g.setColor(Color.BLACK);
-        g.fillOval(170, 130, 10, 10); // Pupille gauche
-        g.fillOval(220, 130, 10, 10); // Pupille droite
+        g.fillOval(170, 130, 10, 10);
+        g.fillOval(220, 130, 10, 10);
 
-        // Nez du chat (petit triangle rose)
         g.setColor(Color.PINK);
         int[] x3 = {200, 210, 190};
         int[] y3 = {150, 170, 170};
-        g.fillPolygon(x3, y3, 3); // Nez
+        g.fillPolygon(x3, y3, 3);
 
-        // Bouche du chat (courbe)
         g.setColor(Color.BLACK);
-        g.drawLine(200, 170, 200, 180); // Ligne centrale de la bouche
-        g.drawArc(195, 180, 10, 10, 0, -180); // Sourire gauche
-        g.drawArc(200, 180, 10, 10, 0, -180); // Sourire droit
+        g.drawLine(200, 170, 200, 180);
+        g.drawArc(195, 180, 10, 10, 0, -180);
+        g.drawArc(200, 180, 10, 10, 0, -180);
 
-        // Moustaches du chat (lignes)
-        g.drawLine(140, 160, 100, 150); // Moustache gauche haut
-        g.drawLine(140, 170, 100, 170); // Moustache gauche bas
-        g.drawLine(260, 160, 300, 150); // Moustache droite haut
-        g.drawLine(260, 170, 300, 170); // Moustache droite bas
+        g.drawLine(140, 160, 100, 150);
+        g.drawLine(140, 170, 100, 170);
+        g.drawLine(260, 160, 300, 150);
+        g.drawLine(260, 170, 300, 170);
     }
 
-    // Fonction pour dessiner une oreille avec rotation autour de son centre
     private void drawRotatedEar(Graphics g, int[] x, int[] y, double angleDegrees) {
-        double angle = Math.toRadians(angleDegrees); // Convertir l'angle en radians
+        double angle = Math.toRadians(angleDegrees);
 
-        // Calculer le centre du triangle (milieu de l'oreille)
         int centerX = (x[0] + x[1] + x[2]) / 3;
         int centerY = (y[0] + y[1] + y[2]) / 3;
 
-        // Appliquer la transformation de rotation autour du centre du triangle
         for (int i = 0; i < 3; i++) {
-            int tempX = x[i] - centerX;  // Déplacer par rapport au centre
+            int tempX = x[i] - centerX;
             int tempY = y[i] - centerY;
 
-            // Appliquer la rotation
             x[i] = (int) (centerX + tempX * Math.cos(angle) - tempY * Math.sin(angle));
             y[i] = (int) (centerY + tempX * Math.sin(angle) + tempY * Math.cos(angle));
         }
 
-        // Dessiner l'oreille après rotation
         g.setColor(Color.GRAY);
-        g.fillPolygon(x, y, 3); // Dessiner le triangle tourné
+        g.fillPolygon(x, y, 3);
     }
-
-
-
 }

@@ -1,5 +1,5 @@
 package com.pianoo.model;
 //en fonction sinusoidales
 
-public class Organ {
+public class Organ implements IOrgan {
 }

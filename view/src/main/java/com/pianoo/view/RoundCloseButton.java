@@ -11,10 +11,9 @@ public class RoundCloseButton extends JPanel implements IRoundCloseButton {
     private boolean isHovered = false;
 
     public RoundCloseButton() {
-        setPreferredSize(new Dimension(30, 30)); // Taille du bouton
+        setPreferredSize(new Dimension(30, 30));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Ajouter un MouseListener pour détecter les clics
         addMouseListener(new MouseAdapter() {
 
 
@@ -24,7 +23,7 @@ public class RoundCloseButton extends JPanel implements IRoundCloseButton {
 
                     listener.onReturnMainMenu();
                 } else {
-                    System.out.println("Listener non défini !");
+                    System.out.println("Listener not defined");
                 }
             }
         });
@@ -39,11 +38,9 @@ public class RoundCloseButton extends JPanel implements IRoundCloseButton {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Dessiner le cercle rouge (ou plus clair si survolé)
         g2.setColor(isHovered ? Color.PINK : Color.RED);
         g2.fill(new Ellipse2D.Double(0, 0, getWidth(), getHeight()));
 
-        // Dessiner la croix blanche
         g2.setColor(Color.WHITE);
         g2.setStroke(new BasicStroke(2));
         int padding = 8;

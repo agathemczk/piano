@@ -26,31 +26,26 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(0, 0, 150, 0));
 
-        // Création du panneau supérieur
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        // Bouton rond pour fermer à droite
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
-                listener.onReturnMainMenu(); // Notifie le contrôleur
+                listener.onReturnMainMenu();
             }
         });
 
-        // Ajouter le bouton au panneau supérieur
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
         buttonPanel.add(closeButton);
         topPanel.add(buttonPanel, BorderLayout.EAST);
 
-        // Ajout du panneau supérieur au frame
         add(topPanel, BorderLayout.NORTH);
 
-        // Ajout des rangées de jeux
-        add(createGameRow(0, 2)); // Ligne du haut
+        add(createGameRow(0, 2));
         add(Box.createRigidArea(new Dimension(0, 30)));
-        add(createGameRow(3, 5)); // Ligne du bas
+        add(createGameRow(3, 5));
 
     }
 

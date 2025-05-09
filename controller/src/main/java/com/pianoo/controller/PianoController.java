@@ -68,6 +68,5 @@ public class PianoController implements IPianoController, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Not used
     }
 }
