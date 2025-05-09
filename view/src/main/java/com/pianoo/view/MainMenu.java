@@ -127,7 +127,7 @@ public class MainMenu extends JFrame implements IMainMenu {
         // Bouton de fermeture
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
-            System.exit(0); // Quitte l'application
+            System.exit(0);
         });
 
         // Ajouter le bouton au panneau supérieur
@@ -185,7 +185,6 @@ public class MainMenu extends JFrame implements IMainMenu {
                 public void mouseClicked(MouseEvent e) {
                     if (listener != null) {
                         listener.onInstrumentSelected(instrumentName);
-                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
                     }
                 }
             });

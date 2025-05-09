@@ -20,21 +20,47 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        // Bouton rond pour fermer à droite
+        // Dans le constructeur XylophoneFrame, après la création de topPanel
+
+// Panneau principal pour les boutons avec BorderLayout
+        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
+        buttonPanel.setBackground(new Color(230, 230, 230));
+        buttonPanel.setOpaque(true);
+
+// Créer le bouton d'enregistrement
+        RecordButton recordButton = new RecordButton();
+        recordButton.setOnClickListener(() -> {
+            boolean isRecording = recordButton.isRecording();
+            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
+            System.out.println("reliage au controller prochainement");
+        });
+
+// Sous-panneau central pour centrer le bouton d'enregistrement
+        JPanel recordButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        recordButtonPanel.setOpaque(false);
+        recordButtonPanel.add(recordButton);
+
+// Bouton de retour au menu principal
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
-                listener.onReturnMainMenu(); // Notifie le contrôleur
+                listener.onReturnMainMenu();
             }
         });
 
-        // Ajouter le bouton au panneau supérieur
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-        buttonPanel.add(closeButton);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
+// Panneau pour le bouton de fermeture
+        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        closeButtonPanel.setOpaque(false);
+        closeButtonPanel.add(closeButton);
 
-        // Ajout du panneau supérieur au frame
+// Ajouter les panneaux au panneau principal
+        buttonPanel.add(recordButtonPanel, BorderLayout.CENTER);
+        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
+
+// Ajouter le panneau de boutons au panneau supérieur
+        topPanel.add(buttonPanel, BorderLayout.CENTER);
+
+// Ajouter le panneau supérieur au conteneur principal
         add(topPanel, BorderLayout.NORTH);
 
         // ===== Xylophone centré =====
