@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 
 public class OrganFrame extends JPanel implements IOrganFrame {
 
-    private IMenuNavigationListener listener; // Ajout du champ pour stocker le contrôleur
+    private IMenuNavigationListener listener;
     private final int WHITE_KEYS_PER_OCTAVE = 7;
     private final int OCTAVE_COUNT = 5;
     private final int TOTAL_WHITE_KEYS = WHITE_KEYS_PER_OCTAVE * OCTAVE_COUNT;

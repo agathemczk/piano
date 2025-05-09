@@ -12,19 +12,21 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
     private IVideoGamesFrame videoGamesFrame;
+    private IDrumsFrame drumsFrame;
     private IRoundCloseButton roundCloseButton;
     private IPianoController pianoController;
     private IMainMenu mainMenu;
 
     private static final int KEYBOARD_OCTAVE = 4;
 
-    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IRoundCloseButton roundCloseButton) {
+    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, IRoundCloseButton roundCloseButton) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
         this.xylophoneFrame = xylophoneFrame;
         this.videoGamesFrame = videoGamesFrame;
+        this.drumsFrame = drumsFrame;
         this.roundCloseButton = roundCloseButton;
         this.mainMenu.setInstrumentSelectedListener(this);
         this.mainMenu.setVisible(true);
@@ -92,7 +94,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     private void openDrums() {
         mainMenu.getContentPane().removeAll();
-        mainMenu.getContentPane().add(pianoFrame.getPanel());
+        mainMenu.getContentPane().add(drumsFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }
