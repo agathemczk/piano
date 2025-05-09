@@ -3,8 +3,6 @@ package com.pianoo.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class XylophoneFrame extends JFrame {
 
@@ -20,11 +18,9 @@ public class XylophoneFrame extends JFrame {
         setSize(900, 400);
         setLocationRelativeTo(null);
 
-        // ===== Panel principal avec BorderLayout =====
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.DARK_GRAY);
 
-        // ===== Header avec bouton rond rouge =====
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.setOpaque(false);
         RoundCloseButton closeButton = new RoundCloseButton();
@@ -32,7 +28,6 @@ public class XylophoneFrame extends JFrame {
         topPanel.add(closeButton);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // ===== Xylophone centré =====
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setOpaque(false);
 
