@@ -5,8 +5,6 @@ import com.pianoo.model.IPartition;
 import com.pianoo.model.IRecord;
 import com.pianoo.view.IMainMenu;
 
-import javax.sound.midi.Instrument;
-
 public class Application implements IApplication {
 
     private IInstrument activeInstrument;

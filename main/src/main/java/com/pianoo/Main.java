@@ -20,11 +20,12 @@ public class Main {
         IOrganFrame organFrame = new OrganFrame();
         IXylophoneFrame xylophoneFrame = new XylophoneFrame();
         IVideoGamesFrame videoGamesFrame = new VideoGamesFrame();
+        IDrumsFrame drumsFrame = new DrumsFrame();
         IRoundCloseButton roundCloseButton = new RoundCloseButton();
 
         mainMenu.setVisible(true);
 
-        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, roundCloseButton);
+        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, roundCloseButton);
         IPianoController pianoController = new PianoController(pianoFrame, controller, new HashSet<>());
 
         controller.setMainMenu(mainMenu);

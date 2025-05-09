@@ -6,7 +6,6 @@ abstract public class Instrument implements IInstrument {
     private String name;
     private Map<String, Sound> sound;
 
-
     public Instrument(String name, Map<String, Sound> sound) {
         this.name = name;
         this.sound = sound;
