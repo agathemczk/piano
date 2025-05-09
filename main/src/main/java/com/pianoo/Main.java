@@ -9,8 +9,6 @@ import com.pianoo.controller.IMusicPlayer;
 import com.pianoo.controller.MusicPlayer;
 import com.pianoo.view.*;
 
-import javax.swing.*;
-
 import java.util.HashSet;
 
 

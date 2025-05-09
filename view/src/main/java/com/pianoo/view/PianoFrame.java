@@ -49,27 +49,23 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        // Sélecteur d'octaves à gauche
         Integer[] octaves = new Integer[]{2, 3, 4, 5, 6, 7};
         octaveSelector = new JComboBox<>(octaves);
         octaveSelector.setSelectedItem(4);
         topPanel.add(octaveSelector, BorderLayout.WEST);
 
-        // Bouton rond pour fermer à droite
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
-                listener.onReturnMainMenu(); // Notifie le contrôleur
+                listener.onReturnMainMenu();
             }
         });
 
-        // Ajouter le bouton au panneau supérieur
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
         buttonPanel.add(closeButton);
         topPanel.add(buttonPanel, BorderLayout.EAST);
 
-        // Ajout du panneau supérieur
         add(topPanel, BorderLayout.NORTH);
 
         pianoPanel = new JPanel() {
@@ -282,18 +278,14 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Optionnel
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // Cette méthode peut être implémentée en fonction des besoins
-        // ou laissée vide si le contrôleur gère tous les événements clavier
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // Optionnel
     }
 
 }

@@ -7,6 +7,10 @@ import java.awt.event.KeyListener;
 
 public interface IPianoFrame {
 
+    void highlightKey(int note);
+
+    void resetKey(int note);
+
     JPanel getPanel();
 
     void setListener(IMenuNavigationListener listener);
@@ -18,10 +22,6 @@ public interface IPianoFrame {
     void setController(IController controller);
 
     int getSelectedOctave();
-
-    void highlightKey(int note);
-
-    void resetKey(int note);
 
     void highlightKey(int note, int octave);
 

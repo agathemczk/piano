@@ -1,6 +1,5 @@
 package com.pianoo.model;
 
-import com.pianoo.model.IInstrument;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,8 +1,5 @@
 package com.pianoo.controller;
 
-import com.pianoo.model.IModel;
-import com.pianoo.model.IVideoGames;
-import com.pianoo.model.IXylophone;
 import com.pianoo.view.*;
 
 import java.awt.event.KeyEvent;
@@ -36,8 +33,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.pianoFrame.setListener(this);
         this.xylophoneFrame.setListener(this);
         this.videoGamesFrame.setListener(this);
-
-
     }
 
     @Override
@@ -103,13 +98,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openMainMenu() {
-        // Vider le contentPane
         mainMenu.getContentPane().removeAll();
-
-        // Reconfigurer l'interface
         mainMenu.initializeUI();
-
-        // RafraÃ®chir l'affichage
         mainMenu.revalidate();
         mainMenu.repaint();
     }
@@ -130,34 +120,19 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     @Override
     public void start() {
-        // Lancement de l'application si besoin
     }
 
     @Override
     public void stop() {
-        // Fermeture ou nettoyage
     }
 
     @Override
     public IView getView() {
         return null;
-        // À implémenter si nécessaire
     }
 
     @Override
     public void setView(final IView view) {
-        // À implémenter si nécessaire
-    }
-
-    @Override
-    public IModel getModel() {
-        return null;
-        // À implémenter si nécessaire
-    }
-
-    @Override
-    public void setModel(final IModel model) {
-        // À implémenter si nécessaire
     }
 
     @Override
@@ -190,7 +165,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Non utilisé
     }
 
     private int convertKeyToNote(int keyCode) {

@@ -1,4 +1,4 @@
 package com.pianoo.model;
 
-public class Drums {
+public class Drums implements IDrums {
 }
