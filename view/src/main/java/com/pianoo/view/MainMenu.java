@@ -94,7 +94,6 @@ public class MainMenu extends JFrame implements IMainMenu {
                 public void mouseClicked(MouseEvent e) {
                     if (listener != null) {
                         listener.onInstrumentSelected(instrumentName);
-                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
                     }
                 }
             });
@@ -120,6 +119,26 @@ public class MainMenu extends JFrame implements IMainMenu {
 
         // Définir le layout du contentPane
         contentPane.setLayout(new BorderLayout());
+
+        // ===== Panneau supérieur avec la croix rouge =====
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
+        // Bouton de fermeture
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.setListener(() -> {
+            System.exit(0); // Quitte l'application
+        });
+
+        // Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+
+        // Ajouter le panneau supérieur au contentPane
+        contentPane.add(topPanel, BorderLayout.NORTH);
+
 
         // Créer le panneau des instruments
         JPanel instrumentsPanel = new JPanel(new GridLayout(2, 3, 20, 20));
@@ -181,6 +200,7 @@ public class MainMenu extends JFrame implements IMainMenu {
         // Ajouter le panneau d'instruments au contentPane
         contentPane.add(instrumentsPanel, BorderLayout.CENTER);
     }
+
     @Override
     public void add(final JPanel panel) {
         mainPanel.add(panel, BorderLayout.CENTER); // Ajoute le panneau au conteneur principal

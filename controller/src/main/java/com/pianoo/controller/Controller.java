@@ -52,7 +52,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
             openVideoGames();
         }
         if ("Organ".equals(instrumentName)) {
-            System.out.println("Organ");
             openOrgan();
         }
         if ("Drums".equals(instrumentName)) {
