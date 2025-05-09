@@ -1,13 +1,17 @@
 package com.pianoo.view;
 
 import javax.swing.*;
-import java.util.function.Consumer;
 
 public interface IMainMenu {
     void setVisible(boolean visible);
-    void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener);
+    void setInstrumentSelectedListener(IOnChoiceSelectedListener listener);
     JPanel getContentPane(); // Ajoutez cette méthode si elle manque
     void revalidate();       // Ajoutez cette méthode si elle manque
     void repaint();
 
+    void removeAll();
+
+    void add(JPanel panel);
+
+    void initializeUI();
 }

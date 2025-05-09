@@ -10,7 +10,7 @@ public class MusicPlayer implements IMusicPlayer {
         try {
             synth = MidiSystem.getSynthesizer();
             synth.open();
-            channel = synth.getChannels()[0]; // Utilisation du premier canal MIDI
+            channel = synth.getChannels()[0];
         } catch (MidiUnavailableException e) {
             e.printStackTrace();
         }
@@ -25,7 +25,7 @@ public class MusicPlayer implements IMusicPlayer {
     }
 
     public int getMidiNote(int baseOctave, int key) {
-        return 12 * baseOctave + key; // Calcule la note MIDI en fonction de l’octave
+        return 12 * baseOctave + key;
     }
 
     @Override

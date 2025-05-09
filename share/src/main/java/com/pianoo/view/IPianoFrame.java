@@ -9,6 +9,8 @@ public interface IPianoFrame {
 
     JPanel getPanel();
 
+    void setListener(IMenuNavigationListener listener);
+
     void addKeyListenerToFrame(KeyListener listener);
 
     void setKeyListener(IController controller);

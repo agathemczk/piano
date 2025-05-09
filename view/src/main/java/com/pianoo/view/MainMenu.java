@@ -1,28 +1,65 @@
 package com.pianoo.view;
-import com.pianoo.controller.IController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MainMenu extends JFrame implements IMainMenu {
-    private IOnInstrumentSelectedListener listener;
-    private IController controller;
+    private IOnChoiceSelectedListener listener;
+    private JPanel mainPanel;
 
     public MainMenu() {
         setTitle("MusicaLau - Menu Principal");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout()); // Assurez-vous d'utiliser BorderLayout
 
+
+        // Initialisation de mainPanel
+        this.mainPanel = new JPanel(new BorderLayout());
+        setContentPane(mainPanel); // Définit mainPanel comme le conteneur principal
+
+
+        // ===== Panneau supérieur avec la croix rouge =====
+
+        // Initialisation de mainPanel
+        this.mainPanel = new JPanel(new BorderLayout());
+        setContentPane(mainPanel);
+
+        // ===== Panneau supérieur avec la croix rouge =====
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
+        // Bouton de fermeture
+        RoundCloseButton closeButton = new RoundCloseButton();
+        closeButton.setListener(() -> {
+            System.exit(0); // Quitte l'application
+        });
+
+        // Ajouter le bouton au panneau supérieur
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+
+        // Ajouter le panneau supérieur au frame
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+
+        // ===== Panneau principal =====
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 3, 20, 20)); // Grille 2x3 pour 6 cases
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        for (int i = 0; i < 6; i++) {
+        String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
+
+
+        for (int i = 0; i < instruments.length; i++) {
             int index = i;
+            String instrumentName = instruments[i];
+
             JPanel instrumentPanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -52,17 +89,15 @@ public class MainMenu extends JFrame implements IMainMenu {
                 }
             };
 
-            if (index == 0) { // Piano
-                instrumentPanel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        System.out.println("Piano cliqué");
-                        if (listener != null) {
-                            listener.onInstrumentSelected("Piano");
-                        }
+            instrumentPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (listener != null) {
+                        listener.onInstrumentSelected(instrumentName);
+                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
                     }
-                });
-            }
+                }
+            });
 
             instrumentPanel.setBackground(Color.LIGHT_GRAY);
             instrumentPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -71,27 +106,101 @@ public class MainMenu extends JFrame implements IMainMenu {
             panel.add(instrumentPanel);
         }
 
-        setLayout(new BorderLayout());
-        add(panel, BorderLayout.CENTER);
+        mainPanel.add(panel, BorderLayout.CENTER);
+    }
+
+
+    public void setInstrumentSelectedListener(IOnChoiceSelectedListener listener) {
+        this.listener = listener;
+    }
+
+    public void initializeUI() {
+        // Récupérer le contentPane
+        Container contentPane = this.getContentPane();
+
+        // Définir le layout du contentPane
+        contentPane.setLayout(new BorderLayout());
+
+        // Créer le panneau des instruments
+        JPanel instrumentsPanel = new JPanel(new GridLayout(2, 3, 20, 20));
+        instrumentsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Réutiliser exactement le même code que dans le constructeur
+        String[] instruments = {"Piano", "Xylophone", "VideoGames", "Organ", "Drums", "Cat"};
+
+        for (int i = 0; i < instruments.length; i++) {
+            final int index = i;
+            final String instrumentName = instruments[i];
+
+            JPanel instrumentPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    switch (index) {
+                        case 0:
+                            drawPiano(g);
+                            break;
+                        case 1:
+                            drawXylophone(g);
+                            break;
+                        case 2:
+                            drawVideoGames(g);
+                            break;
+                        case 3:
+                            drawOrgue(g);
+                            break;
+                        case 4:
+                            drawDrums(g);
+                            break;
+                        case 5:
+                            drawCat(g);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            };
+
+            instrumentPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (listener != null) {
+                        listener.onInstrumentSelected(instrumentName);
+                        System.out.println("Instrument sélectionné!!!!! : " + instrumentName);
+                    }
+                }
+            });
+
+            instrumentPanel.setBackground(Color.LIGHT_GRAY);
+            instrumentPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            instrumentPanel.setPreferredSize(new Dimension(200, 150));
+
+            instrumentsPanel.add(instrumentPanel);
+        }
+
+        // Ajouter le panneau d'instruments au contentPane
+        contentPane.add(instrumentsPanel, BorderLayout.CENTER);
+    }
+    @Override
+    public void add(final JPanel panel) {
+        mainPanel.add(panel, BorderLayout.CENTER); // Ajoute le panneau au conteneur principal
+        mainPanel.revalidate(); // Revalide le conteneur principal
+        mainPanel.repaint(); // Repeint le conteneur principal
     }
 
     @Override
     public JPanel getContentPane() {
-        return (JPanel) super.getContentPane();
+        return (JPanel) super.getContentPane(); // Utilise directement la méthode de JFrame
     }
 
     @Override
     public void revalidate() {
-        super.revalidate();
+        super.revalidate(); // Utilise directement la méthode de JFrame
     }
 
     @Override
     public void repaint() {
-        super.repaint();
-    }
-
-    public void setInstrumentSelectedListener(IOnInstrumentSelectedListener listener) {
-        this.listener = listener;
+        super.repaint(); // Utilise directement la méthode de JFrame
     }
 
     private void drawPiano(Graphics g) {
@@ -108,13 +217,16 @@ public class MainMenu extends JFrame implements IMainMenu {
         int x = (panelWidth / 2) - (pianoWidth / 2);
         int y = (panelHeight+50) - (pianoHeight);
 
+        // Dessiner le fond du piano (la base des touches blanches)
         g.setColor(Color.WHITE);
         g.fillRect(x, y, pianoWidth, pianoHeight);
         g.setColor(Color.BLACK);
         g.drawRect(x, y, pianoWidth, pianoHeight);
 
-        int keyWidth = pianoWidth / 7;
+        // Largeur d'une touche blanche
+        int keyWidth = pianoWidth / 7; // 7 touches blanches au total
 
+        // Dessiner les touches blanches
         for (int i = 0; i < 7; i++) {
             int whiteKeyX = x + i * keyWidth;
             g.setColor(Color.WHITE);
@@ -123,8 +235,9 @@ public class MainMenu extends JFrame implements IMainMenu {
             g.drawRect(whiteKeyX, y, keyWidth, pianoHeight);
         }
 
-        int blackKeyWidth = keyWidth / 2;
-        int blackKeyHeight = pianoHeight / 2;
+        // Dessiner les touches noires
+        int blackKeyWidth = keyWidth / 2; // Largeur d'une touche noire
+        int blackKeyHeight = pianoHeight / 2; // Hauteur des touches noires
 
         for (int i = 0; i < 7; i++) {
             if (i != 2 && i != 6) {
@@ -308,11 +421,6 @@ public class MainMenu extends JFrame implements IMainMenu {
         g.fillPolygon(x, y, 3); // Dessiner le triangle tourné
     }
 
-    public void setController(IController controller) {
-        this.controller = controller;
-    }
 
 
 }
-
-
