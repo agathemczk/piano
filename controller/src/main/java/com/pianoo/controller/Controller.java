@@ -3,11 +3,13 @@ package com.pianoo.controller;
 import com.pianoo.model.ICatPlay;
 import com.pianoo.model.IMusicPlayer;
 import com.pianoo.model.IKeyboardMapping;
+import com.pianoo.model.IXylophonePlayer;
 import com.pianoo.view.*;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
 
     private final IMusicPlayer musicPlayer;
+    private final IXylophonePlayer xylophonePlayer;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
@@ -20,7 +22,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IMainMenu mainMenu;
     private IKeyboardMapping keyboardMapping;
 
-    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
+    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
                       IOrganFrame organFrame, IXylophoneFrame xylophoneFrame,
                       IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
@@ -29,6 +31,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
         this.xylophoneFrame = xylophoneFrame;
+        this.xylophonePlayer = xylophonePlayer;
+        
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
         this.catFrame = catFrame;
@@ -93,29 +97,37 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private void openXylophone() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(xylophoneFrame.getPanel());
+        xylophoneFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        xylophoneFrame.getPanel().requestFocusInWindow();
     }
 
     private void openVideoGames() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(videoGamesFrame.getPanel());
+        //videoGamesFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        videoGamesFrame.getPanel().requestFocusInWindow();
     }
 
     private void openOrgan() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(organFrame.getPanel());
+        //organFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        organFrame.getPanel().requestFocusInWindow();
     }
 
     private void openDrums() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(drumsFrame.getPanel());
+        //drumsFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        drumsFrame.getPanel().requestFocusInWindow();
     }
 
     private void openCat() {
@@ -147,8 +159,21 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
+    public void setXylophoneFrame(final IXylophoneFrame xylophoneFrame) {
+        this.xylophoneFrame = xylophoneFrame;
+        this.xylophoneFrame.setController(this);
+    }
+
+    @Override
     public void setKeyboardMapping(final IKeyboardMapping keyboardMapping) {
         this.keyboardMapping = keyboardMapping;
+    }
+
+    @Override
+    public void onNotePlayed(final String note) {
+        System.out.println("Le xylophone joue la note : " + note);
+        // Déléguer la conversion et la logique de jeu au modèle
+        xylophonePlayer.playNote(note, xylophoneFrame.getNotes());
     }
 
     @Override

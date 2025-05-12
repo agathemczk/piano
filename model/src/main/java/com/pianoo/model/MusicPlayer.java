@@ -5,6 +5,7 @@ import javax.sound.midi.*;
 public class MusicPlayer implements IMusicPlayer {
     private Synthesizer synth;
     private MidiChannel channel;
+    private static final int VELOCITY = 80;
 
     public MusicPlayer() {
         try {
@@ -17,7 +18,7 @@ public class MusicPlayer implements IMusicPlayer {
     }
 
     public void playNote(int midiNote) {
-        channel.noteOn(midiNote, 80); // 80 = vélocité (intensité)
+        channel.noteOn(midiNote, VELOCITY);
     }
 
     public void stopNote(int midiNote) {
