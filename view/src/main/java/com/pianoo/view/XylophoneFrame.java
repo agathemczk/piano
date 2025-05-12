@@ -22,7 +22,7 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
 
         // Dans le constructeur XylophoneFrame, après la création de topPanel
 
-// Panneau principal pour les boutons avec BorderLayout
+/// Panneau principal pour les boutons avec BorderLayout
         JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
         buttonPanel.setBackground(new Color(230, 230, 230));
         buttonPanel.setOpaque(true);
@@ -35,10 +35,18 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
             System.out.println("reliage au controller prochainement");
         });
 
-// Sous-panneau central pour centrer le bouton d'enregistrement
-        JPanel recordButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        recordButtonPanel.setOpaque(false);
-        recordButtonPanel.add(recordButton);
+// Créer le bouton de lecture
+        ReadButton readButton = new ReadButton();
+        readButton.setOnClickListener(() -> {
+            boolean isPlaying = readButton.isPlaying();
+            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+        });
+
+// Sous-panneau central pour les boutons d'enregistrement et de lecture
+        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        mediaButtonsPanel.setOpaque(false);
+        mediaButtonsPanel.add(recordButton);
+        mediaButtonsPanel.add(readButton);
 
 // Bouton de retour au menu principal
         RoundCloseButton closeButton = new RoundCloseButton();
@@ -54,7 +62,7 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
         closeButtonPanel.add(closeButton);
 
 // Ajouter les panneaux au panneau principal
-        buttonPanel.add(recordButtonPanel, BorderLayout.CENTER);
+        buttonPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
         buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
 
 // Ajouter le panneau de boutons au panneau supérieur
