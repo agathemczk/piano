@@ -16,8 +16,30 @@ public class DrumsFrame extends JPanel implements IDrumsFrame {
     public DrumsFrame() {
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
+
+        // Dans le constructeur XylophoneFrame, après la création de topPanel
+
+// Panneau principal pour les boutons avec BorderLayout
+        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
+        buttonPanel.setBackground(new Color(230, 230, 230));
+        buttonPanel.setOpaque(true);
+
+// Créer le bouton d'enregistrement
+        RecordButton recordButton = new RecordButton();
+        recordButton.setOnClickListener(() -> {
+            boolean isRecording = recordButton.isRecording();
+            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
+            System.out.println("reliage au controller prochainement");
+        });
+
+// Sous-panneau central pour centrer le bouton d'enregistrement
+        JPanel recordButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        recordButtonPanel.setOpaque(false);
+        recordButtonPanel.add(recordButton);
+
+// Bouton de retour au menu principal
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
@@ -25,7 +47,19 @@ public class DrumsFrame extends JPanel implements IDrumsFrame {
             }
         });
 
-        topPanel.add(closeButton);
+// Panneau pour le bouton de fermeture
+        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        closeButtonPanel.setOpaque(false);
+        closeButtonPanel.add(closeButton);
+
+// Ajouter les panneaux au panneau principal
+        buttonPanel.add(recordButtonPanel, BorderLayout.CENTER);
+        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
+
+// Ajouter le panneau de boutons au panneau supérieur
+        topPanel.add(buttonPanel, BorderLayout.CENTER);
+
+// Ajouter le panneau supérieur au conteneur principal
         add(topPanel, BorderLayout.NORTH);
 
         setOpaque(false);
@@ -171,7 +205,7 @@ public class DrumsFrame extends JPanel implements IDrumsFrame {
     }
 
     @Override
-    public void setListener(final IMenuNavigationListener listener) {
+    public void setListener(IMenuNavigationListener listener) {
         this.listener = listener;
     }
 
