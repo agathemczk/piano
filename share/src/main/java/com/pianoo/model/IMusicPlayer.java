@@ -1,4 +1,4 @@
-package com.pianoo.controller;
+package com.pianoo.model;
 
 import javax.sound.midi.*;
 

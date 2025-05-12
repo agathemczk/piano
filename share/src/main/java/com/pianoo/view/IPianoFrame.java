@@ -7,10 +7,6 @@ import java.awt.event.KeyListener;
 
 public interface IPianoFrame {
 
-    void highlightKey(int note);
-
-    void resetKey(int note);
-
     JPanel getPanel();
 
     void setListener(IMenuNavigationListener listener);

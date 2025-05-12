@@ -1,13 +1,12 @@
 package com.pianoo.controller;
 
+import com.pianoo.model.IMusicPlayer;
+import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.view.*;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener {
 
-public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener,  KeyListener {
-
-    private final IMusicPlayer musicPlayer;;
+    private final IMusicPlayer musicPlayer;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
@@ -16,10 +15,12 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IRoundCloseButton roundCloseButton;
     private IPianoController pianoController;
     private IMainMenu mainMenu;
+    private IKeyboardMapping keyboardMapping;
 
-    private static final int KEYBOARD_OCTAVE = 4;
-
-    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, IRoundCloseButton roundCloseButton) {
+    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
+                      IOrganFrame organFrame, IXylophoneFrame xylophoneFrame,
+                      IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame,
+                      IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
         this.pianoFrame = pianoFrame;
@@ -28,6 +29,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
         this.roundCloseButton = roundCloseButton;
+        this.keyboardMapping = keyboardMapping;
+
         this.mainMenu.setInstrumentSelectedListener(this);
         this.mainMenu.setVisible(true);
         this.roundCloseButton.setListener(this);
@@ -121,6 +124,11 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
+    public void setKeyboardMapping(final IKeyboardMapping keyboardMapping) {
+        this.keyboardMapping = keyboardMapping;
+    }
+
+    @Override
     public void start() {
     }
 
@@ -138,52 +146,14 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
-    public void onKeyPressed(int key, int octave) {
-        int midiNote = musicPlayer.getMidiNote(octave, key);
+    public void onKeyPressed(int noteValue, int octave) {
+        int midiNote = musicPlayer.getMidiNote(octave, noteValue);
         musicPlayer.playNote(midiNote);
     }
 
     @Override
-    public void onKeyReleased(int key, int octave) {
-        int midiNote = musicPlayer.getMidiNote(octave, key);
+    public void onKeyReleased(int noteValue, int octave) {
+        int midiNote = musicPlayer.getMidiNote(octave, noteValue);
         musicPlayer.stopNote(midiNote);
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int key = convertKeyToNote(e.getKeyCode());
-        if (key >= 0) {
-            onKeyPressed(key, KEYBOARD_OCTAVE);
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int key = convertKeyToNote(e.getKeyCode());
-        if (key >= 0) {
-            onKeyReleased(key, KEYBOARD_OCTAVE);
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    private int convertKeyToNote(int keyCode) {
-        return switch (keyCode) {
-            case KeyEvent.VK_A -> 0;
-            case KeyEvent.VK_Z -> 1;
-            case KeyEvent.VK_E -> 2;
-            case KeyEvent.VK_R -> 3;
-            case KeyEvent.VK_T -> 4;
-            case KeyEvent.VK_Y -> 5;
-            case KeyEvent.VK_U -> 6;
-            default -> -1;
-        };
-
-    }
-
-    public void setPianoController(IPianoController pianoController) {
-        this.pianoController = pianoController;
     }
 }

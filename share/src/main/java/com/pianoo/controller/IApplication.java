@@ -1,6 +1,7 @@
 package com.pianoo.controller;
 
 import com.pianoo.model.IInstrument;
+import com.pianoo.model.IMusicPlayer;
 import com.pianoo.model.IPartition;
 import com.pianoo.model.IRecord;
 import com.pianoo.view.IMainMenu;

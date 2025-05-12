@@ -1,9 +1,11 @@
 package com.pianoo.controller;
+import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.view.IMainMenu;
 import com.pianoo.view.IPianoFrame;
 import com.pianoo.view.IView;
 
 public interface IController {
+
     void start();
 
     void stop();
@@ -21,4 +23,6 @@ public interface IController {
     void setMainMenu(IMainMenu mainMenu);
 
     void setPianoFrame(IPianoFrame pianoFrame);
+
+    void setKeyboardMapping(IKeyboardMapping keyboardMapping);
 }
