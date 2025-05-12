@@ -1,14 +1,12 @@
 package com.pianoo;
 
 import com.pianoo.controller.*;
-import com.pianoo.model.IKeyboardMapping;
-import com.pianoo.model.KeyboardMapping;
+import com.pianoo.model.*;
 import com.pianoo.view.MainMenu;
 import com.pianoo.view.IPianoFrame;
 import com.pianoo.view.PianoFrame;
 import com.pianoo.controller.Controller;
-import com.pianoo.model.IMusicPlayer;
-import com.pianoo.model.MusicPlayer;
+
 import com.pianoo.view.*;
 
 public class Main {
@@ -23,18 +21,17 @@ public class Main {
         IRoundCloseButton roundCloseButton = new RoundCloseButton();
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
         ICatFrame catFrame = new CatFrame();
+        ICatPlay catPlay = new CatPlay();
         // Dans la méthode main
 
 
         mainMenu.setVisible(true);
 
-        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, roundCloseButton, keyboardMapping);
+        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, roundCloseButton, keyboardMapping);
         IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping);
-       //ICatController catController = new CatController(catFrame, controller);
 
         controller.setMainMenu(mainMenu);
         controller.setPianoFrame(pianoFrame);
-        //controller.setCat(catFrame);
 
         controller.start();
     }

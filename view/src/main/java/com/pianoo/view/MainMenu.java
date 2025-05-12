@@ -223,8 +223,21 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawPiano(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("PIANO", 160, 30);
+        // Définir la police
+        Font titleFont = new Font("Arial", Font.BOLD, 24);
+        g.setFont(titleFont);
+
+        // Texte à afficher
+        String text = "PIANO";
+
+        // Obtenir les dimensions de la chaîne
+        FontMetrics metrics = g.getFontMetrics(titleFont);
+        int textWidth = metrics.stringWidth(text);
+
+        // Calculer la position x pour centrer (largeur du panel est 400)
+        int x2 = (400 - textWidth) / 2;
+
+        g.drawString(text, x2, 30);
 
         int pianoWidth = 7 * 40;
         int pianoHeight = 100;
@@ -269,8 +282,20 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
     private void drawXylophone(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("XYLOPHONE", 130, 30);
+        // Définir la police
+        Font titleFont = new Font("Arial", Font.BOLD, 24);
+        g.setFont(titleFont);
+
+        // Texte à afficher
+        String text = "XYLOPHONE";
+
+        // Obtenir les dimensions de la chaîne
+        FontMetrics metrics = g.getFontMetrics(titleFont);
+        int textWidth = metrics.stringWidth(text);
+
+        // Calculer la position x pour centrer (largeur du panel est 400)
+        int x = (400 - textWidth) / 2;
+        g.drawString(text, x, 30);
 
         g.setColor(Color.RED);
         g.fillRect(85, 60, 30, 200);
@@ -299,8 +324,20 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
     private void drawVideoGames(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("VIDEO GAMES", 120, 30);
+        // Définir la police
+        Font titleFont = new Font("Arial", Font.BOLD, 24);
+        g.setFont(titleFont);
+
+        // Texte à afficher
+        String text = "VIDEO GAMES";
+
+        // Obtenir les dimensions de la chaîne
+        FontMetrics metrics = g.getFontMetrics(titleFont);
+        int textWidth = metrics.stringWidth(text);
+
+        // Calculer la position x pour centrer (largeur du panel est 400)
+        int x = (400 - textWidth) / 2;
+        g.drawString(text, x, 30);
 
         int pacmanX = 180;
         int pacmanY = 130;
@@ -317,8 +354,20 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawOrgue(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("ORGAN", 160, 30);
+        // Définir la police
+        Font titleFont = new Font("Arial", Font.BOLD, 24);
+        g.setFont(titleFont);
+
+        // Texte à afficher
+        String text = "ORGAN";
+
+        // Obtenir les dimensions de la chaîne
+        FontMetrics metrics = g.getFontMetrics(titleFont);
+        int textWidth = metrics.stringWidth(text);
+
+        // Calculer la position x pour centrer (largeur du panel est 400)
+        int x = (400 - textWidth) / 2;
+        g.drawString(text, x, 30);
 
         g.setColor(new Color(200, 200, 255));
         g.fillRect(100, 150, 200, 250);
@@ -341,8 +390,21 @@ public class MainMenu extends JFrame implements IMainMenu {
     }
 
     private void drawDrums(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("DRUMS", 160, 30);
+        // Définir la police
+        Font titleFont = new Font("Arial", Font.BOLD, 24);
+        g.setFont(titleFont);
+
+        // Texte à afficher
+        String text = "DRUMS";
+
+        // Obtenir les dimensions de la chaîne
+        FontMetrics metrics = g.getFontMetrics(titleFont);
+        int textWidth = metrics.stringWidth(text);
+
+        // Calculer la position x pour centrer (largeur du panel est 400)
+        int x = (400 - textWidth) / 2;
+        g.drawString(text, x, 30);
+
         // Dessiner la base du tambour (rectangle)
         g.setColor(Color.RED);
         g.fillRect(100, 150, 200, 100); // Le corps du tambour (rectangle)
@@ -377,13 +439,29 @@ public class MainMenu extends JFrame implements IMainMenu {
 
 
     private void drawCat(Graphics g) {
+        // Définir la police
+        Font titleFont = new Font("Arial", Font.BOLD, 24);
+        g.setFont(titleFont);
+
+        // Texte à afficher
+        String text = "CAT WHEN YOU'RE SAD";
+
+        // Obtenir les dimensions de la chaîne
+        FontMetrics metrics = g.getFontMetrics(titleFont);
+        int textWidth = metrics.stringWidth(text);
+
+        // Calculer la position x pour centrer (largeur du panel est 400)
+        int x = (400 - textWidth) / 2;
+
+        // Dessiner le texte centré
+        g.drawString(text, x, 30);
         // Dessiner la tête du chat (un disque noir)
         g.setColor(Color.GRAY);
         g.fillOval(150, 100, 100, 100); // Tête du chat
 
         // Dessiner et faire pivoter l'oreille gauche
         int[] x1 = {160, 130, 180}; // Points originaux de l'oreille gauche
-        int[] y1 = {90, 120, 120};
+        int[] y1 = {93, 123, 123};
         drawRotatedEar(g, x1, y1, 70); // Rotation de 70° pour l'oreille gauche
 
         // Dessiner et faire pivoter l'oreille droite
@@ -407,14 +485,14 @@ public class MainMenu extends JFrame implements IMainMenu {
         // Bouche du chat (courbe)
         g.setColor(Color.BLACK);
         g.drawLine(200, 170, 200, 180); // Ligne centrale de la bouche
-        g.drawArc(195, 180, 10, 10, 0, -180); // Sourire gauche
-        g.drawArc(200, 180, 10, 10, 0, -180); // Sourire droit
+        g.drawArc(190, 175, 10, 10, 0, -180); // Sourire gauche
+        g.drawArc(200, 175, 10, 10, 0, -180); // Sourire droit
 
         // Moustaches du chat (lignes)
-        g.drawLine(140, 160, 100, 150); // Moustache gauche haut
-        g.drawLine(140, 170, 100, 170); // Moustache gauche bas
-        g.drawLine(260, 160, 300, 150); // Moustache droite haut
-        g.drawLine(260, 170, 300, 170); // Moustache droite bas
+        g.drawLine(160, 160, 100, 150); // Moustache gauche haut
+        g.drawLine(160, 170, 100, 170); // Moustache gauche bas
+        g.drawLine(240, 160, 300, 150); // Moustache droite haut
+        g.drawLine(240, 170, 300, 170); // Moustache droite bas
     }
 
     // Fonction pour dessiner une oreille avec rotation autour de son centre

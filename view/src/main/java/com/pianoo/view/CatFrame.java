@@ -12,7 +12,6 @@ public class CatFrame extends JPanel implements ICatFrame {
     public CatFrame() {
         // Définir un seul layout pour le panneau principal
         setLayout(new BorderLayout());
-        setBackground(new Color(250, 240, 230));
 
         // === PARTIE HAUTE (barre de contrôle) ===
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -34,18 +33,19 @@ public class CatFrame extends JPanel implements ICatFrame {
 
         // === PARTIE CENTRALE (bouton play) ===
         JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBackground(new Color(250, 240, 230));
 
         // Création et ajout du bouton au centre
         playCatButton = new PlayCatButton();
-        playCatButton.setPlayCatListener(() -> {
+        playCatButton.setCatPlayListener(() -> {
             if (catListener != null) {
                 catListener.onPlayCat();
             }
         });
 
+
         centerPanel.add(playCatButton);
         add(centerPanel, BorderLayout.CENTER);
+
     }
 
     public void setListener(IMenuNavigationListener listener) {

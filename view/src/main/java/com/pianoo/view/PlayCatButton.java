@@ -5,40 +5,46 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PlayCatButton extends JComponent {
+public class PlayCatButton extends JPanel implements IPlayCatButton {
 
-    private PlayCatListener listener;
+    private ICatListener catListener;
+    private boolean isHovered = false;
 
     public PlayCatButton() {
         setPreferredSize(new Dimension(120, 40));
+        setCursor(new Cursor(Cursor.HAND_CURSOR));
+        setOpaque(false);
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (listener != null) {
-                    listener.onPlayCat();
+                if (catListener != null) {
+                    catListener.onPlayCat();
                 }
-                repaint();
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
+                isHovered = true;
                 repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
+                isHovered = false;
                 repaint();
             }
         });
     }
 
-    public void setPlayCatListener(PlayCatListener listener) {
-        this.listener = listener;
+    public void setCatPlayListener(ICatListener catListener) {
+        this.catListener = catListener;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -48,12 +54,8 @@ public class PlayCatButton extends JComponent {
         // Couleur de fond - rose clair
         Color bgColor = new Color(255, 182, 193);
 
-        // Vérifier si la souris est sur le bouton
-        Point mousePosition = getMousePosition();
-        boolean mouseOver = mousePosition != null;
-
         // Ajuster la couleur si la souris est au-dessus
-        if (mouseOver) {
+        if (isHovered) {
             bgColor = bgColor.brighter();
         }
 
@@ -80,10 +82,4 @@ public class PlayCatButton extends JComponent {
         g2d.dispose();
     }
 
-    public void addActionListener(final Object o) {
-    }
-
-    public interface PlayCatListener {
-        void onPlayCat();
-    }
 }

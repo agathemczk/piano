@@ -1,10 +1,11 @@
 package com.pianoo.controller;
 
+import com.pianoo.model.ICatPlay;
 import com.pianoo.model.IMusicPlayer;
 import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.view.*;
 
-public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener {
+public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
 
     private final IMusicPlayer musicPlayer;
     private IPianoFrame pianoFrame;
@@ -14,13 +15,14 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IDrumsFrame drumsFrame;
     private IRoundCloseButton roundCloseButton;
     private ICatFrame catFrame;
+    private ICatPlay catPlay;
     private IPianoController pianoController;
     private IMainMenu mainMenu;
     private IKeyboardMapping keyboardMapping;
 
     public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
                       IOrganFrame organFrame, IXylophoneFrame xylophoneFrame,
-                      IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame,
+                      IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
@@ -30,6 +32,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
         this.catFrame = catFrame;
+        this.catPlay = catPlay;
         this.roundCloseButton = roundCloseButton;
         this.keyboardMapping = keyboardMapping;
 
@@ -42,6 +45,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.videoGamesFrame.setListener(this);
         this.drumsFrame.setListener(this);
         this.catFrame.setListener(this);
+        this.catFrame.setCatPlayListener(this);
     }
 
     @Override
@@ -67,7 +71,13 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
+    public void onPlayCat() {
+        catPlay.playMeowSound();
+    }
+
+    @Override
     public void onReturnMainMenu() {
+        catPlay.stopSound();
         openMainMenu();
     }
 
