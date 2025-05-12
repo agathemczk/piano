@@ -2,11 +2,13 @@ package com.pianoo.controller;
 
 import com.pianoo.model.IMusicPlayer;
 import com.pianoo.model.IKeyboardMapping;
+import com.pianoo.model.IXylophonePlayer;
 import com.pianoo.view.*;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener {
 
     private final IMusicPlayer musicPlayer;
+    private final IXylophonePlayer xylophonePlayer;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
@@ -17,7 +19,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IMainMenu mainMenu;
     private IKeyboardMapping keyboardMapping;
 
-    public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
+    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
                       IOrganFrame organFrame, IXylophoneFrame xylophoneFrame,
                       IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
@@ -26,6 +28,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
         this.xylophoneFrame = xylophoneFrame;
+        this.xylophonePlayer = xylophonePlayer;
+        
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
         this.roundCloseButton = roundCloseButton;
@@ -144,7 +148,24 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     @Override
     public void onNotePlayed(final String note) {
+
         System.out.println("Le xylophone joue la note : " + note);
+
+        // Convertir le nom de la note en indice
+        int noteIndex = -1;
+        String[] notes = xylophoneFrame.getNotes();
+        for (int i = 0; i < notes.length; i++) {
+            if (notes[i].equals(note)) {
+                noteIndex = i;
+                break;
+            }
+        }
+
+        if (noteIndex >= 0) {
+            // Utiliser l'octave 5 au lieu de 4 pour un son plus aigu
+            int midiNote = xylophonePlayer.getMidiNote(5, noteIndex);
+            xylophonePlayer.playNote(midiNote);
+        }
     }
 
     @Override

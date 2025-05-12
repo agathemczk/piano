@@ -23,9 +23,8 @@ public class Main {
 
         mainMenu.setVisible(true);
 
-        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, roundCloseButton, keyboardMapping);
-        IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping);
-        IXylophoneController xylophoneController = new XylophoneController(xylophoneFrame, controller, keyboardMapping, xylophonePlayer);
+        IController controller = new Controller(musicPlayer, xylophonePlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, roundCloseButton, keyboardMapping);
+        IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
 
         controller.setMainMenu(mainMenu);
         controller.setPianoFrame(pianoFrame);

@@ -128,7 +128,6 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     }
 
     private void playNote(int noteIndex) {
-        System.out.println("Joue la note : " + NOTES[noteIndex]);
         if (controller != null) {
             controller.onNotePlayed(NOTES[noteIndex]);
         }
@@ -183,5 +182,10 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
 
     @Override
     public void keyReleased(final KeyEvent e) {
+    }
+
+    @Override
+    public String[] getNotes() {
+        return NOTES;
     }
 }

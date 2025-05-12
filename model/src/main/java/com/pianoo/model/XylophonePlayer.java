@@ -34,17 +34,11 @@ public class XylophonePlayer implements IXylophonePlayer {
         }
     }
 
-    @Override
-    public void stopNote(int midiNote) {
-        if (channel != null) {
-            channel.noteOff(midiNote);
-            System.out.println("Stopping note: " + midiNote);
-        }
-    }
 
     @Override
     public int getMidiNote(int baseOctave, int key) {
         return 12 * baseOctave + key;
     }
+
 
 }
