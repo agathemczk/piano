@@ -5,6 +5,8 @@ import com.pianoo.view.*;
 
 public interface IController {
 
+    void onPlayCat();
+
     void start();
 
     void stop();

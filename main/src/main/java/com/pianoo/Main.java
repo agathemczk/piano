@@ -20,11 +20,17 @@ public class Main {
         IDrumsFrame drumsFrame = new DrumsFrame();
         IRoundCloseButton roundCloseButton = new RoundCloseButton();
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
+        ICatFrame catFrame = new CatFrame();
+        ICatPlay catPlay = new CatPlay();
+        // Dans la méthode main
+
 
         mainMenu.setVisible(true);
 
-        IController controller = new Controller(musicPlayer, xylophonePlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, roundCloseButton, keyboardMapping);
+
+        IController controller = new Controller(musicPlayer,  xylophonePlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, roundCloseButton, keyboardMapping);
         IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
+
 
         controller.setMainMenu(mainMenu);
         controller.setPianoFrame(pianoFrame);
