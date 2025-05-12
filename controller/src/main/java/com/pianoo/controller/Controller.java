@@ -77,29 +77,37 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private void openXylophone() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(xylophoneFrame.getPanel());
+        xylophoneFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        xylophoneFrame.getPanel().requestFocusInWindow();
     }
 
     private void openVideoGames() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(videoGamesFrame.getPanel());
+        //videoGamesFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        videoGamesFrame.getPanel().requestFocusInWindow();
     }
 
     private void openOrgan() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(organFrame.getPanel());
+        //organFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        organFrame.getPanel().requestFocusInWindow();
     }
 
     private void openDrums() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(drumsFrame.getPanel());
+        //drumsFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
+        drumsFrame.getPanel().requestFocusInWindow();
     }
 
     private void openMainMenu() {
@@ -124,8 +132,19 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
+    public void setXylophoneFrame(final IXylophoneFrame xylophoneFrame) {
+        this.xylophoneFrame = xylophoneFrame;
+        this.xylophoneFrame.setController(this);
+    }
+
+    @Override
     public void setKeyboardMapping(final IKeyboardMapping keyboardMapping) {
         this.keyboardMapping = keyboardMapping;
+    }
+
+    @Override
+    public void onNotePlayed(final String note) {
+        System.out.println("Le xylophone joue la note : " + note);
     }
 
     @Override

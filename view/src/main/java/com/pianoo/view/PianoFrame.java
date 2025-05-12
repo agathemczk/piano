@@ -14,8 +14,9 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
     private IMenuNavigationListener listener;
     private final JComboBox<Integer> octaveSelector;
     private final int WHITE_KEYS_PER_OCTAVE = 7;
-    private IController controller;
     private final int REFERENCE_OCTAVE = 4;
+    private IController controller;
+
 
     private class NoteKey {
         final int note;
@@ -307,18 +308,14 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Optionnel
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // Cette méthode peut être implémentée en fonction des besoins
-        // ou laissée vide si le contrôleur gère tous les événements clavier
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // Optionnel
     }
 
 }

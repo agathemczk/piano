@@ -1,8 +1,7 @@
 package com.pianoo.controller;
 import com.pianoo.model.IKeyboardMapping;
-import com.pianoo.view.IMainMenu;
-import com.pianoo.view.IPianoFrame;
-import com.pianoo.view.IView;
+import com.pianoo.view.*;
+
 
 public interface IController {
 
@@ -24,5 +23,9 @@ public interface IController {
 
     void setPianoFrame(IPianoFrame pianoFrame);
 
+    void setXylophoneFrame(IXylophoneFrame xylophoneFrame);
+
     void setKeyboardMapping(IKeyboardMapping keyboardMapping);
+
+    void onNotePlayed(String note);
 }

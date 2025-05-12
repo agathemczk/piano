@@ -1,11 +1,15 @@
 package com.pianoo.view;
 
+import com.pianoo.controller.IController;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
-public class XylophoneFrame extends JPanel implements IXylophoneFrame {
-
-    private IMenuNavigationListener listener;
+public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListener {
 
     private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] COLORS = {
@@ -13,42 +17,51 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
             Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA
     };
 
+
+
+    private final JPanel xylophonePanel;
+    private IMenuNavigationListener listener;
+    private IController controller;
+    private final List<JButton> noteButtons = new ArrayList<>();
+
     public XylophoneFrame() {
         setLayout(new BorderLayout());
+        setFocusable(true);
+        requestFocusInWindow();
 
-        // Création du panneau supérieur
+        // Haut : barre d'outils
+        JPanel topPanel = createTopPanel();
+        add(topPanel, BorderLayout.NORTH);
+
+        // Centre : xylophone
+        xylophonePanel = createXylophonePanel();
+        add(xylophonePanel, BorderLayout.CENTER);
+    }
+
+    private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        // Dans le constructeur XylophoneFrame, après la création de topPanel
+        // Boutons média (enregistrement et lecture)
+        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        mediaButtonsPanel.setOpaque(false);
 
-/// Panneau principal pour les boutons avec BorderLayout
-        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
-        buttonPanel.setBackground(new Color(230, 230, 230));
-        buttonPanel.setOpaque(true);
-
-// Créer le bouton d'enregistrement
         RecordButton recordButton = new RecordButton();
         recordButton.setOnClickListener(() -> {
             boolean isRecording = recordButton.isRecording();
             System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
-            System.out.println("reliage au controller prochainement");
         });
 
-// Créer le bouton de lecture
         ReadButton readButton = new ReadButton();
         readButton.setOnClickListener(() -> {
             boolean isPlaying = readButton.isPlaying();
             System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
         });
 
-// Sous-panneau central pour les boutons d'enregistrement et de lecture
-        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        mediaButtonsPanel.setOpaque(false);
         mediaButtonsPanel.add(recordButton);
         mediaButtonsPanel.add(readButton);
 
-// Bouton de retour au menu principal
+        // Bouton de fermeture
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
@@ -56,22 +69,17 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
             }
         });
 
-// Panneau pour le bouton de fermeture
-        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        closeButtonPanel.setOpaque(false);
-        closeButtonPanel.add(closeButton);
+        JPanel closePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        closePanel.setOpaque(false);
+        closePanel.add(closeButton);
 
-// Ajouter les panneaux au panneau principal
-        buttonPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
-        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
+        topPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
+        topPanel.add(closePanel, BorderLayout.EAST);
 
-// Ajouter le panneau de boutons au panneau supérieur
-        topPanel.add(buttonPanel, BorderLayout.CENTER);
+        return topPanel;
+    }
 
-// Ajouter le panneau supérieur au conteneur principal
-        add(topPanel, BorderLayout.NORTH);
-
-        // ===== Xylophone centré =====
+    private JPanel createXylophonePanel() {
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setOpaque(false);
 
@@ -82,6 +90,7 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
         int baseHeight = 250;
         int width = 90;
 
+        // Création des touches du xylophone
         for (int i = 0; i < NOTES.length; i++) {
             JButton noteButton = new JButton(NOTES[i]);
             noteButton.setBackground(COLORS[i]);
@@ -89,13 +98,16 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
             noteButton.setBorderPainted(false);
             noteButton.setFont(new Font("Arial", Font.BOLD, 20));
 
+            // Ajuster la hauteur pour simuler les barres du xylophone
             int buttonHeight = baseHeight - (i * 15);
             noteButton.setPreferredSize(new Dimension(width, buttonHeight));
             noteButton.setMaximumSize(new Dimension(width, buttonHeight));
             noteButton.setMinimumSize(new Dimension(width, buttonHeight));
 
-            final int index = i;
-            noteButton.addActionListener(e -> playNote(NOTES[index]));
+            final int noteIndex = i;
+            noteButton.addActionListener(e -> playNote(noteIndex));
+
+            noteButtons.add(noteButton);
 
             JPanel wrapper = new JPanel();
             wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
@@ -112,11 +124,14 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
         }
 
         centerPanel.add(xylophonePanel);
-        add(centerPanel, BorderLayout.CENTER);
+        return centerPanel;
     }
 
-    private void playNote(String note) {
-        System.out.println("Joue la note : " + note);
+    private void playNote(int noteIndex) {
+        System.out.println("Joue la note : " + NOTES[noteIndex]);
+        if (controller != null) {
+            controller.onNotePlayed(NOTES[noteIndex]);
+        }
     }
 
     @Override
@@ -124,8 +139,49 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame {
         return this;
     }
 
+    @Override
+    public void addKeyListenerToFrame(KeyListener listener) {
+        this.addKeyListener(listener);
+        xylophonePanel.addKeyListener(listener);
+    }
+
+    @Override
+    public void setKeyListener(final IController controller) {
+        this.controller = controller;
+    }
+
+    @Override
+    public void setController(final IController controller) {
+        this.controller = controller;
+    }
+
+    @Override
+    public void highlightNote(int note) {
+        if (note >= 0 && note < noteButtons.size()) {
+            noteButtons.get(note).setBackground(noteButtons.get(note).getBackground().darker());
+        }
+    }
+
+    @Override
+    public void resetNote(int note) {
+        if (note >= 0 && note < noteButtons.size()) {
+            noteButtons.get(note).setBackground(COLORS[note]);
+        }
+    }
+
     public void setListener(IMenuNavigationListener listener) {
         this.listener = listener;
     }
 
+    @Override
+    public void keyTyped(final KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(final KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(final KeyEvent e) {
+    }
 }
