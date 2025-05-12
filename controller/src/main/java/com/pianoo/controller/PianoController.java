@@ -56,7 +56,7 @@ public class PianoController implements IPianoController {
         }
     }
 
-        @Override
+    @Override
     public void keyTyped(KeyEvent e) {
     }
 }
