@@ -35,6 +35,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.pianoFrame.setListener(this);
         this.xylophoneFrame.setListener(this);
         this.videoGamesFrame.setListener(this);
+        this.drumsFrame.setListener(this);
     }
 
     @Override
@@ -49,7 +50,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
             openVideoGames();
         }
         if ("Organ".equals(instrumentName)) {
-            System.out.println("Organ");
             openOrgan();
         }
         if ("Drums".equals(instrumentName)) {

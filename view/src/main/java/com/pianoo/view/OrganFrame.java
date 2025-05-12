@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 
 public class OrganFrame extends JPanel implements IOrganFrame {
 
-    private IMenuNavigationListener listener;
+    private IMenuNavigationListener listener; // Ajout du champ pour stocker le contrôleur
     private final int WHITE_KEYS_PER_OCTAVE = 7;
     private final int OCTAVE_COUNT = 5;
     private final int TOTAL_WHITE_KEYS = WHITE_KEYS_PER_OCTAVE * OCTAVE_COUNT;
@@ -18,11 +18,35 @@ public class OrganFrame extends JPanel implements IOrganFrame {
 
     private final java.util.List<PianoKey> keys = new ArrayList<>();
 
+    // Constructeur de la classe OrganFrame
     public OrganFrame() {
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // Création du panneau supérieur
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
+
+        // Dans le constructeur XylophoneFrame, après la création de topPanel
+
+// Panneau principal pour les boutons avec BorderLayout
+        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
+        buttonPanel.setBackground(new Color(230, 230, 230));
+        buttonPanel.setOpaque(true);
+
+// Créer le bouton d'enregistrement
+        RecordButton recordButton = new RecordButton();
+        recordButton.setOnClickListener(() -> {
+            boolean isRecording = recordButton.isRecording();
+            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
+            System.out.println("reliage au controller prochainement");
+        });
+
+// Sous-panneau central pour centrer le bouton d'enregistrement
+        JPanel recordButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        recordButtonPanel.setOpaque(false);
+        recordButtonPanel.add(recordButton);
+
+// Bouton de retour au menu principal
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
@@ -30,10 +54,19 @@ public class OrganFrame extends JPanel implements IOrganFrame {
             }
         });
 
-        topPanel.add(closeButton);
-        add(topPanel, BorderLayout.NORTH);
+// Panneau pour le bouton de fermeture
+        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        closeButtonPanel.setOpaque(false);
+        closeButtonPanel.add(closeButton);
 
-        topPanel.add(closeButton);
+// Ajouter les panneaux au panneau principal
+        buttonPanel.add(recordButtonPanel, BorderLayout.CENTER);
+        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
+
+// Ajouter le panneau de boutons au panneau supérieur
+        topPanel.add(buttonPanel, BorderLayout.CENTER);
+
+// Ajouter le panneau supérieur au conteneur principal
         add(topPanel, BorderLayout.NORTH);
 
         addMouseListener(new MouseAdapter() {
@@ -41,6 +74,7 @@ public class OrganFrame extends JPanel implements IOrganFrame {
             public void mousePressed(MouseEvent e) {
                 for (PianoKey key : keys) {
                     if (key.contains(e.getPoint())) {
+                        System.out.println("Touche cliquée : " + key.note + " (" + (key.isBlack ? "noire" : "blanche") + ")");
                         break;
                     }
                 }
@@ -48,10 +82,12 @@ public class OrganFrame extends JPanel implements IOrganFrame {
         });
     }
 
+    // Méthode pour définir le listener
     public void setListener(IMenuNavigationListener listener) {
         this.listener = listener;
     }
 
+    // Méthode pour dessiner le clavier
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -70,15 +106,20 @@ public class OrganFrame extends JPanel implements IOrganFrame {
         int blackKeyWidth = (int) (keyWidth * 0.66);
         int blackKeyHeight = (int) (keyHeight * 0.66);
 
+        // Clavier supérieur
         int y1 = buttonHeight + margin;
         drawKeyboard(g, margin, y1, keyWidth, keyHeight, blackKeyWidth, blackKeyHeight);
+
+        // Clavier inférieur
         int y2 = y1 + keyHeight + margin;
         drawKeyboard(g, margin, y2, keyWidth, keyHeight, blackKeyWidth, blackKeyHeight);
     }
 
+    // Méthode pour dessiner le clavier
     private void drawKeyboard(Graphics g, int xOffset, int yOffset, int keyWidth, int keyHeight, int blackKeyWidth, int blackKeyHeight) {
         int currentWhite = 0;
 
+        // Touches blanches
         for (int octave = 0; octave < OCTAVE_COUNT; octave++) {
             for (int i = 0; i < WHITE_KEYS_PER_OCTAVE; i++) {
                 int x = xOffset + currentWhite * keyWidth;
@@ -98,6 +139,7 @@ public class OrganFrame extends JPanel implements IOrganFrame {
             }
         }
 
+        // Touches noires
         currentWhite = 0;
         for (int octave = 0; octave < OCTAVE_COUNT; octave++) {
             for (int note = 0; note < 12; note++) {
@@ -122,6 +164,7 @@ public class OrganFrame extends JPanel implements IOrganFrame {
         }
     }
 
+    // Classe pour représenter les touches du clavier
     private static class PianoKey {
         Rectangle bounds;
         boolean isBlack;

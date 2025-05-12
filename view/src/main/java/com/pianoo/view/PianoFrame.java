@@ -49,11 +49,40 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
+        // Sélecteur d'octaves à gauche
         Integer[] octaves = new Integer[]{2, 3, 4, 5, 6, 7};
         octaveSelector = new JComboBox<>(octaves);
         octaveSelector.setSelectedItem(4);
         topPanel.add(octaveSelector, BorderLayout.WEST);
 
+
+/// Panneau principal pour les boutons avec BorderLayout
+        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
+        buttonPanel.setBackground(new Color(230, 230, 230));
+        buttonPanel.setOpaque(true);
+
+// Créer le bouton d'enregistrement
+        RecordButton recordButton = new RecordButton();
+        recordButton.setOnClickListener(() -> {
+            boolean isRecording = recordButton.isRecording();
+            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
+            System.out.println("reliage au controller prochainement");
+        });
+
+// Créer le bouton de lecture
+        ReadButton readButton = new ReadButton();
+        readButton.setOnClickListener(() -> {
+            boolean isPlaying = readButton.isPlaying();
+            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+        });
+
+// Sous-panneau central pour les boutons d'enregistrement et de lecture
+        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        mediaButtonsPanel.setOpaque(false);
+        mediaButtonsPanel.add(recordButton);
+        mediaButtonsPanel.add(readButton);
+
+// Bouton de retour au menu principal
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
             if (listener != null) {
@@ -61,12 +90,22 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
             }
         });
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-        buttonPanel.add(closeButton);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
+// Panneau pour le bouton de fermeture
+        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        closeButtonPanel.setOpaque(false);
+        closeButtonPanel.add(closeButton);
 
+// Ajouter les panneaux au panneau principal
+        buttonPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
+        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
+
+// Ajouter le panneau de boutons au panneau supérieur
+        topPanel.add(buttonPanel, BorderLayout.CENTER);
+
+// Ajouter le panneau supérieur au conteneur principal
         add(topPanel, BorderLayout.NORTH);
+
+        // ===== Piano centré =====
 
         pianoPanel = new JPanel() {
             @Override
@@ -278,14 +317,18 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
+        // Optionnel
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        // Cette méthode peut être implémentée en fonction des besoins
+        // ou laissée vide si le contrôleur gère tous les événements clavier
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        // Optionnel
     }
 
 }
