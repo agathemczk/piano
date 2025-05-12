@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListener {
 
@@ -28,6 +30,15 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
         setLayout(new BorderLayout());
         setFocusable(true);
         requestFocusInWindow();
+
+        // Ajouter cette ligne pour activer la détection des touches
+        addKeyListener(this);
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                requestFocusInWindow();
+            }
+        });
 
         // Haut : barre d'outils
         JPanel topPanel = createTopPanel();
@@ -178,11 +189,53 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
 
     @Override
     public void keyPressed(final KeyEvent e) {
+        // Mapping des touches du clavier aux indices des notes
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: // Do (C)
+                highlightNote(0);
+                playNote(0);
+                break;
+            case KeyEvent.VK_S: // Ré (D)
+                highlightNote(1);
+                playNote(1);
+                break;
+            case KeyEvent.VK_D: // Mi (E)
+                highlightNote(2);
+                playNote(2);
+                break;
+            case KeyEvent.VK_F: // Fa (F)
+                highlightNote(3);
+                playNote(3);
+                break;
+            case KeyEvent.VK_G: // Sol (G)
+                highlightNote(4);
+                playNote(4);
+                break;
+            case KeyEvent.VK_H: // La (A)
+                highlightNote(5);
+                playNote(5);
+                break;
+            case KeyEvent.VK_J: // Si (B)
+                highlightNote(6);
+                playNote(6);
+                break;
+        }
     }
 
     @Override
     public void keyReleased(final KeyEvent e) {
+        // Rétablir l'apparence normale de la touche
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: resetNote(0); break;
+            case KeyEvent.VK_S: resetNote(1); break;
+            case KeyEvent.VK_D: resetNote(2); break;
+            case KeyEvent.VK_F: resetNote(3); break;
+            case KeyEvent.VK_G: resetNote(4); break;
+            case KeyEvent.VK_H: resetNote(5); break;
+            case KeyEvent.VK_J: resetNote(6); break;
+        }
     }
+
 
     @Override
     public String[] getNotes() {
