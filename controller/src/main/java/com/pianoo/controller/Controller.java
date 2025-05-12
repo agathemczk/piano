@@ -148,24 +148,9 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     @Override
     public void onNotePlayed(final String note) {
-
         System.out.println("Le xylophone joue la note : " + note);
-
-        // Convertir le nom de la note en indice
-        int noteIndex = -1;
-        String[] notes = xylophoneFrame.getNotes();
-        for (int i = 0; i < notes.length; i++) {
-            if (notes[i].equals(note)) {
-                noteIndex = i;
-                break;
-            }
-        }
-
-        if (noteIndex >= 0) {
-            // Utiliser l'octave 5 au lieu de 4 pour un son plus aigu
-            int midiNote = xylophonePlayer.getMidiNote(5, noteIndex);
-            xylophonePlayer.playNote(midiNote);
-        }
+        // Déléguer la conversion et la logique de jeu au modèle
+        xylophonePlayer.playNote(note, xylophoneFrame.getNotes());
     }
 
     @Override

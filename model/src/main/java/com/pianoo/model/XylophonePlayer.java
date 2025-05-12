@@ -34,11 +34,26 @@ public class XylophonePlayer implements IXylophonePlayer {
         }
     }
 
+    public void playNote(String noteName, String[] availableNotes) {
+        int noteIndex = convertNoteNameToIndex(noteName, availableNotes);
+        if (noteIndex >= 0) {
+            // Utiliser l'octave 5 pour un son plus aigu
+            int midiNote = getMidiNote(5, noteIndex);
+            playNote(midiNote);
+        }
+    }
+
+    private int convertNoteNameToIndex(String noteName, String[] availableNotes) {
+        for (int i = 0; i < availableNotes.length; i++) {
+            if (availableNotes[i].equals(noteName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     @Override
     public int getMidiNote(int baseOctave, int key) {
         return 12 * baseOctave + key;
     }
-
-
 }
