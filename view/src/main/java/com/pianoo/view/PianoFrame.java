@@ -202,16 +202,6 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         pianoPanel.repaint();
     }
 
-    @Override
-    public void highlightKey(int note) {
-        highlightKey(note, getSelectedOctave());
-    }
-
-    @Override
-    public void resetKey(int note) {
-        resetKey(note, getSelectedOctave());
-    }
-
     private boolean isBlackKey(int note) {
         int noteValue = note % 12;
         return noteValue == 1 || noteValue == 3 || noteValue == 6 || noteValue == 8 || noteValue == 10;
