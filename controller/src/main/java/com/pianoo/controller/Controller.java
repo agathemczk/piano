@@ -13,13 +13,14 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IVideoGamesFrame videoGamesFrame;
     private IDrumsFrame drumsFrame;
     private IRoundCloseButton roundCloseButton;
+    private ICatFrame catFrame;
     private IPianoController pianoController;
     private IMainMenu mainMenu;
     private IKeyboardMapping keyboardMapping;
 
     public Controller(IMusicPlayer musicPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
                       IOrganFrame organFrame, IXylophoneFrame xylophoneFrame,
-                      IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame,
+                      IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
@@ -28,6 +29,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.xylophoneFrame = xylophoneFrame;
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
+        this.catFrame = catFrame;
         this.roundCloseButton = roundCloseButton;
         this.keyboardMapping = keyboardMapping;
 
@@ -39,6 +41,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.xylophoneFrame.setListener(this);
         this.videoGamesFrame.setListener(this);
         this.drumsFrame.setListener(this);
+        this.catFrame.setListener(this);
     }
 
     @Override
@@ -57,6 +60,9 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         }
         if ("Drums".equals(instrumentName)) {
             openDrums();
+        }
+        if ("Cat".equals(instrumentName)) {
+            openCat();
         }
     }
 
@@ -98,6 +104,13 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private void openDrums() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(drumsFrame.getPanel());
+        mainMenu.revalidate();
+        mainMenu.repaint();
+    }
+
+    private void openCat() {
+        mainMenu.getContentPane().removeAll();
+        mainMenu.getContentPane().add(catFrame.getPanel());
         mainMenu.revalidate();
         mainMenu.repaint();
     }

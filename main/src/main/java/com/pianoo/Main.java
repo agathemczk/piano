@@ -22,14 +22,19 @@ public class Main {
         IDrumsFrame drumsFrame = new DrumsFrame();
         IRoundCloseButton roundCloseButton = new RoundCloseButton();
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
+        ICatFrame catFrame = new CatFrame();
+        // Dans la méthode main
+
 
         mainMenu.setVisible(true);
 
-        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, roundCloseButton, keyboardMapping);
+        IController controller = new Controller(musicPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, roundCloseButton, keyboardMapping);
         IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping);
+       //ICatController catController = new CatController(catFrame, controller);
 
         controller.setMainMenu(mainMenu);
         controller.setPianoFrame(pianoFrame);
+        //controller.setCat(catFrame);
 
         controller.start();
     }
