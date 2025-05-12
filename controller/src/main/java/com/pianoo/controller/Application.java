@@ -2,7 +2,7 @@ package com.pianoo.controller;
 
 import com.pianoo.model.IInstrument;
 import com.pianoo.model.IMusicPlayer;
-import com.pianoo.model.IPartition;
+//import com.pianoo.model.ScoreParser;
 import com.pianoo.model.IRecord;
 import com.pianoo.view.IMainMenu;
 
@@ -34,10 +34,10 @@ public class Application implements IApplication {
 
     }
 
-    @Override
-    public void loadAndPlayParition(final IPartition partition) {
+    /*@Override
+    public void loadAndPlayParition(final ScoreParser partition) {
 
-    }
+    }*/
 
     @Override
     public void quit() {

@@ -52,32 +52,32 @@ public class KeyboardMapping implements IKeyboardMapping {
     @Override
     public Integer getNoteFromKeyCode(int keyCode) {
         if (isAzerty) {
-            return switch (keyCode) {
-                case KeyEvent.VK_A -> 0;
-                case KeyEvent.VK_Z -> 1;
-                case KeyEvent.VK_E -> 2;
-                case KeyEvent.VK_R -> 3;
-                case KeyEvent.VK_T -> 4;
-                case KeyEvent.VK_Y -> 5;
-                case KeyEvent.VK_U -> 6;
-                default -> null;
-            };
+            switch (keyCode) {
+                case KeyEvent.VK_A: return 0;
+                case KeyEvent.VK_Z: return 1;
+                case KeyEvent.VK_E: return 2;
+                case KeyEvent.VK_R: return 3;
+                case KeyEvent.VK_T: return 4;
+                case KeyEvent.VK_Y: return 5;
+                case KeyEvent.VK_U: return 6;
+                default: return null;
+            }
         } else {
-            return switch (keyCode) {
-                case KeyEvent.VK_A -> 0;
-                case KeyEvent.VK_W -> 1;
-                case KeyEvent.VK_S -> 2;
-                case KeyEvent.VK_E -> 3;
-                case KeyEvent.VK_D -> 4;
-                case KeyEvent.VK_F -> 5;
-                case KeyEvent.VK_T -> 6;
-                case KeyEvent.VK_G -> 7;
-                case KeyEvent.VK_Y -> 8;
-                case KeyEvent.VK_H -> 9;
-                case KeyEvent.VK_U -> 10;
-                case KeyEvent.VK_J -> 11;
-                default -> null;
-            };
+            switch (keyCode) {
+                case KeyEvent.VK_A: return 0;
+                case KeyEvent.VK_W: return 1;
+                case KeyEvent.VK_S: return 2;
+                case KeyEvent.VK_E: return 3;
+                case KeyEvent.VK_D: return 4;
+                case KeyEvent.VK_F: return 5;
+                case KeyEvent.VK_T: return 6;
+                case KeyEvent.VK_G: return 7;
+                case KeyEvent.VK_Y: return 8;
+                case KeyEvent.VK_H: return 9;
+                case KeyEvent.VK_U: return 10;
+                case KeyEvent.VK_J: return 11;
+                default: return null;
+            }
         }
     }
 

@@ -29,10 +29,6 @@ public class MusicPlayer implements IMusicPlayer {
     }
 
     @Override
-    public void setInstrument(final String instrument) {
-    }
-
-    @Override
     public void close() {
     }
 

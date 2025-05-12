@@ -8,7 +8,8 @@ import java.awt.*;
 public interface ICatFrame {
 
     void setListener(IMenuNavigationListener listener);
+
     void setCatPlayListener(ICatListener listener);
+
     JPanel getPanel();
-    // Dans ICatFrame.java
 }

@@ -160,15 +160,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
-    public IView getView() {
-        return null;
-    }
-
-    @Override
-    public void setView(final IView view) {
-    }
-
-    @Override
     public void onKeyPressed(int noteValue, int octave) {
         int midiNote = musicPlayer.getMidiNote(octave, noteValue);
         musicPlayer.playNote(midiNote);

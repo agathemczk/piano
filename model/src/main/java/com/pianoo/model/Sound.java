@@ -2,7 +2,7 @@ package com.pianoo.model;
 
 public class Sound implements ISound {
 
-    Partition partition;
+    PartitionParser partitionParser;
 
     @Override
     public void playMusic() {

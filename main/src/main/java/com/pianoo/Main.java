@@ -22,8 +22,6 @@ public class Main {
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
         ICatFrame catFrame = new CatFrame();
         ICatPlay catPlay = new CatPlay();
-        // Dans la méthode main
-
 
         mainMenu.setVisible(true);
 

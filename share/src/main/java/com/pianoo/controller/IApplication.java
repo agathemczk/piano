@@ -2,7 +2,7 @@ package com.pianoo.controller;
 
 import com.pianoo.model.IInstrument;
 import com.pianoo.model.IMusicPlayer;
-import com.pianoo.model.IPartition;
+//import com.pianoo.model.ScoreParser;
 import com.pianoo.model.IRecord;
 import com.pianoo.view.IMainMenu;
 
@@ -17,7 +17,7 @@ public interface IApplication {
     void chosseInstrument(IInstrument instrument);
     void goingToRecord(boolean isRecording);
     void saveRecord(String fileName);
-    void loadAndPlayParition(IPartition partition);
+    //void loadAndPlayParition(ScoreParser partition);
     void quit();
 
 }
