@@ -1,6 +1,5 @@
 package com.pianoo.view;
 
-import java.awt.Component;
 import com.pianoo.controller.IController;
 
 import javax.swing.*;

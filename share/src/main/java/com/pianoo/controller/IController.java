@@ -2,7 +2,6 @@ package com.pianoo.controller;
 import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.view.*;
 
-
 public interface IController {
 
     void onOrganKeyPressed(int midiNote);
@@ -10,8 +9,11 @@ public interface IController {
     void onOrganKeyReleased(int midiNote);
 
     int getMidiNoteFromKeyName(String noteName);
+
     boolean isNoteActive(int midiNote);
+
     int adjustMidiNoteForKeyboard(int baseMidiNote, boolean isUpperKeyboard);
+
     int getMidiNoteForKeyCode(int keyCode);
 
     void onPlayCat();
@@ -19,10 +21,6 @@ public interface IController {
     void start();
 
     void stop();
-
-    IView getView();
-
-    void setView(IView view);
 
     void onKeyPressed(int key, int octave);
 
@@ -39,5 +37,6 @@ public interface IController {
     void setKeyboardMapping(IKeyboardMapping keyboardMapping);
 
     void onNotePlayed(String note);
+
     void onDrumHit(String drumType);
 }
