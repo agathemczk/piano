@@ -9,11 +9,12 @@ public class DrumsPlayer implements IDrumsPlayer {
 
     private Synthesizer synth;
     private MidiChannel channel;
+    private volatile Thread scorePlayingThread = null; // Thread for score playback
+
     private static final int DRUMS_CHANNEL_INDEX = 9; // Canal 10 (indexé à partir de 0) réservé aux percussions
     private static final int DEFAULT_VELOCITY = 100;
     private static final int SILENCE_MIDI_NOTE = -1; // Consistent with ScoreReader
 
-    // Mapping des types de batterie aux notes MIDI standard
     private final Map<String, Integer> drumMidiNotes;
 
     public DrumsPlayer() {
@@ -22,18 +23,13 @@ public class DrumsPlayer implements IDrumsPlayer {
 
         try {
             synth = MidiSystem.getSynthesizer();
-            synth.open();
-
-            // Soundbank sb = synth.getDefaultSoundbank();
-            // if (sb != null) {
-            //    synth.loadAllInstruments(sb);
-            // }
+            if (!synth.isOpen()) {
+                synth.open();
+            }
 
             if (synth.getChannels() != null && synth.getChannels().length > DRUMS_CHANNEL_INDEX) {
                 channel = synth.getChannels()[DRUMS_CHANNEL_INDEX];
-                // For drums, programChange is often not needed or selects a drum kit.
-                // Default is usually GM Standard Drum Kit on channel 10 (index 9).
-                // channel.programChange(0); // Example: Sets to GM Standard Drum Kit if needed
+                // channel.programChange(0); // Default GM Standard Drum Kit often implicitly on channel 10
             } else {
                 System.err.println("Drum channel (10) not available or synthesizer has too few channels!");
             }
@@ -53,13 +49,12 @@ public class DrumsPlayer implements IDrumsPlayer {
         drumMidiNotes.put("Tom Basse", 41);  // Low Floor Tom
         drumMidiNotes.put("Ride Cymbale", 51);  // Ride Cymbal 1 (changed for clarity)
         drumMidiNotes.put("Crash Cymbale", 49);     // Crash Cymbal 1 (changed for clarity)
-        // Add more drum sounds if needed by partitions
-        drumMidiNotes.put("Kick", 36); // Alias for Bass Drum
-        drumMidiNotes.put("Snare", 38); // Alias
-        drumMidiNotes.put("ClosedHH", 42); // Alias
-        drumMidiNotes.put("OpenHH", 46); // Alias
-        drumMidiNotes.put("Crash", 49); // Alias
-        drumMidiNotes.put("Ride", 51); // Alias
+        drumMidiNotes.put("Kick", 36);
+        drumMidiNotes.put("Snare", 38);
+        drumMidiNotes.put("ClosedHH", 42);
+        drumMidiNotes.put("OpenHH", 46);
+        drumMidiNotes.put("Crash", 49);
+        drumMidiNotes.put("Ride", 51);
     }
 
     @Override
@@ -73,24 +68,17 @@ public class DrumsPlayer implements IDrumsPlayer {
         }
     }
 
-    // --- IMusicPlayer Implementation ---
     @Override
     public void playNote(int midiNote) {
         if (channel != null) {
-            // In the context of playScore for drums, midiNote is directly a drum sound.
             channel.noteOn(midiNote, DEFAULT_VELOCITY);
         }
     }
 
     @Override
     public void stopNote(int midiNote) {
-        // For most drum sounds, noteOff does little or nothing as they are percussive (short decay).
-        // However, some sounds like cymbals or open hi-hats might be affected by noteOff or allNotesOff.
-        // For simplicity in playScore, we might not call stopNote for each drum hit, 
-        // relying on their natural decay, or call it if the score indicates a very short hit specifically.
-        // Or, it could be used to implement choking a cymbal.
         if (channel != null) {
-            channel.noteOff(midiNote, 0); // Velocity 0 for noteOff
+            channel.noteOff(midiNote, 0);
         }
     }
 
@@ -125,63 +113,86 @@ public class DrumsPlayer implements IDrumsPlayer {
             return;
         }
 
-        System.out.println("DrumsPlayer starting to play score...");
-        new Thread(() -> {
-            for (IScoreEvent event : scoreEvents) {
-                if (Thread.currentThread().isInterrupted()) {
-                    System.out.println("DrumsPlayer playback thread interrupted, stopping score.");
-                    break;
-                }
-
-                int midiNote = event.getMidiNote();
-                long durationMs = (long) (event.getDurationSeconds() * 1000);
-
-                if (midiNote != SILENCE_MIDI_NOTE) {
-                    playNote(midiNote); // This will call DrumsPlayer.playNote(int)
-                    // which does channel.noteOn for the drum sound.
-                    // For drums, the sound usually decays naturally. 
-                    // The duration from the score primarily dictates when the *next* event occurs.
-                    // We don't typically hold a drum note then stop it like a piano note.
-                    // So, we just sleep for the event's duration to time the next event.
-                    if (durationMs > 0) { // Only sleep if duration is positive
-                        try {
-                            Thread.sleep(durationMs);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            System.err.println("DrumsPlayer playback interrupted during note/timing pause.");
-                            // Unlike melodic instruments, a specific stopNote(midiNote) might not be critical here,
-                            // as the sound is percussive. But if a long sound was cut short, it might matter.
-                            break;
-                        }
-                    }
-                    // No explicit stopNote(midiNote) here for typical drum score playback.
-                    // If a score *needs* a cymbal choke, it would require special handling or a specific MIDI note off.
-                } else {
-                    // This is a silence
-                    if (durationMs > 0) {
-                        try {
-                            Thread.sleep(durationMs);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            System.err.println("DrumsPlayer playback interrupted during silence.");
-                            break;
-                        }
-                    }
-                }
+        if (scorePlayingThread != null && scorePlayingThread.isAlive()) {
+            System.out.println("DrumsPlayer: Stopping previous score playback.");
+            scorePlayingThread.interrupt();
+            try {
+                scorePlayingThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-            System.out.println("DrumsPlayer finished playing score.");
-        }).start();
+        }
+
+        System.out.println("DrumsPlayer starting to play score...");
+        scorePlayingThread = new Thread(() -> {
+            try {
+                for (IScoreEvent event : scoreEvents) {
+                    if (Thread.currentThread().isInterrupted()) {
+                        System.out.println("DrumsPlayer playback thread interrupted, stopping score.");
+                        // For drums, allNotesOff might be too aggressive if only one part of kit was playing.
+                        // However, individual noteOffs are less common in drum sequencing this way.
+                        // channel.allNotesOff(); // Consider implications.
+                        break;
+                    }
+
+                    int midiNote = event.getMidiNote();
+                    long durationMs = (long) (event.getDurationSeconds() * 1000);
+
+                    if (midiNote != SILENCE_MIDI_NOTE) {
+                        playNote(midiNote); // This calls channel.noteOn()
+                        // For drums, the duration from the score primarily dictates when the *next* event occurs.
+                        // We don't typically hold a drum note then stop it like a piano note.
+                        // So, we just sleep for the event's duration to time the next event.
+                        if (durationMs > 0) {
+                            try {
+                                Thread.sleep(durationMs);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                System.err.println("DrumsPlayer playback interrupted during note/timing pause.");
+                                // No explicit stopNote(midiNote) here for typical drum score playback.
+                                break;
+                            }
+                        }
+                        // Unlike melodic instruments, stopNote(midiNote) is not typically called after each drum hit here.
+                        // Its effect is often minimal for percussive sounds.
+                    } else {
+                        // This is a silence
+                        if (durationMs > 0) {
+                            try {
+                                Thread.sleep(durationMs);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                System.err.println("DrumsPlayer playback interrupted during silence.");
+                                break;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                System.out.println("DrumsPlayer finished playing score or was interrupted.");
+            }
+        });
+        scorePlayingThread.setDaemon(true);
+        scorePlayingThread.start();
     }
 
     @Override
     public void close() {
-        if (synth != null && synth.isOpen()) {
-            if (channel != null) {
-                channel.allNotesOff(); // Good practice for any channel
-            }
-            synth.close();
-            System.out.println("DrumsPlayer synthesizer closed.");
+        System.out.println("DrumsPlayer.close() called. Stopping notes and interrupting score thread.");
+        if (channel != null) {
+            channel.allNotesOff(); // Stop all drum sounds on this channel
         }
+        if (scorePlayingThread != null && scorePlayingThread.isAlive()) {
+            scorePlayingThread.interrupt();
+            try {
+                scorePlayingThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            scorePlayingThread = null;
+        }
+        // synth.close(); // Do not close synthesizer here
+        System.out.println("DrumsPlayer resources cleaned. Synthesizer remains open.");
     }
 
     @Override

@@ -7,6 +7,7 @@ public class XylophonePlayer implements IXylophonePlayer {
 
     private Synthesizer synth;
     private MidiChannel channel;
+    private volatile Thread scorePlayingThread = null;
     private static final int XYLOPHONE_MIDI_PROGRAM = 13;
     private static final int DEFAULT_VELOCITY = 100;
     private static final int SILENCE_MIDI_NOTE = -1;
@@ -14,15 +15,16 @@ public class XylophonePlayer implements IXylophonePlayer {
     public XylophonePlayer() {
         try {
             synth = MidiSystem.getSynthesizer();
-            synth.open();
-
-            Soundbank sb = synth.getDefaultSoundbank();
-            if (sb != null) {
-                synth.loadAllInstruments(sb);
+            if (!synth.isOpen()) {
+                synth.open();
             }
 
-            channel = synth.getChannels()[0];
-            channel.programChange(XYLOPHONE_MIDI_PROGRAM);
+            if (synth.getChannels() != null && synth.getChannels().length > 0) {
+                channel = synth.getChannels()[0];
+                channel.programChange(XYLOPHONE_MIDI_PROGRAM);
+            } else {
+                System.err.println("No MIDI channels available for XylophonePlayer!");
+            }
         } catch (MidiUnavailableException e) {
             e.printStackTrace();
         }
@@ -84,53 +86,76 @@ public class XylophonePlayer implements IXylophonePlayer {
             return;
         }
 
+        if (scorePlayingThread != null && scorePlayingThread.isAlive()) {
+            System.out.println("XylophonePlayer: Stopping previous score playback.");
+            scorePlayingThread.interrupt();
+            try {
+                scorePlayingThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         System.out.println("XylophonePlayer starting to play score...");
-        new Thread(() -> {
-            for (IScoreEvent event : scoreEvents) {
-                if (Thread.currentThread().isInterrupted()) {
-                    System.out.println("XylophonePlayer playback thread interrupted, stopping score.");
-                    break;
-                }
-
-                int midiNote = event.getMidiNote();
-                long durationMs = (long) (event.getDurationSeconds() * 1000);
-
-                if (midiNote != SILENCE_MIDI_NOTE) {
-                    playNote(midiNote);
-                    try {
-                        Thread.sleep(durationMs);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.err.println("XylophonePlayer playback interrupted during note.");
-                        stopNote(midiNote);
+        scorePlayingThread = new Thread(() -> {
+            try {
+                for (IScoreEvent event : scoreEvents) {
+                    if (Thread.currentThread().isInterrupted()) {
+                        System.out.println("XylophonePlayer playback thread interrupted, stopping score.");
+                        channel.allNotesOff();
                         break;
                     }
-                    stopNote(midiNote);
-                } else {
-                    if (durationMs > 0) {
+
+                    int midiNote = event.getMidiNote();
+                    long durationMs = (long) (event.getDurationSeconds() * 1000);
+
+                    if (midiNote != SILENCE_MIDI_NOTE) {
+                        playNote(midiNote);
                         try {
                             Thread.sleep(durationMs);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            System.err.println("XylophonePlayer playback interrupted during silence.");
+                            System.err.println("XylophonePlayer playback interrupted during note hold.");
+                            stopNote(midiNote);
                             break;
+                        }
+                        stopNote(midiNote);
+                    } else {
+                        if (durationMs > 0) {
+                            try {
+                                Thread.sleep(durationMs);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                System.err.println("XylophonePlayer playback interrupted during silence.");
+                                break;
+                            }
                         }
                     }
                 }
+            } finally {
+                System.out.println("XylophonePlayer finished playing score or was interrupted.");
             }
-            System.out.println("XylophonePlayer finished playing score.");
-        }).start();
+        });
+        scorePlayingThread.setDaemon(true);
+        scorePlayingThread.start();
     }
 
     @Override
     public void close() {
-        if (synth != null && synth.isOpen()) {
-            if (channel != null) {
-                channel.allNotesOff();
-            }
-            synth.close();
-            System.out.println("XylophonePlayer synthesizer closed.");
+        System.out.println("XylophonePlayer.close() called. Stopping notes and interrupting score thread.");
+        if (channel != null) {
+            channel.allNotesOff();
         }
+        if (scorePlayingThread != null && scorePlayingThread.isAlive()) {
+            scorePlayingThread.interrupt();
+            try {
+                scorePlayingThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            scorePlayingThread = null;
+        }
+        System.out.println("XylophonePlayer resources cleaned. Synthesizer remains open.");
     }
 
     @Override

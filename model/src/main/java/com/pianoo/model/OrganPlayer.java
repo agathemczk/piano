@@ -9,6 +9,7 @@ public class OrganPlayer implements IOrganPlayer {
     private final Set<Integer> activeNotes = new HashSet<>();
     private Synthesizer synth;
     private MidiChannel channel;
+    private volatile Thread scorePlayingThread = null; // Thread for score playback
 
     private static final int CHURCH_ORGAN_INSTRUMENT = 19;
     private static final int DEFAULT_VELOCITY = 100;
@@ -17,7 +18,10 @@ public class OrganPlayer implements IOrganPlayer {
     public OrganPlayer() {
         try {
             synth = MidiSystem.getSynthesizer();
-            synth.open();
+            // Keep synth open until application exit or explicit global cleanup
+            if (!synth.isOpen()) {
+                synth.open();
+            }
             if (synth.getChannels() != null && synth.getChannels().length > 0) {
                 channel = synth.getChannels()[0];
                 channel.programChange(CHURCH_ORGAN_INSTRUMENT);
@@ -37,6 +41,7 @@ public class OrganPlayer implements IOrganPlayer {
         }
     }
 
+    @Override
     public void playNote(int midiNote) {
         playNote(midiNote, DEFAULT_VELOCITY);
     }
@@ -51,13 +56,15 @@ public class OrganPlayer implements IOrganPlayer {
 
     @Override
     public int getMidiNote(final int baseOctave, final int key) {
-        System.out.println("OrganPlayer.getMidiNote() called with baseOctave: " + baseOctave + ", key: " + key + "");
         return baseOctave * 12 + key;
     }
 
     @Override
     public void setInstrument(final String instrument) {
-
+        System.out.println("OrganPlayer instrument is fixed. Call to setInstrument with '" + instrument + "' ignored.");
+        if (channel != null && channel.getProgram() != CHURCH_ORGAN_INSTRUMENT) {
+            channel.programChange(CHURCH_ORGAN_INSTRUMENT);
+        }
     }
 
     @Override
@@ -135,6 +142,7 @@ public class OrganPlayer implements IOrganPlayer {
         return isUpperKeyboard ? baseMidiNote + 12 : baseMidiNote - 12;
     }
 
+    @Override
     public void playScore(List<IScoreEvent> scoreEvents) {
         if (channel == null) {
             System.err.println("Cannot play score on Organ, MIDI channel is not available.");
@@ -145,56 +153,80 @@ public class OrganPlayer implements IOrganPlayer {
             return;
         }
 
+        if (scorePlayingThread != null && scorePlayingThread.isAlive()) {
+            System.out.println("OrganPlayer: Stopping previous score playback.");
+            scorePlayingThread.interrupt();
+            try {
+                scorePlayingThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         System.out.println("OrganPlayer starting to play score...");
-        new Thread(() -> {
-            for (IScoreEvent event : scoreEvents) {
-                if (Thread.currentThread().isInterrupted()) {
-                    System.out.println("OrganPlayer playback thread interrupted, stopping score.");
-                    break;
-                }
-
-                int midiNote = event.getMidiNote();
-                long durationMs = (long) (event.getDurationSeconds() * 1000);
-
-                if (midiNote != SILENCE_MIDI_NOTE) {
-                    playNote(midiNote, DEFAULT_VELOCITY);
-                    try {
-                        Thread.sleep(durationMs);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.err.println("OrganPlayer playback interrupted during note.");
-                        stopNote(midiNote);
+        scorePlayingThread = new Thread(() -> {
+            try {
+                for (IScoreEvent event : scoreEvents) {
+                    if (Thread.currentThread().isInterrupted()) {
+                        System.out.println("OrganPlayer playback thread interrupted, stopping score.");
+                        channel.allNotesOff();
                         break;
                     }
-                    stopNote(midiNote);
-                } else {
-                    if (durationMs > 0) {
+
+                    int midiNote = event.getMidiNote();
+                    long durationMs = (long) (event.getDurationSeconds() * 1000);
+
+                    if (midiNote != SILENCE_MIDI_NOTE) {
+                        playNote(midiNote);
                         try {
                             Thread.sleep(durationMs);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            System.err.println("OrganPlayer playback interrupted during silence.");
+                            System.err.println("OrganPlayer playback interrupted during note hold.");
+                            stopNote(midiNote);
                             break;
+                        }
+                        stopNote(midiNote);
+                    } else {
+                        if (durationMs > 0) {
+                            try {
+                                Thread.sleep(durationMs);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                System.err.println("OrganPlayer playback interrupted during silence.");
+                                break;
+                            }
                         }
                     }
                 }
+            } finally {
+                System.out.println("OrganPlayer finished playing score or was interrupted.");
             }
-            System.out.println("OrganPlayer finished playing score.");
-        }).start();
+        });
+        scorePlayingThread.setDaemon(true);
+        scorePlayingThread.start();
     }
 
+    @Override
     public void close() {
-        if (synth != null && synth.isOpen()) {
-            if (channel != null) {
-                channel.allNotesOff();
-            }
-            synth.close();
-            System.out.println("OrganPlayer synthesizer closed.");
+        System.out.println("OrganPlayer.close() called. Stopping notes and interrupting score thread.");
+        if (channel != null) {
+            channel.allNotesOff();
         }
+        if (scorePlayingThread != null && scorePlayingThread.isAlive()) {
+            scorePlayingThread.interrupt();
+            try {
+                scorePlayingThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            scorePlayingThread = null;
+        }
+        System.out.println("OrganPlayer resources cleaned. Synthesizer remains open.");
     }
 
     @Override
     public void addEffect() {
-
+        System.out.println("addEffect not implemented in OrganPlayer.");
     }
 }
