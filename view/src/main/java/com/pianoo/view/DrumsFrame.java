@@ -1,13 +1,20 @@
 package com.pianoo.view;
 
+import com.pianoo.controller.IController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class DrumsFrame extends JPanel implements IDrumsFrame {
 
+public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
     private IMenuNavigationListener listener;
+    private IController controller;
     private final HashMap<String, DrumComponent> drums = new HashMap<>();
     private String hitDrum = null;
     private boolean kickPedalPressed = false;
@@ -17,7 +24,19 @@ public class DrumsFrame extends JPanel implements IDrumsFrame {
         setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
+        topPanel.setOpaque(false);// Configuration pour la détection des touches
+
+        setFocusable(true);
+        requestFocusInWindow();
+        addKeyListener(this);
+
+        // Maintien du focus
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                requestFocusInWindow();
+            }
+        });
 
         // Dans le constructeur XylophoneFrame, après la création de topPanel
 
@@ -88,6 +107,12 @@ public class DrumsFrame extends JPanel implements IDrumsFrame {
                     if (drum.contains(scaledPoint)) {
                         hitDrum = drum.label;
                         if (drum.isKick) kickPedalPressed = true;
+
+                        // Ajoutez ces trois lignes ici
+                        if (controller != null && hitDrum != null) {
+                            controller.onDrumHit(hitDrum);
+                        }
+
                         repaint();
                         new Timer(120, evt -> {
                             hitDrum = null;
@@ -300,5 +325,69 @@ public class DrumsFrame extends JPanel implements IDrumsFrame {
                 return Math.abs(dx) <= width / 2 && Math.abs(dy) <= height / 2;
             }
         }
+    }
+
+
+    @Override
+    public void keyTyped(final KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_B:  // Grosse caisse (Bass/Kick drum)
+                hitDrum = "kick";
+                System.out.println("Kick pressed");
+                kickPedalPressed = true;
+                break;
+            case KeyEvent.VK_S:  // Caisse claire (Snare)
+                hitDrum = "snare";
+                break;
+            case KeyEvent.VK_H:  // Hi-hat
+                hitDrum = "hihat1";
+                break;
+            case KeyEvent.VK_T:  // Tom alto
+                hitDrum = "tom1";
+                break;
+            case KeyEvent.VK_Y:  // Tom medium
+                hitDrum = "tom2";
+                break;
+            case KeyEvent.VK_F:  // Floor tom (Tom basse)
+                hitDrum = "floorTom";
+                break;
+            case KeyEvent.VK_R:  // Ride
+                hitDrum = "ride";
+                break;
+            case KeyEvent.VK_C:  // Crash
+                hitDrum = "crash";
+                break;
+        }
+
+        if (controller != null && hitDrum != null) {
+            controller.onDrumHit(hitDrum);
+        }
+
+        repaint();
+
+        // Vous devriez ajouter ici la partie qui joue le son
+        // Si vous avez un contrôleur, appelez la méthode appropriée
+        // Par exemple: controller.playDrum(hitDrum);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Réinitialiser l'état des éléments après un court délai
+        new Timer(120, evt -> {
+            hitDrum = null;
+            kickPedalPressed = false;
+            repaint();
+            ((Timer) evt.getSource()).stop();
+        }).start();
+    }
+
+    @Override
+    public void setController(final IController controller) {
+        this.controller = controller;
     }
 }
