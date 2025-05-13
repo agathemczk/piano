@@ -1,8 +1,8 @@
 package com.pianoo.model;
 
-import java.util.Set;
+import java.util.List;
 
-public interface IOrganPlayer {
+public interface IOrganPlayer extends IMusicPlayer {
     void playNote(int midiNote, int velocity);
 
     void stopNote(int midiNote);

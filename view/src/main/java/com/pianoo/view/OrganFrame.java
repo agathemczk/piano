@@ -46,8 +46,15 @@ public class OrganFrame extends JPanel implements IOrganFrame, KeyListener {
         // Créer le bouton de lecture
         ReadButton readButton = new ReadButton();
         readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+            // boolean isPlaying = readButton.isPlaying(); // Plus forcément utile ici
+            // System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée")); // Log ancien
+            if (controller != null) {
+                System.out.println("OrganFrame: ReadButton cliqué, appel de controller.onReadScoreRequested()");
+                controller.onReadScoreRequested();
+            } else {
+                System.err.println("OrganFrame: Controller non initialisé lors du clic sur ReadButton.");
+                JOptionPane.showMessageDialog(this, "Erreur : Le contrôleur n'est pas disponible pour lire la partition.", "Erreur Interne", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Sous-panneau central pour les boutons d'enregistrement et de lecture

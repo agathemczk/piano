@@ -53,14 +53,17 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
             System.out.println("reliage au controller prochainement");
         });
 
-// Créer le bouton de lecture
         ReadButton readButton = new ReadButton();
         readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+            if (controller != null) {
+                System.out.println("DrumsFrame: ReadButton cliqué, appel de controller.onReadScoreRequested()");
+                controller.onReadScoreRequested();
+            } else {
+                System.err.println("DrumsFrame: Controller non initialisé lors du clic sur ReadButton.");
+                JOptionPane.showMessageDialog(this, "Erreur : Le contrôleur n'est pas disponible pour lire la partition.", "Erreur Interne", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
-// Sous-panneau central pour les boutons d'enregistrement et de lecture
         JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         mediaButtonsPanel.setOpaque(false);
         mediaButtonsPanel.add(recordButton);

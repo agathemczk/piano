@@ -2,6 +2,7 @@ package com.pianoo.model;
 
 import javax.sound.midi.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class OrganPlayer implements IOrganPlayer {
@@ -11,13 +12,18 @@ public class OrganPlayer implements IOrganPlayer {
 
     private static final int CHURCH_ORGAN_INSTRUMENT = 19;
     private static final int DEFAULT_VELOCITY = 100;
+    private static final int SILENCE_MIDI_NOTE = -1; // Consistent with ScoreReader
 
     public OrganPlayer() {
         try {
             synth = MidiSystem.getSynthesizer();
             synth.open();
-            channel = synth.getChannels()[0];
-            channel.programChange(CHURCH_ORGAN_INSTRUMENT);
+            if (synth.getChannels() != null && synth.getChannels().length > 0) {
+                channel = synth.getChannels()[0];
+                channel.programChange(CHURCH_ORGAN_INSTRUMENT);
+            } else {
+                System.err.println("No MIDI channels available for OrganPlayer!");
+            }
         } catch (MidiUnavailableException e) {
             e.printStackTrace();
         }
@@ -31,6 +37,10 @@ public class OrganPlayer implements IOrganPlayer {
         }
     }
 
+    public void playNote(int midiNote) {
+        playNote(midiNote, DEFAULT_VELOCITY);
+    }
+
     @Override
     public void stopNote(int midiNote) {
         if (channel != null) {
@@ -39,6 +49,16 @@ public class OrganPlayer implements IOrganPlayer {
         }
     }
 
+    @Override
+    public int getMidiNote(final int baseOctave, final int key) {
+        System.out.println("OrganPlayer.getMidiNote() called with baseOctave: " + baseOctave + ", key: " + key + "");
+        return baseOctave * 12 + key;
+    }
+
+    @Override
+    public void setInstrument(final String instrument) {
+
+    }
 
     @Override
     public boolean isNoteActive(int midiNote) {
@@ -113,5 +133,68 @@ public class OrganPlayer implements IOrganPlayer {
     @Override
     public int adjustMidiNoteForKeyboard(int baseMidiNote, boolean isUpperKeyboard) {
         return isUpperKeyboard ? baseMidiNote + 12 : baseMidiNote - 12;
+    }
+
+    public void playScore(List<IScoreEvent> scoreEvents) {
+        if (channel == null) {
+            System.err.println("Cannot play score on Organ, MIDI channel is not available.");
+            return;
+        }
+        if (scoreEvents == null || scoreEvents.isEmpty()) {
+            System.out.println("No score events to play on Organ.");
+            return;
+        }
+
+        System.out.println("OrganPlayer starting to play score...");
+        new Thread(() -> {
+            for (IScoreEvent event : scoreEvents) {
+                if (Thread.currentThread().isInterrupted()) {
+                    System.out.println("OrganPlayer playback thread interrupted, stopping score.");
+                    break;
+                }
+
+                int midiNote = event.getMidiNote();
+                long durationMs = (long) (event.getDurationSeconds() * 1000);
+
+                if (midiNote != SILENCE_MIDI_NOTE) {
+                    playNote(midiNote, DEFAULT_VELOCITY);
+                    try {
+                        Thread.sleep(durationMs);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("OrganPlayer playback interrupted during note.");
+                        stopNote(midiNote);
+                        break;
+                    }
+                    stopNote(midiNote);
+                } else {
+                    if (durationMs > 0) {
+                        try {
+                            Thread.sleep(durationMs);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.err.println("OrganPlayer playback interrupted during silence.");
+                            break;
+                        }
+                    }
+                }
+            }
+            System.out.println("OrganPlayer finished playing score.");
+        }).start();
+    }
+
+    public void close() {
+        if (synth != null && synth.isOpen()) {
+            if (channel != null) {
+                channel.allNotesOff();
+            }
+            synth.close();
+            System.out.println("OrganPlayer synthesizer closed.");
+        }
+    }
+
+    @Override
+    public void addEffect() {
+
     }
 }

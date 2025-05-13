@@ -39,4 +39,9 @@ public interface IController {
     void onNotePlayed(String note);
 
     void onDrumHit(String drumType);
+
+    /**
+     * Called when the user requests to read and play a score from any instrument view.
+     */
+    void onReadScoreRequested();
 }

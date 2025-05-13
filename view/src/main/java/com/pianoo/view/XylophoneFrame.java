@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import javax.swing.JOptionPane;
 
 public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListener {
 
@@ -21,7 +22,7 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
 
 
 
-    private final JPanel xylophonePanel;
+    private final JPanel xylophonePanel = null;
     private IMenuNavigationListener listener;
     private IController controller;
     private final List<JButton> noteButtons = new ArrayList<>();
@@ -40,13 +41,10 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
             }
         });
 
-        // Haut : barre d'outils
         JPanel topPanel = createTopPanel();
         add(topPanel, BorderLayout.NORTH);
 
-        // Centre : xylophone
-        xylophonePanel = createXylophonePanel();
-        add(xylophonePanel, BorderLayout.CENTER);
+        add(createXylophonePanel(), BorderLayout.CENTER);
     }
 
     private JPanel createTopPanel() {
@@ -61,12 +59,18 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
         recordButton.setOnClickListener(() -> {
             boolean isRecording = recordButton.isRecording();
             System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
+            // Future logique d'enregistrement
         });
 
         ReadButton readButton = new ReadButton();
         readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+            if (controller != null) {
+                System.out.println("XylophoneFrame: ReadButton cliqué, appel de controller.onReadScoreRequested()");
+                controller.onReadScoreRequested();
+            } else {
+                System.err.println("XylophoneFrame: Controller non initialisé lors du clic sur ReadButton.");
+                JOptionPane.showMessageDialog(this, "Erreur : Le contrôleur n'est pas disponible pour lire la partition.", "Erreur Interne", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         mediaButtonsPanel.add(recordButton);
