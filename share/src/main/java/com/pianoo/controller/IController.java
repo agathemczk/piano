@@ -30,4 +30,5 @@ public interface IController {
     void setKeyboardMapping(IKeyboardMapping keyboardMapping);
 
     void onNotePlayed(String note);
+    void onDrumHit(String drumType);
 }

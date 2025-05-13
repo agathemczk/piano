@@ -4,12 +4,14 @@ import com.pianoo.model.ICatPlay;
 import com.pianoo.model.IMusicPlayer;
 import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.model.IXylophonePlayer;
+import com.pianoo.model.IDrumsPlayer;
 import com.pianoo.view.*;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
 
     private final IMusicPlayer musicPlayer;
     private final IXylophonePlayer xylophonePlayer;
+    private final IDrumsPlayer drumsPlayer;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
@@ -22,9 +24,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IMainMenu mainMenu;
     private IKeyboardMapping keyboardMapping;
 
-    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
-                      IOrganFrame organFrame, IXylophoneFrame xylophoneFrame,
-                      IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
+    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
+                      IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
@@ -35,6 +36,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
+        this.drumsPlayer = drumsPlayer;
         this.catFrame = catFrame;
         this.catPlay = catPlay;
         this.roundCloseButton = roundCloseButton;
@@ -74,10 +76,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         }
     }
 
-    @Override
-    public void onPlayCat() {
-        catPlay.playMeowSound();
-    }
 
     @Override
     public void onReturnMainMenu() {
@@ -124,7 +122,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private void openDrums() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(drumsFrame.getPanel());
-        //drumsFrame.setKeyListener(this);
+        drumsFrame.setController(this);  // Ajoutez cette ligne
         mainMenu.revalidate();
         mainMenu.repaint();
         drumsFrame.getPanel().requestFocusInWindow();
@@ -174,6 +172,16 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         System.out.println("Le xylophone joue la note : " + note);
         // Déléguer la conversion et la logique de jeu au modèle
         xylophonePlayer.playNote(note, xylophoneFrame.getNotes());
+    }
+
+    public void onDrumHit(String drumType) {
+        // Appel au modèle pour jouer le son de batterie
+        drumsPlayer.playDrum(drumType);
+    }
+
+    @Override
+    public void onPlayCat() {
+        catPlay.playMeowSound();
     }
 
     @Override
