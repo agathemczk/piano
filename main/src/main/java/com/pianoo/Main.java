@@ -1,60 +1,44 @@
 package com.pianoo;
-import java.util.Scanner;
+
+import com.pianoo.controller.*;
+import com.pianoo.model.*;
+import com.pianoo.view.MainMenu;
+import com.pianoo.view.IPianoFrame;
+import com.pianoo.view.PianoFrame;
+import com.pianoo.controller.Controller;
+import com.pianoo.view.*;
 
 public class Main {
     public static void main(String[] args) {
-        /*Partition partition = PartitionLoader.chargerPartition("star_wars.txt");
-        partition.afficher();   lire et afficher la partition*/
+        IMusicPlayer musicPlayer = new MusicPlayer();
+        IXylophonePlayer xylophonePlayer = new XylophonePlayer();
+        IDrumsPlayer drumsPlayer = new DrumsPlayer();
+        IOrganPlayer organPlayer = new OrganPlayer();
+        IRecordPlayer recordPlayer = new RecordPlayer();
+        MainMenu mainMenu = new MainMenu();
+        IPianoFrame pianoFrame = new PianoFrame();
+        IOrganFrame organFrame = new OrganFrame();
+        IXylophoneFrame xylophoneFrame = new XylophoneFrame();
+        IVideoGamesFrame videoGamesFrame = new VideoGamesFrame();
+        IDrumsFrame drumsFrame = new DrumsFrame();
+        IRoundCloseButton roundCloseButton = new RoundCloseButton();
+        IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
+        ICatFrame catFrame = new CatFrame();
+        ICatPlay catPlay = new CatPlay();
+        // Dans la méthode main
 
 
-        Application app = new Application();
-        Scanner scanner = new Scanner(System.in);
+        mainMenu.setVisible(true);
 
-        while (true) {
-            System.out.println("\nMenu :");
-            System.out.println("1 - Changer instrument");
-            System.out.println("2 - Jouer note");
-            System.out.println("3 - Commencer un enregistrement");
-            System.out.println("4 - Arrêter l'enregistrement et sauvegarder");
-            System.out.println("5 - Quitter");
 
-            System.out.print("Faites un choix : ");
+        IController controller = new Controller(musicPlayer, xylophonePlayer, drumsPlayer, organPlayer, recordPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, roundCloseButton, keyboardMapping);
+        IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
 
-            int choix;
-            try {
-                choix = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Entrée invalide, veuillez entrer un nombre.");
-                continue;
-            }
 
-            if (choix == 1) {
-                System.out.println("Instruments disponibles : Piano, Xylophone, Orgue, Violon");
-                System.out.print("Choisissez un instrument : ");
-                String instrument = scanner.nextLine();
-                app.choisirInstrument(instrument);
-            }
-            else if (choix == 2) {
-                System.out.print("Entrez une note (ex: C4, A#2) : ");
-                String note = scanner.nextLine();
-                app.jouerNote(note);
-            }
-            else if (choix == 3) {
-                app.commencerEnregistrement();
-            }
-            else if (choix == 4) {
-                System.out.print("Entrez le nom du fichier d'enregistrement : ");
-                String nomFichier = scanner.nextLine();
-                app.arreterEnregistrement(nomFichier);
-            }
-            else if (choix == 5) {
-                System.out.println("Fermeture de l'application...");
-                break;
-            }
-            else {
-                System.out.println("Choix invalide, veuillez entrer un nombre entre 1 et 5.");
-            }
-        }
-        scanner.close();
+        controller.setMainMenu(mainMenu);
+        controller.setPianoFrame(pianoFrame);
+        controller.setXylophoneFrame(xylophoneFrame);
+
+        controller.start();
     }
 }

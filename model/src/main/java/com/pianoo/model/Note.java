@@ -1,26 +1,44 @@
 package com.pianoo.model;
 
-public class Note {
-    private String nom;
-    private int midi;
-    private double duree; // en secondes
+public class Note implements INote {
+    private final int noteValue;
+    private final int octave;
 
-    public Note(String nom, double duree) {
-        this.nom = nom;
-        this.midi = Frequencies.getMidi(nom);
-        this.duree = duree;
-    }
-
-    public int getMidi() {
-        return midi;
-    }
-
-    public int getDureeMs() {
-        return (int) (duree * 1000);
+    public Note(int noteValue, int octave) {
+        this.noteValue = noteValue % 12;
+        this.octave = octave;
     }
 
     @Override
-    public String toString() {
-        return nom + " (MIDI: " + midi + ") - " + duree + "s";
+    public int getNoteValue() {
+        return noteValue;
+    }
+
+    @Override
+    public int getOctave() {
+        return octave;
+    }
+
+    @Override
+    public int getMidiNote() {
+        return (octave + 1) * 12 + noteValue;
+    }
+
+    @Override
+    public boolean isBlackKey() {
+        return noteValue == 1 || noteValue == 3 || noteValue == 6 || noteValue == 8 || noteValue == 10;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Note note = (Note) o;
+        return noteValue == note.noteValue && octave == note.octave;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * noteValue + octave;
     }
 }

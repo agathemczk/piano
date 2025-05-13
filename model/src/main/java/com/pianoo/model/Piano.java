@@ -1,4 +1,6 @@
 package com.pianoo.model;
 
-public class Piano {
+public class Piano implements IPiano {
+
 }
+

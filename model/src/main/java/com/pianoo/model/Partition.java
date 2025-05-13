@@ -1,30 +1,17 @@
 package com.pianoo.model;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Partition implements IPartition {
 
-public class Partition {
-    private List<Note> notes;
-
-    public Partition() {
-        this.notes = new ArrayList<>();
+    @Override
+    public void addNote(final INote note) {
     }
 
-    public void ajouterNote(Note note) {
-        notes.add(note);
+    @Override
+    public void displayPartition() {
     }
 
-    public void afficher() {
-        for (Note note : notes) {
-            System.out.println(note);
-        }
-    }
+    @Override
+    public void playPartition() {
 
-    public void jouer() {
-        MusicPlayer player = new MusicPlayer();
-        for (Note note : notes) {
-            player.jouerNote(note.getMidi(), note.getDureeMs());
-        }
-        player.fermer();
     }
 }

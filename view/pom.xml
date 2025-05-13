@@ -17,6 +17,13 @@
         <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/ressources</directory>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
         <dependency>
