@@ -5,6 +5,15 @@ import com.pianoo.view.*;
 
 public interface IController {
 
+    void onOrganKeyPressed(int midiNote);
+
+    void onOrganKeyReleased(int midiNote);
+
+    int getMidiNoteFromKeyName(String noteName);
+    boolean isNoteActive(int midiNote);
+    int adjustMidiNoteForKeyboard(int baseMidiNote, boolean isUpperKeyboard);
+    int getMidiNoteForKeyCode(int keyCode);
+
     void onPlayCat();
 
     void start();

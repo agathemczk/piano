@@ -5,6 +5,8 @@ import com.pianoo.model.IMusicPlayer;
 import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.model.IXylophonePlayer;
 import com.pianoo.model.IDrumsPlayer;
+import com.pianoo.model.IOrganPlayer;
+
 import com.pianoo.view.*;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
@@ -12,6 +14,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private final IMusicPlayer musicPlayer;
     private final IXylophonePlayer xylophonePlayer;
     private final IDrumsPlayer drumsPlayer;
+    private final IOrganPlayer organPlayer;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
@@ -24,16 +27,16 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IMainMenu mainMenu;
     private IKeyboardMapping keyboardMapping;
 
-    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
+    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer, IOrganPlayer organPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
                       IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
         this.musicPlayer = musicPlayer;
         this.mainMenu = mainMenu;
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
+        this.organPlayer = organPlayer;
         this.xylophoneFrame = xylophoneFrame;
         this.xylophonePlayer = xylophonePlayer;
-        
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
         this.drumsPlayer = drumsPlayer;
@@ -113,7 +116,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private void openOrgan() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(organFrame.getPanel());
-        //organFrame.setKeyListener(this);
+        organFrame.setController(this);
         mainMenu.revalidate();
         mainMenu.repaint();
         organFrame.getPanel().requestFocusInWindow();
@@ -122,7 +125,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private void openDrums() {
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(drumsFrame.getPanel());
-        drumsFrame.setController(this);  // Ajoutez cette ligne
+        drumsFrame.setController(this);
         mainMenu.revalidate();
         mainMenu.repaint();
         drumsFrame.getPanel().requestFocusInWindow();
@@ -178,6 +181,37 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         // Appel au modèle pour jouer le son de batterie
         drumsPlayer.playDrum(drumType);
     }
+
+    @Override
+    public void onOrganKeyReleased(int midiNote) {
+        organPlayer.stopNote(midiNote);
+    }
+
+    @Override
+    public void onOrganKeyPressed(int midiNote) {
+        organPlayer.playNote(midiNote, 100); // 100 est la vélocité par défaut
+    }
+
+    @Override
+    public int getMidiNoteFromKeyName(String noteName) {
+        return organPlayer.getMidiNoteFromKeyName(noteName);
+    }
+
+    @Override
+    public boolean isNoteActive(int midiNote) {
+        return organPlayer.isNoteActive(midiNote);
+    }
+
+    @Override
+    public int adjustMidiNoteForKeyboard(int baseMidiNote, boolean isUpperKeyboard) {
+        return organPlayer.adjustMidiNoteForKeyboard(baseMidiNote, isUpperKeyboard);
+    }
+
+    @Override
+    public int getMidiNoteForKeyCode(int keyCode) {
+        return organPlayer.getMidiNoteForKeyCode(keyCode);
+    }
+
 
     @Override
     public void onPlayCat() {
