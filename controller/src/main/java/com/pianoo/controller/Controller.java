@@ -6,6 +6,7 @@ import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.model.IXylophonePlayer;
 import com.pianoo.model.IDrumsPlayer;
 import com.pianoo.model.IOrganPlayer;
+import com.pianoo.model.IPianoPlayer;
 import com.pianoo.model.IScoreReader;
 import com.pianoo.model.IScoreEvent;
 
@@ -21,6 +22,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private final IXylophonePlayer xylophonePlayer;
     private final IDrumsPlayer drumsPlayer;
     private final IOrganPlayer organPlayer;
+    private final IPianoPlayer pianoPlayer;
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
@@ -35,7 +37,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private final IScoreReader scoreReader;
     private final IScoreChooserView scoreChooserView;
 
-    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer, IOrganPlayer organPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
+    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer, IOrganPlayer organPlayer, IPianoPlayer pianoPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
                       IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
                       IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping, IScoreReader scoreReader, IScoreChooserView scoreChooserView) {
         this.musicPlayer = musicPlayer;
@@ -43,6 +45,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
         this.organPlayer = organPlayer;
+        this.pianoPlayer = pianoPlayer;
         this.xylophoneFrame = xylophoneFrame;
         this.xylophonePlayer = xylophonePlayer;
         this.videoGamesFrame = videoGamesFrame;
@@ -94,6 +97,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         if (organPlayer != null) organPlayer.close();
         if (xylophonePlayer != null) xylophonePlayer.close();
         if (drumsPlayer != null) drumsPlayer.close();
+        if (pianoPlayer != null) pianoPlayer.close();
         catPlay.stopSound();
         openMainMenu();
     }
@@ -259,7 +263,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
             java.awt.Component currentContent = mainMenu.getContentPane().getComponent(0);
 
             if (currentContent == pianoFrame.getPanel()) {
-                System.out.println("Piano score reading not yet fully wired for specific player.");
+                currentPlayerToPlayScore = pianoPlayer;
             } else if (currentContent == organFrame.getPanel()) {
                 currentPlayerToPlayScore = organPlayer;
             } else if (currentContent == xylophoneFrame.getPanel()) {

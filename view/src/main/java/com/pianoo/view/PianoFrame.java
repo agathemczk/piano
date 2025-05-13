@@ -73,8 +73,9 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
 // Créer le bouton de lecture
         ReadButton readButton = new ReadButton();
         readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+            if (controller != null) {
+                controller.onReadScoreRequested();
+            }
         });
 
 // Sous-panneau central pour les boutons d'enregistrement et de lecture
