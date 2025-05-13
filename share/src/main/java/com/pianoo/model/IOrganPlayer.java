@@ -11,6 +11,8 @@ public interface IOrganPlayer {
 
     int getMidiNoteFromKeyName(String noteName);
 
+    String getNoteNameFromMidi(int midiNote);
+
     int getMidiNoteForKeyCode(int keyCode);
 
     int adjustMidiNoteForKeyboard(int baseMidiNote, boolean isUpperKeyboard);

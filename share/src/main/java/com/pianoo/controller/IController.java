@@ -16,15 +16,15 @@ public interface IController {
 
     void onPlayCat();
 
+    void toggleRecording();
+
+    void showMainMenu();
+
     void start();
 
     void stop();
 
-    IView getView();
-
-    void setView(IView view);
-
-    void onKeyPressed(int key, int octave);
+    void onKeyPressed(int noteValue, int octave);
 
     void onKeyReleased(int key, int octave);
 

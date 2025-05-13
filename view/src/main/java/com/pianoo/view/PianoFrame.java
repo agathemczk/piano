@@ -8,15 +8,16 @@ import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
+public class PianoFrame extends JPanel implements IPianoFrame, KeyListener, IMenuNavigationListener {
 
     private final JPanel pianoPanel;
-    private IMenuNavigationListener listener;
+    private IMenuNavigationListener menuNavigationListener;
     private final JComboBox<Integer> octaveSelector;
     private final int WHITE_KEYS_PER_OCTAVE = 7;
     private final int REFERENCE_OCTAVE = 4;
     private IController controller;
-
+    private RecordButton recordButton;
+    private TopPanel topPanel;
 
     private class NoteKey {
         final int note;
@@ -47,64 +48,10 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
-
         // Sélecteur d'octaves à gauche
         Integer[] octaves = new Integer[]{2, 3, 4, 5, 6, 7};
         octaveSelector = new JComboBox<>(octaves);
         octaveSelector.setSelectedItem(4);
-        topPanel.add(octaveSelector, BorderLayout.WEST);
-
-
-/// Panneau principal pour les boutons avec BorderLayout
-        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
-        buttonPanel.setBackground(new Color(230, 230, 230));
-        buttonPanel.setOpaque(true);
-
-// Créer le bouton d'enregistrement
-        RecordButton recordButton = new RecordButton();
-        recordButton.setOnClickListener(() -> {
-            boolean isRecording = recordButton.isRecording();
-            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
-            System.out.println("reliage au controller prochainement");
-        });
-
-// Créer le bouton de lecture
-        ReadButton readButton = new ReadButton();
-        readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
-        });
-
-// Sous-panneau central pour les boutons d'enregistrement et de lecture
-        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        mediaButtonsPanel.setOpaque(false);
-        mediaButtonsPanel.add(recordButton);
-        mediaButtonsPanel.add(readButton);
-
-// Bouton de retour au menu principal
-        RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.setListener(() -> {
-            if (listener != null) {
-                listener.onReturnMainMenu();
-            }
-        });
-
-// Panneau pour le bouton de fermeture
-        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        closeButtonPanel.setOpaque(false);
-        closeButtonPanel.add(closeButton);
-
-// Ajouter les panneaux au panneau principal
-        buttonPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
-        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
-
-// Ajouter le panneau de boutons au panneau supérieur
-        topPanel.add(buttonPanel, BorderLayout.CENTER);
-
-// Ajouter le panneau supérieur au conteneur principal
-        add(topPanel, BorderLayout.NORTH);
 
         // ===== Piano centré =====
 
@@ -163,8 +110,55 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
         });
     }
 
+    @Override
     public void setListener(IMenuNavigationListener listener) {
-        this.listener = listener;
+        this.menuNavigationListener = listener;
+        if (this.controller != null && this.topPanel == null) {
+            initializeTopPanel();
+        }
+    }
+
+    @Override
+    public void setController(final IController controller) {
+        this.controller = controller;
+        if (this.menuNavigationListener != null || this instanceof IMenuNavigationListener) {
+            initializeTopPanel();
+        }
+    }
+
+    private void initializeTopPanel() {
+        IMenuNavigationListener actualListener = (this.menuNavigationListener != null) ? this.menuNavigationListener : this;
+        this.topPanel = new TopPanel(this.controller, actualListener);
+        this.recordButton = this.topPanel.getRecordButtonInstance();
+
+        JPanel northPanelContainer = new JPanel(new BorderLayout());
+        northPanelContainer.setOpaque(false);
+        northPanelContainer.add(this.octaveSelector, BorderLayout.WEST);
+        northPanelContainer.add(this.topPanel, BorderLayout.CENTER);
+
+        add(northPanelContainer, BorderLayout.NORTH);
+        revalidate();
+        repaint();
+    }
+
+    public void updateRecordButtonState(boolean isRecording) {
+        if (recordButton != null) {
+            recordButton.setVisualRecordingState(isRecording);
+        }
+    }
+
+    @Override
+    public void onReturnMainMenu() {
+        if (menuNavigationListener != null && menuNavigationListener != this) {
+            menuNavigationListener.onReturnMainMenu();
+        } else if (controller != null) {
+            controller.showMainMenu();
+        }
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 
     private void drawPiano(Graphics g, int octaves) {
@@ -248,11 +242,6 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
     }
 
     @Override
-    public JPanel getPanel() {
-        return this;
-    }
-
-    @Override
     public void addKeyListenerToFrame(KeyListener listener) {
         this.addKeyListener(listener);
         pianoPanel.addKeyListener(listener);
@@ -260,11 +249,6 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener {
 
     @Override
     public void setKeyListener(final IController controller) {
-        this.controller = controller;
-    }
-
-    @Override
-    public void setController(final IController controller) {
         this.controller = controller;
     }
 

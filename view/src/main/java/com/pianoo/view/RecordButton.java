@@ -1,3 +1,4 @@
+// view/src/main/java/com/pianoo/view/RecordButton.java
 package com.pianoo.view;
 
 import javax.swing.*;
@@ -6,7 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class RecordButton extends JPanel {
-    private boolean isRecording = false;
+    private boolean isRecording = false; // This field remains for visual state
     private Runnable onClickListener;
 
     public RecordButton() {
@@ -16,7 +17,6 @@ public class RecordButton extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                toggleRecording();
                 if (onClickListener != null) {
                     onClickListener.run();
                 }
@@ -25,13 +25,13 @@ public class RecordButton extends JPanel {
             @Override
             public void mouseEntered(MouseEvent e) {
                 setCursor(new Cursor(Cursor.HAND_CURSOR));
-                repaint();
+                // repaint(); // Repainting on hover can be kept if desired
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                repaint();
+                // repaint(); // Repainting on hover can be kept if desired
             }
         });
     }
@@ -44,9 +44,11 @@ public class RecordButton extends JPanel {
         return isRecording;
     }
 
-    private void toggleRecording() {
-        isRecording = !isRecording;
-        repaint();
+    public void setVisualRecordingState(boolean state) {
+        if (this.isRecording != state) {
+            this.isRecording = state;
+            repaint();
+        }
     }
 
     @Override
@@ -59,7 +61,7 @@ public class RecordButton extends JPanel {
         int height = getHeight();
 
         // Fond du bouton
-        g2d.setColor(isRecording ? Color.RED : Color.LIGHT_GRAY);
+        g2d.setColor(isRecording ? Color.RED : Color.LIGHT_GRAY); // Visual state based on isRecording field
         g2d.fillRoundRect(2, 2, width - 4, height - 4, 8, 8);
 
         // Bordure
@@ -74,9 +76,9 @@ public class RecordButton extends JPanel {
         FontMetrics fm = g2d.getFontMetrics();
         String text = "REC";
         int textWidth = fm.stringWidth(text);
-        int textHeight = fm.getHeight();
+        // int textHeight = fm.getHeight(); // Not strictly needed for centering y here
         int x = (width - textWidth) / 2;
-        int y = (height - textHeight) / 2 + fm.getAscent();
+        int y = (height - fm.getAscent() - fm.getDescent()) / 2 + fm.getAscent(); // Better y-centering for text
 
         g2d.drawString(text, x, y);
         g2d.dispose();

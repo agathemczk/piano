@@ -22,4 +22,6 @@ public interface IPianoFrame {
     void highlightKey(int note, int octave);
 
     void resetKey(int note, int octave);
+
+    void updateRecordButtonState(boolean isRecording);
 }

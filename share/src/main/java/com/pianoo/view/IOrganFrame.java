@@ -10,4 +10,6 @@ public interface IOrganFrame {
     void setListener(IMenuNavigationListener listener);
     void setController(IController controller);
     void setKeyListener(IController controller);
+
+    void updateRecordButtonState(boolean isRecording);
 }

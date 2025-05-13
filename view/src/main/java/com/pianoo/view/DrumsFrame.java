@@ -6,14 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 
 public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
-    private IMenuNavigationListener listener;
+    private IMenuNavigationListener menuNavigationListener;
     private IController controller;
     private final HashMap<String, DrumComponent> drums = new HashMap<>();
     private String hitDrum = null;
@@ -23,14 +18,10 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
     public DrumsFrame() {
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);// Configuration pour la détection des touches
-
         setFocusable(true);
         requestFocusInWindow();
         addKeyListener(this);
 
-        // Maintien du focus
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
@@ -38,56 +29,19 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
             }
         });
 
-        // Dans le constructeur XylophoneFrame, après la création de topPanel
+        JPanel customTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        customTopPanel.setOpaque(false);
 
-/// Panneau principal pour les boutons avec BorderLayout
-        JPanel buttonPanel = new JPanel(new BorderLayout(10, 0));
-        buttonPanel.setBackground(new Color(230, 230, 230));
-        buttonPanel.setOpaque(true);
-
-// Créer le bouton d'enregistrement
-        RecordButton recordButton = new RecordButton();
-        recordButton.setOnClickListener(() -> {
-            boolean isRecording = recordButton.isRecording();
-            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
-            System.out.println("reliage au controller prochainement");
-        });
-
-// Créer le bouton de lecture
-        ReadButton readButton = new ReadButton();
-        readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
-        });
-
-// Sous-panneau central pour les boutons d'enregistrement et de lecture
-        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        mediaButtonsPanel.setOpaque(false);
-        mediaButtonsPanel.add(recordButton);
-        mediaButtonsPanel.add(readButton);
-
-// Bouton de retour au menu principal
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
-            if (listener != null) {
-                listener.onReturnMainMenu();
+            if (menuNavigationListener != null) {
+                menuNavigationListener.onReturnMainMenu();
+            } else if (controller != null) {
+                controller.showMainMenu();
             }
         });
-
-// Panneau pour le bouton de fermeture
-        JPanel closeButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        closeButtonPanel.setOpaque(false);
-        closeButtonPanel.add(closeButton);
-
-// Ajouter les panneaux au panneau principal
-        buttonPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
-        buttonPanel.add(closeButtonPanel, BorderLayout.EAST);
-
-// Ajouter le panneau de boutons au panneau supérieur
-        topPanel.add(buttonPanel, BorderLayout.CENTER);
-
-// Ajouter le panneau supérieur au conteneur principal
-        add(topPanel, BorderLayout.NORTH);
+        customTopPanel.add(closeButton);
+        add(customTopPanel, BorderLayout.NORTH);
 
         setOpaque(false);
         addComponentListener(new ComponentAdapter() {
@@ -239,7 +193,62 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
 
     @Override
     public void setListener(IMenuNavigationListener listener) {
-        this.listener = listener;
+        this.menuNavigationListener = listener;
+    }
+
+    @Override
+    public void setController(final IController controller) {
+        this.controller = controller;
+    }
+
+    @Override
+    public void keyTyped(final KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_B:
+                hitDrum = "kick";
+                kickPedalPressed = true;
+                break;
+            case KeyEvent.VK_S:
+                hitDrum = "snare";
+                break;
+            case KeyEvent.VK_H:
+                hitDrum = "hihat1";
+                break;
+            case KeyEvent.VK_T:
+                hitDrum = "tom1";
+                break;
+            case KeyEvent.VK_Y:
+                hitDrum = "tom2";
+                break;
+            case KeyEvent.VK_F:
+                hitDrum = "floorTom";
+                break;
+            case KeyEvent.VK_R:
+                hitDrum = "ride";
+                break;
+            case KeyEvent.VK_C:
+                hitDrum = "crash";
+                break;
+        }
+
+        if (controller != null && hitDrum != null) {
+            controller.onDrumHit(hitDrum);
+        }
+        repaint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        new Timer(120, evt -> {
+            hitDrum = null;
+            kickPedalPressed = false;
+            repaint();
+            ((Timer) evt.getSource()).stop();
+        }).start();
     }
 
     static class DrumComponent {
@@ -325,69 +334,5 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
                 return Math.abs(dx) <= width / 2 && Math.abs(dy) <= height / 2;
             }
         }
-    }
-
-
-    @Override
-    public void keyTyped(final KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_B:  // Grosse caisse (Bass/Kick drum)
-                hitDrum = "kick";
-                System.out.println("Kick pressed");
-                kickPedalPressed = true;
-                break;
-            case KeyEvent.VK_S:  // Caisse claire (Snare)
-                hitDrum = "snare";
-                break;
-            case KeyEvent.VK_H:  // Hi-hat
-                hitDrum = "hihat1";
-                break;
-            case KeyEvent.VK_T:  // Tom alto
-                hitDrum = "tom1";
-                break;
-            case KeyEvent.VK_Y:  // Tom medium
-                hitDrum = "tom2";
-                break;
-            case KeyEvent.VK_F:  // Floor tom (Tom basse)
-                hitDrum = "floorTom";
-                break;
-            case KeyEvent.VK_R:  // Ride
-                hitDrum = "ride";
-                break;
-            case KeyEvent.VK_C:  // Crash
-                hitDrum = "crash";
-                break;
-        }
-
-        if (controller != null && hitDrum != null) {
-            controller.onDrumHit(hitDrum);
-        }
-
-        repaint();
-
-        // Vous devriez ajouter ici la partie qui joue le son
-        // Si vous avez un contrôleur, appelez la méthode appropriée
-        // Par exemple: controller.playDrum(hitDrum);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // Réinitialiser l'état des éléments après un court délai
-        new Timer(120, evt -> {
-            hitDrum = null;
-            kickPedalPressed = false;
-            repaint();
-            ((Timer) evt.getSource()).stop();
-        }).start();
-    }
-
-    @Override
-    public void setController(final IController controller) {
-        this.controller = controller;
     }
 }

@@ -11,6 +11,7 @@ public class OrganPlayer implements IOrganPlayer {
 
     private static final int CHURCH_ORGAN_INSTRUMENT = 19;
     private static final int DEFAULT_VELOCITY = 100;
+    private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     public OrganPlayer() {
         try {
@@ -38,7 +39,6 @@ public class OrganPlayer implements IOrganPlayer {
             activeNotes.remove(midiNote);
         }
     }
-
 
     @Override
     public boolean isNoteActive(int midiNote) {
@@ -84,6 +84,16 @@ public class OrganPlayer implements IOrganPlayer {
         }
 
         return 12 * (octave + 3) + baseNote;
+    }
+
+    @Override
+    public String getNoteNameFromMidi(int midiNote) {
+        if (midiNote < 0 || midiNote > 127) {
+            return "InvalidMIDI";
+        }
+        int octave = (midiNote / 12) - 1;
+        int noteIndex = midiNote % 12;
+        return NOTE_NAMES[noteIndex] + octave;
     }
 
     @Override

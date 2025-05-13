@@ -13,6 +13,8 @@ public interface IMusicPlayer {
 
     int getMidiNote(int baseOctave, int key);
 
+    String getNoteName(int noteValue, int octave);
+
     void setInstrument(String instrument);
 
     void close();

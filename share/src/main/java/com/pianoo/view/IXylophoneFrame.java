@@ -12,6 +12,9 @@ public interface IXylophoneFrame {
     void setController(IController controller);
     void highlightNote(int note);
     void resetNote(int note);
-    String[] getNotes(); // Nouvelle méthode
+
+    String[] getNotes();
+
+    void updateRecordButtonState(boolean isRecording);
     void setListener(IMenuNavigationListener listener);
 }

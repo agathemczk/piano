@@ -6,6 +6,7 @@ public class MusicPlayer implements IMusicPlayer {
     private Synthesizer synth;
     private MidiChannel channel;
     private static final int VELOCITY = 80;
+    private static final String[] NOTE_NAMES_ARRAY = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     public MusicPlayer() {
         try {
@@ -30,7 +31,15 @@ public class MusicPlayer implements IMusicPlayer {
     }
 
     @Override
-    public void setInstrument(final String instrument) {
+    public String getNoteName(int noteValue, int octave) {
+        if (noteValue < 0 || noteValue > 11) {
+            return "InvalidNoteValue";
+        }
+        return NOTE_NAMES_ARRAY[noteValue] + octave;
+    }
+
+    @Override
+    public void setInstrument(String instrument) {
     }
 
     @Override

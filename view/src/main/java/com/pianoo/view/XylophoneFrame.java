@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import javax.swing.Timer;
 
-public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListener {
+public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListener, IMenuNavigationListener {
 
     private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] COLORS = {
@@ -19,12 +20,12 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
             Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA
     };
 
-
-
     private final JPanel xylophonePanel;
-    private IMenuNavigationListener listener;
+    private IMenuNavigationListener menuNavigationListener;
     private IController controller;
     private final List<JButton> noteButtons = new ArrayList<>();
+    private RecordButton recordButton;
+    private TopPanel topPanel;
 
     public XylophoneFrame() {
         setLayout(new BorderLayout());
@@ -40,54 +41,8 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
             }
         });
 
-        // Haut : barre d'outils
-        JPanel topPanel = createTopPanel();
-        add(topPanel, BorderLayout.NORTH);
-
-        // Centre : xylophone
         xylophonePanel = createXylophonePanel();
         add(xylophonePanel, BorderLayout.CENTER);
-    }
-
-    private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
-
-        // Boutons média (enregistrement et lecture)
-        JPanel mediaButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        mediaButtonsPanel.setOpaque(false);
-
-        RecordButton recordButton = new RecordButton();
-        recordButton.setOnClickListener(() -> {
-            boolean isRecording = recordButton.isRecording();
-            System.out.println("Enregistrement: " + (isRecording ? "activé" : "désactivé"));
-        });
-
-        ReadButton readButton = new ReadButton();
-        readButton.setOnClickListener(() -> {
-            boolean isPlaying = readButton.isPlaying();
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
-        });
-
-        mediaButtonsPanel.add(recordButton);
-        mediaButtonsPanel.add(readButton);
-
-        // Bouton de fermeture
-        RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.setListener(() -> {
-            if (listener != null) {
-                listener.onReturnMainMenu();
-            }
-        });
-
-        JPanel closePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        closePanel.setOpaque(false);
-        closePanel.add(closeButton);
-
-        topPanel.add(mediaButtonsPanel, BorderLayout.CENTER);
-        topPanel.add(closePanel, BorderLayout.EAST);
-
-        return topPanel;
     }
 
     private JPanel createXylophonePanel() {
@@ -142,6 +97,14 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
         if (controller != null) {
             controller.onNotePlayed(NOTES[noteIndex]);
         }
+
+        highlightNote(noteIndex);
+
+        Timer timer = new Timer(150, (actionEvent) -> {
+            resetNote(noteIndex);
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     @Override
@@ -163,6 +126,21 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     @Override
     public void setController(final IController controller) {
         this.controller = controller;
+        if (this.menuNavigationListener != null) {
+            this.topPanel = new TopPanel(this.controller, this.menuNavigationListener);
+            add(this.topPanel, BorderLayout.NORTH);
+            this.recordButton = this.topPanel.getRecordButtonInstance();
+            revalidate();
+            repaint();
+        } else if (this instanceof IMenuNavigationListener) {
+            this.topPanel = new TopPanel(this.controller, this);
+            add(this.topPanel, BorderLayout.NORTH);
+            this.recordButton = this.topPanel.getRecordButtonInstance();
+            revalidate();
+            repaint();
+        } else {
+            System.err.println("IMenuNavigationListener not set for XylophoneFrame before controller. TopPanel not created.");
+        }
     }
 
     @Override
@@ -180,7 +158,32 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     }
 
     public void setListener(IMenuNavigationListener listener) {
-        this.listener = listener;
+        this.menuNavigationListener = listener;
+        if (this.controller != null && this.topPanel == null) {
+            this.topPanel = new TopPanel(this.controller, this.menuNavigationListener);
+            add(this.topPanel, BorderLayout.NORTH);
+            this.recordButton = this.topPanel.getRecordButtonInstance();
+            revalidate();
+            repaint();
+        }
+    }
+
+    @Override
+    public void onReturnMainMenu() {
+        if (menuNavigationListener != null && menuNavigationListener != this) {
+            menuNavigationListener.onReturnMainMenu();
+        } else {
+            System.out.println("XylophoneFrame: onReturnMainMenu called.");
+            if (controller != null) {
+                // controller.showMainMenu(); // This line will be addressed later
+            }
+        }
+    }
+
+    public void updateRecordButtonState(boolean isRecording) {
+        if (recordButton != null) {
+            recordButton.setVisualRecordingState(isRecording);
+        }
     }
 
     @Override
@@ -189,34 +192,33 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
 
     @Override
     public void keyPressed(final KeyEvent e) {
-        // Mapping des touches du clavier aux indices des notes
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_A: // Do (C)
-                highlightNote(0);
+            case KeyEvent.VK_A:
+                // highlightNote(0); // Moved to playNote
                 playNote(0);
                 break;
-            case KeyEvent.VK_S: // Ré (D)
-                highlightNote(1);
+            case KeyEvent.VK_S:
+                // highlightNote(1); // Moved to playNote
                 playNote(1);
                 break;
-            case KeyEvent.VK_D: // Mi (E)
-                highlightNote(2);
+            case KeyEvent.VK_D:
+                // highlightNote(2); // Moved to playNote
                 playNote(2);
                 break;
-            case KeyEvent.VK_F: // Fa (F)
-                highlightNote(3);
+            case KeyEvent.VK_F:
+                // highlightNote(3); // Moved to playNote
                 playNote(3);
                 break;
-            case KeyEvent.VK_G: // Sol (G)
-                highlightNote(4);
+            case KeyEvent.VK_G:
+                // highlightNote(4); // Moved to playNote
                 playNote(4);
                 break;
-            case KeyEvent.VK_H: // La (A)
-                highlightNote(5);
+            case KeyEvent.VK_H:
+                // highlightNote(5); // Moved to playNote
                 playNote(5);
                 break;
-            case KeyEvent.VK_J: // Si (B)
-                highlightNote(6);
+            case KeyEvent.VK_J:
+                // highlightNote(6); // Moved to playNote
                 playNote(6);
                 break;
         }
@@ -236,9 +238,9 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
         }
     }
 
-
     @Override
     public String[] getNotes() {
         return NOTES;
     }
+
 }
