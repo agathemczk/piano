@@ -1,5 +1,4 @@
 package com.pianoo.controller;
-import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.view.*;
 
 
@@ -18,6 +17,8 @@ public interface IController {
 
     void toggleRecording();
 
+    void onReturnMainMenu();
+
     void showMainMenu();
 
     void start();
@@ -30,13 +31,11 @@ public interface IController {
 
     void onInstrumentSelected(String instrumentName);
 
-    void setMainMenu(IMainMenu mainMenu);
+    void onVideoGameNotePressed(String noteName);
 
     void setPianoFrame(IPianoFrame pianoFrame);
 
     void setXylophoneFrame(IXylophoneFrame xylophoneFrame);
-
-    void setKeyboardMapping(IKeyboardMapping keyboardMapping);
 
     void onNotePlayed(String note);
     void onDrumHit(String drumType);

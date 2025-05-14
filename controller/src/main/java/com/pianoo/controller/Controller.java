@@ -1,65 +1,89 @@
 package com.pianoo.controller;
 
-import com.pianoo.model.ICatPlay;
-import com.pianoo.model.IMusicPlayer;
-import com.pianoo.model.IKeyboardMapping;
-import com.pianoo.model.IXylophonePlayer;
-import com.pianoo.model.IDrumsPlayer;
-import com.pianoo.model.IOrganPlayer;
-import com.pianoo.model.IRecordPlayer;
-
+import com.pianoo.model.*;
 import com.pianoo.view.*;
-
 import javax.swing.JOptionPane;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
 
+    // Déclarations des champs final (s'assurer qu'ils correspondent aux paramètres du constructeur)
     private final IMusicPlayer musicPlayer;
     private final IXylophonePlayer xylophonePlayer;
     private final IDrumsPlayer drumsPlayer;
     private final IOrganPlayer organPlayer;
     private final IRecordPlayer recordPlayer;
+    private final IVideoGamesSoundModel videoGamesSoundModel;
+    private final IKeyboardMapping keyboardMapping;
+    private final ICatPlay catPlay;
+    private final IMainMenu mainMenu; // mainMenu peut aussi être final s'il est fixé à la construction
+
+    // Champs pour les frames (non final car peuvent être set via setters ou initialisés après)
     private IPianoFrame pianoFrame;
     private IOrganFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
     private IVideoGamesFrame videoGamesFrame;
     private IDrumsFrame drumsFrame;
-    private IRoundCloseButton roundCloseButton;
     private ICatFrame catFrame;
-    private ICatPlay catPlay;
-    private IPianoController pianoController;
-    private IMainMenu mainMenu;
-    private IKeyboardMapping keyboardMapping;
 
-    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer, IOrganPlayer organPlayer, IRecordPlayer recordPlayer, IMainMenu mainMenu, IPianoFrame pianoFrame,
-                      IOrganFrame organFrame, IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame, ICatFrame catFrame, ICatPlay catPlay,
-                      IRoundCloseButton roundCloseButton, IKeyboardMapping keyboardMapping) {
+    // Constructeur mis à jour
+    public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer,
+                      IOrganPlayer organPlayer, IRecordPlayer recordPlayer, IVideoGamesSoundModel videoGamesSoundModel,
+                      IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame,
+                      IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame,
+                      ICatFrame catFrame, ICatPlay catPlay, IKeyboardMapping keyboardMapping) {
+        // Assignation des champs final
         this.musicPlayer = musicPlayer;
         this.xylophonePlayer = xylophonePlayer;
         this.drumsPlayer = drumsPlayer;
         this.organPlayer = organPlayer;
         this.recordPlayer = recordPlayer;
-        this.mainMenu = mainMenu;
+        this.videoGamesSoundModel = videoGamesSoundModel;
+        this.mainMenu = mainMenu; // Assignation de mainMenu
+        this.catPlay = catPlay;
+        this.keyboardMapping = keyboardMapping;
+
+        // Assignation/Configuration des frames (qui ne sont pas final)
         this.pianoFrame = pianoFrame;
         this.organFrame = organFrame;
         this.xylophoneFrame = xylophoneFrame;
         this.videoGamesFrame = videoGamesFrame;
         this.drumsFrame = drumsFrame;
         this.catFrame = catFrame;
-        this.catPlay = catPlay;
-        this.roundCloseButton = roundCloseButton;
-        this.keyboardMapping = keyboardMapping;
 
-        this.mainMenu.setInstrumentSelectedListener(this);
-        this.mainMenu.setVisible(true);
-        this.roundCloseButton.setListener(this);
-        this.organFrame.setListener(this);
-        this.pianoFrame.setListener(this);
-        this.xylophoneFrame.setListener(this);
-        this.videoGamesFrame.setListener(this);
-        this.drumsFrame.setListener(this);
-        this.catFrame.setListener(this);
-        this.catFrame.setCatPlayListener(this);
+        // Configuration des listeners etc.
+        if (this.mainMenu != null) { // Ajout d'une vérification pour mainMenu
+            this.mainMenu.setInstrumentSelectedListener(this);
+            this.mainMenu.setVisible(true);
+        }
+
+        if (this.pianoFrame != null) {
+            this.pianoFrame.setListener(this);
+            this.pianoFrame.setController(this);
+        }
+        if (this.organFrame != null) {
+            this.organFrame.setListener(this);
+            this.organFrame.setController(this);
+        }
+        if (this.xylophoneFrame != null) {
+            this.xylophoneFrame.setListener(this);
+            this.xylophoneFrame.setController(this);
+        }
+        if (this.videoGamesFrame != null) {
+            this.videoGamesFrame.setListener(this);
+            this.videoGamesFrame.setController(this);
+        }
+        if (this.drumsFrame != null) {
+            this.drumsFrame.setListener(this);
+            this.drumsFrame.setController(this);
+        }
+        if (this.catFrame != null) {
+            this.catFrame.setListener(this);
+            this.catFrame.setCatPlayListener(this);
+            // Si CatFrame a besoin d'un setController générique:
+            // if (this.catFrame instanceof SomeInterfaceWithSetController) {
+            // ((SomeInterfaceWithSetController)this.catFrame).setController(this);
+            // }
+        }
     }
 
     @Override
@@ -93,7 +117,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
             recordPlayer.stopRecording();
             updateAllRecordButtonsState(false);
         }
-        showMainMenuScreen();
+        showMainMenuScreen(); // Calls the private method
     }
 
     @Override
@@ -105,7 +129,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
             recordPlayer.stopRecording();
             updateAllRecordButtonsState(false);
         }
-        showMainMenuScreen();
+        showMainMenuScreen(); // Calls the private method
     }
 
     private void showMainMenuScreen() {
@@ -132,6 +156,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openPiano() {
+        if (mainMenu == null || mainMenu.getContentPane() == null || pianoFrame == null || pianoFrame.getPanel() == null)
+            return;
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(pianoFrame.getPanel());
         pianoFrame.setKeyListener(this);
@@ -141,6 +167,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openXylophone() {
+        if (mainMenu == null || mainMenu.getContentPane() == null || xylophoneFrame == null || xylophoneFrame.getPanel() == null)
+            return;
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(xylophoneFrame.getPanel());
         xylophoneFrame.setKeyListener(this);
@@ -150,15 +178,18 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openVideoGames() {
+        if (mainMenu == null || mainMenu.getContentPane() == null || videoGamesFrame == null || videoGamesFrame.getPanel() == null)
+            return;
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(videoGamesFrame.getPanel());
-        //videoGamesFrame.setKeyListener(this);
         mainMenu.revalidate();
         mainMenu.repaint();
         videoGamesFrame.getPanel().requestFocusInWindow();
     }
 
     private void openOrgan() {
+        if (mainMenu == null || mainMenu.getContentPane() == null || organFrame == null || organFrame.getPanel() == null)
+            return;
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(organFrame.getPanel());
         organFrame.setController(this);
@@ -168,6 +199,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openDrums() {
+        if (mainMenu == null || mainMenu.getContentPane() == null || drumsFrame == null || drumsFrame.getPanel() == null)
+            return;
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(drumsFrame.getPanel());
         drumsFrame.setController(this);
@@ -177,6 +210,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     private void openCat() {
+        if (mainMenu == null || mainMenu.getContentPane() == null || catFrame == null || catFrame.getPanel() == null)
+            return;
         mainMenu.getContentPane().removeAll();
         mainMenu.getContentPane().add(catFrame.getPanel());
         mainMenu.revalidate();
@@ -184,50 +219,48 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
-    public void setMainMenu(final IMainMenu mainMenu) {
-        this.mainMenu = mainMenu;
-        this.mainMenu.setInstrumentSelectedListener(this);
-        this.mainMenu.setVisible(true);
-    }
-
-    @Override
     public void setPianoFrame(final IPianoFrame pianoFrame) {
         this.pianoFrame = pianoFrame;
-        this.pianoFrame.setController(this);
+        if (this.pianoFrame != null) {
+            this.pianoFrame.setController(this);
+        }
     }
 
     @Override
     public void setXylophoneFrame(final IXylophoneFrame xylophoneFrame) {
         this.xylophoneFrame = xylophoneFrame;
-        this.xylophoneFrame.setController(this);
+        if (this.xylophoneFrame != null) {
+            this.xylophoneFrame.setController(this);
+        }
     }
 
-    @Override
-    public void setKeyboardMapping(final IKeyboardMapping keyboardMapping) {
-        this.keyboardMapping = keyboardMapping;
-    }
+    // Removed setKeyboardMapping as keyboardMapping is final
 
     public void onDrumHit(String drumType) {
-        drumsPlayer.playDrum(drumType);
+        if (drumsPlayer != null) drumsPlayer.playDrum(drumType);
+        if (recordPlayer != null && recordPlayer.isRecording()) {
+            // recordPlayer.recordEvent("Drums: DrumHit, Type=" + drumType);
+        }
     }
 
     @Override
-    public void onKeyPressed(int noteValue, int octave) { // Piano
-        int midiNote = musicPlayer.getMidiNote(octave, noteValue); // Vous l'avez déjà
+    public void onKeyPressed(int noteValue, int octave) {
+        if (musicPlayer == null) return;
+        String noteName = musicPlayer.getNoteName(noteValue, octave);
+        int midiNote = musicPlayer.getMidiNote(octave, noteValue);
         musicPlayer.playNote(midiNote);
-        if (recordPlayer.isRecording()) {
-            // Supposons que musicPlayer a maintenant getNoteName(noteValue, octave)
-            String noteName = musicPlayer.getNoteName(noteValue, octave); // À AJOUTER à IMusicPlayer
+        if (recordPlayer != null && recordPlayer.isRecording()) {
             recordPlayer.recordNoteOn(noteName, System.currentTimeMillis());
         }
     }
 
     @Override
-    public void onKeyReleased(int noteValue, int octave) { // Piano
+    public void onKeyReleased(int noteValue, int octave) {
+        if (musicPlayer == null) return;
+        String noteName = musicPlayer.getNoteName(noteValue, octave);
         int midiNote = musicPlayer.getMidiNote(octave, noteValue);
         musicPlayer.stopNote(midiNote);
-        if (recordPlayer.isRecording()) {
-            String noteName = musicPlayer.getNoteName(noteValue, octave); // À AJOUTER à IMusicPlayer
+        if (recordPlayer != null && recordPlayer.isRecording()) {
             recordPlayer.recordNoteOff(noteName, System.currentTimeMillis());
         }
     }
@@ -244,48 +277,49 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     @Override
     public void onOrganKeyReleased(int midiNote) {
+        if (organPlayer == null) return;
         organPlayer.stopNote(midiNote);
-        if (recordPlayer.isRecording()) {
-            String noteName = organPlayer.getNoteNameFromMidi(midiNote); // À AJOUTER à IOrganPlayer
+        if (recordPlayer != null && recordPlayer.isRecording()) {
+            String noteName = organPlayer.getNoteNameFromMidi(midiNote);
             recordPlayer.recordNoteOff(noteName, System.currentTimeMillis());
         }
     }
 
     @Override
-    public void onNotePlayed(final String note) { // Xylophone
-        System.out.println("Le xylophone joue la note : " + note);
-        xylophonePlayer.playNote(note, xylophoneFrame.getNotes());
-        if (recordPlayer.isRecording()) {
+    public void onNotePlayed(final String note) {
+        if (xylophonePlayer != null && xylophoneFrame != null) {
+            xylophonePlayer.playNote(note, xylophoneFrame.getNotes());
+        }
+        if (recordPlayer != null && recordPlayer.isRecording()) {
             long currentTime = System.currentTimeMillis();
             recordPlayer.recordNoteOn(note, currentTime);
-            // Simuler une courte durée pour le xylophone, par exemple 100ms
             recordPlayer.recordNoteOff(note, currentTime + 100);
         }
     }
 
     @Override
     public int getMidiNoteFromKeyName(String noteName) {
-        return organPlayer.getMidiNoteFromKeyName(noteName);
+        return organPlayer != null ? organPlayer.getMidiNoteFromKeyName(noteName) : -1;
     }
 
     @Override
     public boolean isNoteActive(int midiNote) {
-        return organPlayer.isNoteActive(midiNote);
+        return organPlayer != null ? organPlayer.isNoteActive(midiNote) : false;
     }
 
     @Override
     public int adjustMidiNoteForKeyboard(int baseMidiNote, boolean isUpperKeyboard) {
-        return organPlayer.adjustMidiNoteForKeyboard(baseMidiNote, isUpperKeyboard);
+        return organPlayer != null ? organPlayer.adjustMidiNoteForKeyboard(baseMidiNote, isUpperKeyboard) : baseMidiNote;
     }
 
     @Override
     public int getMidiNoteForKeyCode(int keyCode) {
-        return organPlayer.getMidiNoteForKeyCode(keyCode);
+        return organPlayer != null ? organPlayer.getMidiNoteForKeyCode(keyCode) : -1;
     }
 
     @Override
     public void onPlayCat() {
-        catPlay.playMeowSound();
+        if (catPlay != null) catPlay.playMeowSound();
     }
 
     @Override
@@ -298,18 +332,55 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     @Override
     public void toggleRecording() {
+        if (recordPlayer == null) return;
         if (recordPlayer.isRecording()) {
             recordPlayer.stopRecording();
         } else {
-            String filename = JOptionPane.showInputDialog(null, "Entrez le nom du fichier pour l'enregistrement :", "Nom de l'enregistrement", JOptionPane.PLAIN_MESSAGE);
-            if (filename != null && !filename.trim().isEmpty()) {
-                recordPlayer.startRecording(filename);
-            } else {
-                System.out.println("Nom de fichier non valide ou annulé.");
-                return;
+            boolean recordingAttemptSuccessful = false;
+            while (!recordingAttemptSuccessful) {
+                String filename = JOptionPane.showInputDialog(null, "Entrez le nom du fichier pour l'enregistrement :", "Nom de l'enregistrement", JOptionPane.PLAIN_MESSAGE);
+
+                if (filename == null) {
+                    System.out.println("Saisie du nom de fichier annulée par l'utilisateur.");
+                    updateAllRecordButtonsState(false);
+                    return;
+                }
+
+                if (!filename.trim().isEmpty()) {
+                    if (recordPlayer.startRecording(filename)) {
+                        recordingAttemptSuccessful = true;
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "Le nom de fichier est déjà utilisé ou une erreur est survenue.\nVeuillez choisir un autre nom.",
+                                "Erreur de nom de fichier",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    System.out.println("Le nom de fichier ne peut pas être vide.");
+                    JOptionPane.showMessageDialog(null,
+                            "Le nom de fichier ne peut pas être vide.",
+                            "Erreur de nom de fichier",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
         updateAllRecordButtonsState(recordPlayer.isRecording());
     }
 
+    @Override
+    public void onVideoGameNotePressed(String noteName) {
+        if (videoGamesSoundModel != null) {
+            videoGamesSoundModel.playNote(noteName);
+        } else {
+            System.err.println("VideoGamesSoundModel non initialisé dans le Controller.");
+        }
+
+        if (recordPlayer != null && recordPlayer.isRecording()) {
+            long currentTime = System.currentTimeMillis();
+            String noteToRecord = noteName + "4"; // Appending default octave 4
+
+            recordPlayer.recordNoteOn(noteToRecord, currentTime);
+            recordPlayer.recordNoteOff(noteToRecord, currentTime + 100);
+        }
+    }
 }
