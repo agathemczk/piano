@@ -20,6 +20,7 @@ public class Main {
         IOrganFrame organFrame = new OrganFrame();
         IXylophoneFrame xylophoneFrame = new XylophoneFrame();
         IVideoGamesFrame videoGamesFrame = new VideoGamesFrame();
+        IVideoGamesSoundModel videoGamesPlayer = new VideoGamesSoundModel();
         IDrumsFrame drumsFrame = new DrumsFrame();
         IRoundCloseButton roundCloseButton = new RoundCloseButton();
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
@@ -31,11 +32,11 @@ public class Main {
         mainMenu.setVisible(true);
 
 
-        IController controller = new Controller(musicPlayer, xylophonePlayer, drumsPlayer, organPlayer, recordPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, roundCloseButton, keyboardMapping);
+        IController controller = new Controller(musicPlayer, xylophonePlayer, drumsPlayer, organPlayer,  recordPlayer, videoGamesPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, keyboardMapping);
         IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
 
 
-        controller.setMainMenu(mainMenu);
+        //controller.setMainMenu(mainMenu);
         controller.setPianoFrame(pianoFrame);
         controller.setXylophoneFrame(xylophoneFrame);
 

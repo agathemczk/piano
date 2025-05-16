@@ -1,107 +1,90 @@
 package com.pianoo.view;
 
+import com.pianoo.controller.IController;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class VideoGamesFrame extends JPanel implements IVideoGamesFrame, IMenuNavigationListener {
+
+    private IController controller;
+    private IMenuNavigationListener menuNavigationListener;
+    private TopPanel topPanel;
+    private RecordButton recordButton;
 
 
-public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
-    private JPanel panel;
-    private IMenuNavigationListener listener;
-    private RoundCloseButton closeButton;
-
-
-    private static final String[] GAME_IMAGES = {
-            "BellaCiaoView.jpg",
-            "Mario2View.png",
-            "MarioView.png",
-            "Pirate2View.jpg",
-            "QueenView.png",
-            "StarWarsView.png"
+    private static final String[] NOTE_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
+    private static final Color[] NOTE_COLORS = {
+            new Color(255, 100, 100), // C
+            new Color(255, 180, 100), // D
+            new Color(255, 255, 100), // E
+            new Color(100, 255, 100), // F
+            new Color(100, 200, 255), // G
+            new Color(150, 100, 255), // A
+            new Color(220, 100, 220)  // B
     };
 
     public VideoGamesFrame() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 150, 0));
+        setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
+        // Remplacer FlowLayout par GridBagLayout pour un meilleur contrôle
+        JPanel notesPanel = new JPanel(new GridBagLayout());
+        notesPanel.setOpaque(false);
 
-        RoundCloseButton closeButton = new RoundCloseButton();
-        closeButton.setListener(() -> {
-            if (listener != null) {
-                listener.onReturnMainMenu();
-            }
-        });
+        // Créer un sous-panel pour contenir uniquement les boutons
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        buttonsPanel.setOpaque(false);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-        buttonPanel.add(closeButton);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
+        for (int i = 0; i < NOTE_NAMES.length; i++) {
+            final String noteName = NOTE_NAMES[i];
+            RoundNoteButton noteButton = new RoundNoteButton(noteName, NOTE_COLORS[i]);
+            noteButton.setFont(new Font("Arial", Font.BOLD, 20));
+            noteButton.setForeground(Color.WHITE);
+            noteButton.setPreferredSize(new Dimension(120, 120));
 
-        add(topPanel, BorderLayout.NORTH);
-
-        add(createGameRow(0, 2));
-        add(Box.createRigidArea(new Dimension(0, 30)));
-        add(createGameRow(3, 5));
-
-    }
-
-    private JPanel createGameRow(int start, int end) {
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
-        row.setOpaque(false);
-
-        for (int i = start; i <= end; i++) {
-            ImageIcon icon = loadImage(GAME_IMAGES[i]);
-            RoundButton button = new RoundButton(icon);
-            button.setPreferredSize(new Dimension(150, 150));
-            row.add(button);
+            noteButton.addActionListener(e -> {
+                System.out.println("Bouton pressé: " + noteName);
+                if (controller != null) {
+                    controller.onVideoGameNotePressed(noteName);
+                }
+            });
+            buttonsPanel.add(noteButton);
         }
-        return row;
+
+        // Ajouter le panel de boutons au panel principal avec GridBagLayout
+        // pour le centrer verticalement et horizontalement
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        notesPanel.add(buttonsPanel, gbc);
+        add(notesPanel, BorderLayout.CENTER);
     }
 
-    private ImageIcon loadImage(String filename) {
-        try {
-            URL imageUrl = VideoGamesFrame.class.getResource("/imagesGame/" + filename);
-            if (imageUrl != null) {
-                return resizeIcon(new ImageIcon(imageUrl), 150, 150);
-            } else {
-                System.err.println("Image non trouvée: /imagesGame/" + filename);
-            }
-        } catch (Exception e) {
-            System.err.println("Erreur chargement image: " + e.getMessage());
+
+    private void initializeTopPanel() {
+        if (this.controller == null || (this.menuNavigationListener == null && !(this instanceof IMenuNavigationListener))) {
+            return;
         }
-        return createDefaultIcon(filename);
-    }
+        if (this.topPanel != null) return;
 
-    private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
-        Image img = icon.getImage();
-        double ratio = Math.min(
-                (double) width / icon.getIconWidth(),
-                (double) height / icon.getIconHeight()
-        );
-        int newWidth = (int) (icon.getIconWidth() * ratio);
-        int newHeight = (int) (icon.getIconHeight() * ratio);
-        return new ImageIcon(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH));
-    }
+        IMenuNavigationListener actualListener = (this.menuNavigationListener != null) ? this.menuNavigationListener : this;
+        this.topPanel = new TopPanel(this.controller, actualListener);
 
-    private ImageIcon createDefaultIcon(String name) {
-        BufferedImage img = new BufferedImage(150, 150, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = img.createGraphics();
+        // Récupérer la référence au bouton d'enregistrement
+        this.recordButton = this.topPanel.getRecordButtonInstance();
 
-        g.setColor(new Color(200, 200, 200));
-        g.fillOval(0, 0, 150, 150);
-
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        String text = name.replace(".png", "").replace(".jpg", "");
-        int x = 75 - g.getFontMetrics().stringWidth(text) / 2;
-        g.drawString(text, x, 80);
-
-        g.dispose();
-        return new ImageIcon(img);
+        add(this.topPanel, BorderLayout.NORTH);
+        revalidate();
+        repaint();
     }
 
     @Override
@@ -109,46 +92,30 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame {
         return this;
     }
 
+    @Override
     public void setListener(IMenuNavigationListener listener) {
-        this.listener = listener;
+        this.menuNavigationListener = listener;
+        initializeTopPanel();
     }
 
+    @Override
+    public void setController(IController controller) {
+        this.controller = controller;
+        initializeTopPanel();
+    }
 
-    private static class RoundButton extends JButton {
-        public RoundButton(ImageIcon icon) {
-            super(icon);
-            setContentAreaFilled(false);
-            setBorderPainted(false);
-            setFocusPainted(false);
-            setCursor(new Cursor(Cursor.HAND_CURSOR));
+    @Override
+    public void onReturnMainMenu() {
+        if (menuNavigationListener != null && menuNavigationListener != this) {
+            menuNavigationListener.onReturnMainMenu();
+        } else if (controller != null) {
+            controller.onReturnMainMenu();
         }
+    }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            Shape circle = new Ellipse2D.Double(0, 0, getWidth(), getHeight());
-            g2.setClip(circle);
-
-            ImageIcon icon = (ImageIcon) getIcon();
-            if (icon != null) {
-                int x = (getWidth() - icon.getIconWidth()) / 2;
-                int y = (getHeight() - icon.getIconHeight()) / 2;
-                g2.drawImage(icon.getImage(), x, y, null);
-            }
-
-            if (getModel().isRollover()) {
-                g2.setColor(new Color(255, 255, 255, 50));
-                g2.fill(circle);
-            }
-
-            g2.dispose();
-        }
-
-        @Override
-        public boolean contains(int x, int y) {
-            return new Ellipse2D.Double(0, 0, getWidth(), getHeight()).contains(x, y);
+    public void updateRecordButtonState(boolean isRecording) {
+        if (recordButton != null) {
+            recordButton.setVisualRecordingState(isRecording);
         }
     }
 }
