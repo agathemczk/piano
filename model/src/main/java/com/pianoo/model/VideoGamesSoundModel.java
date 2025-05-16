@@ -58,7 +58,7 @@ public class VideoGamesSoundModel implements IVideoGamesSoundModel {
                 for (int i = 0; i < numSamples; i++) {
                     double time = i / SAMPLE_RATE;
                     double amplitudeValue = 100.0;
-                    buffer[i] = (byte) (amplitudeValue * Math.sin(2 * Math.PI * frequency * time));
+                    buffer[i] = (byte) (amplitudeValue * Math.sin(3 * Math.PI * frequency * time));
                 }
 
                 line.write(buffer, 0, buffer.length);

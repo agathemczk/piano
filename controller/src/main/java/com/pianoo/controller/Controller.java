@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
 
-    // Déclarations des champs final (s'assurer qu'ils correspondent aux paramètres du constructeur)
+    // Déclarations des champs finaux (s'assurer qu'ils correspondent aux paramètres du constructeur)
     private final IMusicPlayer musicPlayer;
     private final IXylophonePlayer xylophonePlayer;
     private final IDrumsPlayer drumsPlayer;
@@ -152,6 +152,9 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         }
         if (xylophoneFrame != null) {
             xylophoneFrame.updateRecordButtonState(isRecording);
+        }
+        if (videoGamesFrame != null) {
+            videoGamesFrame.updateRecordButtonState(isRecording);
         }
     }
 

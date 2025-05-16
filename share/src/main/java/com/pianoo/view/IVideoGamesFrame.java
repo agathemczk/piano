@@ -9,4 +9,6 @@ public interface IVideoGamesFrame {
     void setListener(IMenuNavigationListener listener);
 
     void setController(IController controller);
+    void updateRecordButtonState(boolean isRecording);
+
 }
