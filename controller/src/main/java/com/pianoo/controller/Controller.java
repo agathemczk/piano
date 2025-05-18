@@ -308,6 +308,11 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
                 "Gb_Ab", "G", "Gb_Ab", "A", "Bb", "B"
         };
 
+        // Mapping de l'index MIDI (0-11) aux noms de notes pour VideoGamesSoundModel
+        String[] gameNoteMapping = {
+                "C", "C", "D", "D", "E", "F", "F", "G", "G", "A", "A", "B"
+        }; // C#, D#, F#, G#, A# sont mappés à la note naturelle inférieure
+
         try {
             for (IScoreEvent event : events) {
                 if (Thread.currentThread().isInterrupted()) { // Vérifier l'interruption avant chaque note
@@ -346,8 +351,16 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
                                 // XylophonePlayer n'a pas de stopNote explicite, le son s'arrête naturellement.
                             }
                             break;
+                        case "VideoGames":
+                            if (videoGamesSoundModel != null) {
+                                int noteIndex = midiNote % 12;
+                                String gameNoteName = gameNoteMapping[noteIndex];
+                                videoGamesSoundModel.playNote(gameNoteName, event.getDurationSeconds());
+                                // Pas besoin de Thread.sleep ici, car playNote dans VideoGamesSoundModel
+                                // est maintenant bloquant pour la durée de la note grâce à line.drain().
+                            }
+                            break;
                         case "Piano":
-                        case "VideoGames": // Les sons de jeux vidéo sont variés, utiliser le piano comme fallback
                         default:
                             if (musicPlayer != null) {
                                 musicPlayer.playNote(midiNote);

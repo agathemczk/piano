@@ -11,6 +11,7 @@ public class VideoGamesSoundModel implements IVideoGamesSoundModel {
     private static final int CHANNELS = 1;
     private static final boolean SIGNED = true;
     private static final boolean BIG_ENDIAN = false;
+    private static final double DEFAULT_DURATION_SECONDS = 0.3;
 
     private AudioFormat audioFormat;
     private Map<String, Double> noteFrequencies;
@@ -33,9 +34,17 @@ public class VideoGamesSoundModel implements IVideoGamesSoundModel {
 
     @Override
     public void playNote(String noteName) {
+        this.playNote(noteName, DEFAULT_DURATION_SECONDS);
+    }
+
+    @Override
+    public void playNote(String noteName, double durationSeconds) {
         Double frequency = noteFrequencies.get(noteName.toUpperCase());
         if (frequency == null) {
             System.err.println("Fréquence non définie pour la note : " + noteName);
+            return;
+        }
+        if (durationSeconds <= 0) {
             return;
         }
 
@@ -51,14 +60,17 @@ public class VideoGamesSoundModel implements IVideoGamesSoundModel {
                 line.open(audioFormat);
                 line.start();
 
-                double durationSeconds = 0.3;
                 int numSamples = (int) (durationSeconds * SAMPLE_RATE);
+                if (numSamples == 0) {
+                    numSamples = 1;
+                }
+
                 byte[] buffer = new byte[numSamples];
 
                 for (int i = 0; i < numSamples; i++) {
                     double time = i / SAMPLE_RATE;
                     double amplitudeValue = 100.0;
-                    buffer[i] = (byte) (amplitudeValue * Math.sin(3 * Math.PI * frequency * time));
+                    buffer[i] = (byte) (amplitudeValue * Math.sin(2 * Math.PI * frequency * time));
                 }
 
                 line.write(buffer, 0, buffer.length);
