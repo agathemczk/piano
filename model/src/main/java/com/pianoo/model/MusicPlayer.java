@@ -50,4 +50,15 @@ public class MusicPlayer implements IMusicPlayer {
     public void addEffect() {
     }
 
+    @Override
+    public void silenceAllNotes() {
+        if (channel != null) {
+            channel.allNotesOff();
+            // For a more robust solution, especially if notes could be on other channels
+            // or if allNotesOff() isn't sufficient, you might iterate through all MIDI notes:
+            // for (int i = 0; i < 128; i++) {
+            //     channel.noteOff(i);
+            // }
+        }
+    }
 }

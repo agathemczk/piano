@@ -20,4 +20,6 @@ public interface IMusicPlayer {
     void close();
 
     void addEffect();
+
+    void silenceAllNotes();
 }
