@@ -34,11 +34,15 @@ public class VideoGamesSoundModel implements IVideoGamesSoundModel {
 
     @Override
     public void playNote(String noteName) {
-        this.playNote(noteName, DEFAULT_DURATION_SECONDS);
+        new Thread(() -> playSoundInternal(noteName, DEFAULT_DURATION_SECONDS)).start();
     }
 
     @Override
     public void playNote(String noteName, double durationSeconds) {
+        playSoundInternal(noteName, durationSeconds);
+    }
+
+    private void playSoundInternal(String noteName, double durationSeconds) {
         Double frequency = noteFrequencies.get(noteName.toUpperCase());
         if (frequency == null) {
             System.err.println("Fréquence non définie pour la note : " + noteName);
@@ -48,42 +52,41 @@ public class VideoGamesSoundModel implements IVideoGamesSoundModel {
             return;
         }
 
-        new Thread(() -> {
-            SourceDataLine line = null;
-            try {
-                DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-                if (!AudioSystem.isLineSupported(info)) {
-                    System.err.println("Ligne non supportée: " + info);
-                    return;
-                }
-                line = (SourceDataLine) AudioSystem.getLine(info);
-                line.open(audioFormat);
-                line.start();
-
-                int numSamples = (int) (durationSeconds * SAMPLE_RATE);
-                if (numSamples == 0) {
-                    numSamples = 1;
-                }
-
-                byte[] buffer = new byte[numSamples];
-
-                for (int i = 0; i < numSamples; i++) {
-                    double time = i / SAMPLE_RATE;
-                    double amplitudeValue = 100.0;
-                    buffer[i] = (byte) (amplitudeValue * Math.sin(2 * Math.PI * frequency * time));
-                }
-
-                line.write(buffer, 0, buffer.length);
-                line.drain();
-
-            } catch (LineUnavailableException e) {
-                System.err.println("Erreur de ligne audio : " + e.getMessage());
-                e.printStackTrace();
-            } finally {
-                if (line != null) {
-                    line.close();
-                }
+        SourceDataLine line = null;
+        try {
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+            if (!AudioSystem.isLineSupported(info)) {
+                System.err.println("Ligne non supportée: " + info);
+                return;
             }
-        }).start();
+            line = (SourceDataLine) AudioSystem.getLine(info);
+            line.open(audioFormat);
+            line.start();
+
+            int numSamples = (int) (durationSeconds * SAMPLE_RATE);
+            if (numSamples == 0 && durationSeconds > 0) {
+                numSamples = 1;
+            }
+            if (numSamples == 0) return;
+
+            byte[] buffer = new byte[numSamples];
+
+            for (int i = 0; i < numSamples; i++) {
+                double time = i / SAMPLE_RATE;
+                double amplitudeValue = 100.0;
+                buffer[i] = (byte) (amplitudeValue * Math.sin(2 * Math.PI * frequency * time));
+            }
+
+            line.write(buffer, 0, buffer.length);
+            line.drain();
+
+        } catch (LineUnavailableException e) {
+            System.err.println("Erreur de ligne audio : " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (line != null) {
+                line.close();
+            }
+        }
     }
 }

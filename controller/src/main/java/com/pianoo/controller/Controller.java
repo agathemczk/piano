@@ -5,6 +5,8 @@ import com.pianoo.view.*;
 import javax.swing.JOptionPane;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Controller implements IController, IOnChoiceSelectedListener, IMenuNavigationListener, ICatListener {
 
@@ -22,6 +24,24 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     private IScoreChooserView scoreChooserView; // Added field (can be set if it's a dialog)
     private Thread scorePlaybackThread = null; // Pour suivre le thread de lecture de partition
     private String activeInstrumentForScorePlayback = "Piano"; // Nouvel attribut pour suivre l'instrument actif
+
+    // Tableau des noms de notes MIDI standards (pour l'enregistrement et la lecture)
+    private static final String[] MIDI_NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    private static final int DEFAULT_XYLOPHONE_OCTAVE = 5;
+
+    // Mapping pour convertir les noms de notes du Xylophone en index MIDI (0-11)
+    private static final Map<String, Integer> XYLOPHONE_NOTE_TO_MIDI_INDEX = new HashMap<>();
+
+    static {
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("C", 0);  // C
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("D", 2);  // D
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("E", 4);  // E
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("F", 5);  // F
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("G", 7);  // G
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("A", 9);  // A
+        XYLOPHONE_NOTE_TO_MIDI_INDEX.put("B", 11); // B
+    }
+
 
     // Champs pour les frames (non final car peuvent être set via setters ou initialisés après)
     private IPianoFrame pianoFrame;
@@ -452,14 +472,29 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
     }
 
     @Override
-    public void onNotePlayed(final String note) {
+    public void onNotePlayed(final String xylophoneNoteName) {
         if (xylophonePlayer != null && xylophoneFrame != null) {
-            xylophonePlayer.playNote(note, xylophoneFrame.getNotes());
+            xylophonePlayer.playNote(xylophoneNoteName, xylophoneFrame.getNotes());
         }
+
         if (recordPlayer != null && recordPlayer.isRecording()) {
-            long currentTime = System.currentTimeMillis();
-            recordPlayer.recordNoteOn(note, currentTime);
-            recordPlayer.recordNoteOff(note, currentTime + 100);
+            Integer noteIndex = XYLOPHONE_NOTE_TO_MIDI_INDEX.get(xylophoneNoteName.toUpperCase());
+
+            if (noteIndex != null) {
+                String standardNoteName = MIDI_NOTE_NAMES[noteIndex] + DEFAULT_XYLOPHONE_OCTAVE;
+                long currentTime = System.currentTimeMillis();
+                // Enregistre la note avec le nom standardisé et l'octave
+                recordPlayer.recordNoteOn(standardNoteName, currentTime);
+                // Pour le xylophone, les notes sont percussives et courtes.
+                // On enregistre un noteOff très rapidement après le noteOn.
+                // La durée de 100ms est arbitraire et pourrait être ajustée ou rendue configurable.
+                recordPlayer.recordNoteOff(standardNoteName, currentTime + 100);
+            } else {
+                System.err.println("Controller: Note de xylophone inconnue pour l'enregistrement: " + xylophoneNoteName);
+                // Optionnel: enregistrer la note brute si on veut une trace, mais elle ne sera pas lisible par les autres
+                // recordPlayer.recordNoteOn(xylophoneNoteName, currentTime);
+                // recordPlayer.recordNoteOff(xylophoneNoteName, currentTime + 100);
+            }
         }
     }
 
