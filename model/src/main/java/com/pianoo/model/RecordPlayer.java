@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 public class RecordPlayer implements IRecordPlayer {
     private boolean isRecording = false;
@@ -110,7 +111,7 @@ public class RecordPlayer implements IRecordPlayer {
         if (writer == null) return;
         try {
             double durationSeconds = (endTime - startTime) / 1000.0;
-            writer.write(noteName + " " + String.format("%.3f", durationSeconds));
+            writer.write(noteName + " " + String.format(Locale.US, "%.3f", durationSeconds));
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
@@ -122,7 +123,7 @@ public class RecordPlayer implements IRecordPlayer {
         if (writer == null || durationMillis <= 0) return; // Ne pas écrire de silence de durée nulle ou négative
         try {
             double durationSeconds = durationMillis / 1000.0;
-            writer.write("0 " + String.format("%.3f", durationSeconds));
+            writer.write("0 " + String.format(Locale.US, "%.3f", durationSeconds));
             writer.newLine();
             writer.flush();
         } catch (IOException e) {

@@ -2,10 +2,6 @@ package com.pianoo;
 
 import com.pianoo.controller.*;
 import com.pianoo.model.*;
-import com.pianoo.view.MainMenu;
-import com.pianoo.view.IPianoFrame;
-import com.pianoo.view.PianoFrame;
-import com.pianoo.controller.Controller;
 import com.pianoo.view.*;
 
 public class Main {
@@ -26,13 +22,14 @@ public class Main {
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
         ICatFrame catFrame = new CatFrame();
         ICatPlay catPlay = new CatPlay();
-        // Dans la méthode main
 
+        IScoreReader scoreReader = new ScoreReader();
+        IScoreChooserView scoreChooserView = new ScoreChooserView(mainMenu);
 
         mainMenu.setVisible(true);
 
 
-        IController controller = new Controller(musicPlayer, xylophonePlayer, drumsPlayer, organPlayer,  recordPlayer, videoGamesPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, keyboardMapping);
+        IController controller = new Controller(musicPlayer, xylophonePlayer, drumsPlayer, organPlayer, recordPlayer, videoGamesPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, keyboardMapping, scoreReader, scoreChooserView);
         IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
 
 

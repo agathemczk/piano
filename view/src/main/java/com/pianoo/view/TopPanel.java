@@ -36,9 +36,11 @@ public class TopPanel extends JPanel {
         readButton = new ReadButton();
         readButton.setOnClickListener(() -> {
             // Logique pour le bouton de lecture (peut être étendue plus tard)
-            boolean isPlaying = readButton.isPlaying(); // Suppose ReadButton a cette méthode
-            System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
-            // if (controller != null) { controller.togglePlayback(); }
+            // boolean isPlaying = readButton.isPlaying(); // Suppose ReadButton a cette méthode
+            // System.out.println("Lecture: " + (isPlaying ? "activée" : "désactivée"));
+            if (controller != null) {
+                controller.onInstrumentSelected("PlayPartition"); // Changed to trigger score selection
+            }
         });
 
         mediaButtonsPanel.add(recordButton);
