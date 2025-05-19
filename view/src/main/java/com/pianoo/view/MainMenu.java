@@ -10,7 +10,7 @@ public class MainMenu extends JFrame implements IMainMenu {
     private JPanel mainPanel;
 
     public MainMenu() {
-        setTitle("MusicaLau - Menu Principal");
+        setTitle("MusicaLau");
         setSize(800, 600); // Cette ligne peut être conservée comme taille par défaut si la maximisation échoue
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
