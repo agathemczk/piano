@@ -99,25 +99,24 @@ public class ScoreChooserView extends JDialog implements IScoreChooserView {
                 JOptionPane.showMessageDialog(this,
                         "Le fichier de partition sélectionné n'existe pas ou n'est pas un fichier valide : " + this.selectedScoreFile.getAbsolutePath(),
                         "Erreur Fichier", JOptionPane.ERROR_MESSAGE);
-                this.selectedScoreFile = null; // Reset if not found or invalid
-                return; // Keep dialog open for another selection or cancel
+                this.selectedScoreFile = null;
+                return;
             }
         }
-        dispose(); // Close the dialog only if selection is valid
+        dispose();
     }
 
     private void onCancel() {
         this.selectedScoreFile = null;
-        dispose(); // Close the dialog
+        dispose();
     }
 
     @Override
     public void displayView() {
-        // Reset selection before showing, in case it's reused
         this.selectedScoreFile = null;
-        // scoreList.clearSelection(); // Optional: clear previous JList selection
-        setLocationRelativeTo(this.ownerFrame); // Recenter if owner moved or first time
-        setVisible(true); // This makes the dialog visible and blocks until it's disposed
+        loadPartitions();
+        setLocationRelativeTo(this.ownerFrame);
+        setVisible(true);
     }
 
     @Override
