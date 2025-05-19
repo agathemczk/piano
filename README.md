@@ -67,3 +67,90 @@ Pour compiler et exécuter ce projet Java, vous aurez besoin de :
         3. Localisez la classe principale (dans le module `main` `com.pianoo.main.Main`) et exécutez-la.
     * **En Ligne de Commande (avec Maven, si applicable)** :
       En vous plaçant à la racine du projet (où se trouve le `pom.xml` principal).
+
+## 📂 Arborescence du Projet (Détaillée)
+
+```plaintext
+📁 piano/
+├── 📁 consignes/
+│   ├── Demande Client.pdf
+│   └── 📁 partitions/
+│       ├── au_clair_de_la_lune.txt
+│       ├── bella_ciao.txt
+│       ├── fur_elise.txt
+│       ├── liste_notes_frequences.txt
+│       ├── mario1.txt
+│       ├── mario2.txt
+│       ├── pirate1.txt
+│       ├── show_must_go_on.txt
+│       ├── star_wars.txt
+│       └── test.txt
+│
+├── 📁 controller/
+│   ├── Controller.java
+│   └── PianoController.java
+│
+├── 📁 main/
+│   └── Main.java
+│
+├── 📁 model/
+│   ├── CatPlay.java
+│   ├── DrumsPlayer.java
+│   ├── KeyboardMapping.java
+│   ├── MusicPlayer.java
+│   ├── OrganPlayer.java
+│   ├── RecordPlayer.java
+│   ├── ScoreEvent.java
+│   ├── ScoreReader.java
+│   ├── VideoGamesSoundModel.java
+│   └── XylophonePlayer.java
+│
+├── 📁 share/
+│   ├── 📁 controller/
+│   │   ├── IController.java
+│   │   └── IPianoController.java
+│   ├── 📁 model/
+│   │   ├── ICatPlay.java
+│   │   ├── IDrumsPlayer.java
+│   │   ├── IKeyboardMapping.java
+│   │   ├── IMusicPlayer.java
+│   │   ├── IOrganPlayer.java
+│   │   ├── IRecordPlayer.java
+│   │   ├── IScoreEvent.java
+│   │   ├── IScoreReader.java
+│   │   ├── IVideoGamesSoundModel.java
+│   │   └── IXylophonePlayer.java
+│   └── 📁 view/
+│       ├── ICatFrame.java
+│       ├── ICatListener.java
+│       ├── IDrumsFrame.java
+│       ├── IMainMenu.java
+│       ├── IMenuNavigationListener.java
+│       ├── IOnChoiceSelectedListener.java
+│       ├── IOrganFrame.java
+│       ├── IPianoFrame.java
+│       ├── IPlayCatButton.java
+│       ├── IRoundCloseButton.java
+│       ├── IScoreChooserView.java
+│       ├── IVideoGamesFrame.java
+│       └── IXylophoneFrame.java
+│
+├── 📁 view/
+│   ├── CatFrame.java
+│   ├── DrumsFrame.java
+│   ├── OrganFrame.java
+│   ├── MainMenu.java
+│   ├── PianoFrame.java
+│   ├── PlayCatButton.java
+│   ├── ReadButton.java
+│   ├── RecordButton.java
+│   ├── RoundCloseButton.java
+│   ├── RoundNoteButton.java
+│   ├── ScoreChooserView.java
+│   ├── TopPanel.java
+│   ├── VideoGamesFrame.java
+│   └── XylophoneFrame.java
+│
+└── pom.xml
+```
+
