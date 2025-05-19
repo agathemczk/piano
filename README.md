@@ -65,4 +65,4 @@ Pour compiler et exécuter ce projet Java, vous aurez besoin de :
         2. Ouvrez le projet dans votre IDE. L'IDE devrait détecter la structure Maven si applicable.
         3. Localisez la classe principale (dans le module `main` `com.pianoo.main.Main`) et exécutez-la.
     * **En Ligne de Commande (avec Maven, si applicable)** :
-      En vous plaçant à la racine du projet (où se trouve le `pom.xml` principal) :
+      En vous plaçant à la racine du projet (où se trouve le `pom.xml` principal).
