@@ -40,9 +40,6 @@ public class RecordButton extends JPanel {
         this.onClickListener = listener;
     }
 
-    public boolean isRecording() {
-        return isRecording;
-    }
 
     public void setVisualRecordingState(boolean state) {
         if (this.isRecording != state) {

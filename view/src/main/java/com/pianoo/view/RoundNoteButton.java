@@ -2,7 +2,6 @@ package com.pianoo.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 
 public class RoundNoteButton extends JButton {
     private Color backgroundColor;

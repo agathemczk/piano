@@ -4,10 +4,11 @@ import com.pianoo.model.IKeyboardMapping;
 import com.pianoo.view.IPianoFrame;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PianoController implements IPianoController {
+public class PianoController implements KeyListener {
 
     private final IPianoFrame view;
     private final IController controller;
@@ -22,10 +23,6 @@ public class PianoController implements IPianoController {
         this.view.addKeyListenerToFrame(this);
     }
 
-    @Override
-    public void setKeyboardMapping(IKeyboardMapping keyboardMapping) {
-        this.keyboardMapping = keyboardMapping;
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {

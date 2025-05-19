@@ -45,17 +45,17 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
 
     // Champs pour les frames (non final car peuvent être set via setters ou initialisés après)
     private IPianoFrame pianoFrame;
-    private IOrganFrame organFrame;
+    private IInstrumentFrame organFrame;
     private IXylophoneFrame xylophoneFrame;
-    private IVideoGamesFrame videoGamesFrame;
+    private IInstrumentFrame videoGamesFrame;
     private IDrumsFrame drumsFrame;
     private ICatFrame catFrame;
 
     // Constructeur mis à jour
     public Controller(IMusicPlayer musicPlayer, IXylophonePlayer xylophonePlayer, IDrumsPlayer drumsPlayer,
                       IOrganPlayer organPlayer, IRecordPlayer recordPlayer, IVideoGamesSoundModel videoGamesSoundModel,
-                      IMainMenu mainMenu, IPianoFrame pianoFrame, IOrganFrame organFrame,
-                      IXylophoneFrame xylophoneFrame, IVideoGamesFrame videoGamesFrame, IDrumsFrame drumsFrame,
+                      IMainMenu mainMenu, IPianoFrame pianoFrame, IInstrumentFrame organFrame,
+                      IXylophoneFrame xylophoneFrame, IInstrumentFrame videoGamesFrame, IDrumsFrame drumsFrame,
                       ICatFrame catFrame, ICatPlay catPlay, IKeyboardMapping keyboardMapping,
                       IScoreReader scoreReader, IScoreChooserView scoreChooserView) { // Added parameters
         // Assignation des champs final
@@ -140,7 +140,7 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         }
     }
 
-    @Override
+
     public void onReturnMainMenu() {
         stopScorePlayback(); // Arrêter la lecture de la partition
         if (catPlay != null) {
@@ -412,14 +412,6 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         }
     }
 
-    @Override
-    public void setXylophoneFrame(final IXylophoneFrame xylophoneFrame) {
-        this.xylophoneFrame = xylophoneFrame;
-        if (this.xylophoneFrame != null) {
-            this.xylophoneFrame.setController(this);
-        }
-    }
-
     // Removed setKeyboardMapping as keyboardMapping is final
 
     public void onDrumHit(String drumType) {
@@ -518,17 +510,8 @@ public class Controller implements IController, IOnChoiceSelectedListener, IMenu
         return organPlayer != null ? organPlayer.getMidiNoteForKeyCode(keyCode) : -1;
     }
 
-    @Override
     public void onPlayCat() {
         if (catPlay != null) catPlay.playMeowSound();
-    }
-
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
     }
 
     @Override

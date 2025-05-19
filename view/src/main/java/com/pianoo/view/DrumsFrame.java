@@ -7,17 +7,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 
-public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
-    private IMenuNavigationListener menuNavigationListener;
-    private IController controller;
+public class DrumsFrame extends InstrumentFrame implements IDrumsFrame, KeyListener {
     private final HashMap<String, DrumComponent> drums = new HashMap<>();
     private String hitDrum = null;
     private boolean kickPedalPressed = false;
     private double scaleFactor = 1.2;
 
     public DrumsFrame() {
-        setLayout(new BorderLayout());
-
         setFocusable(true);
         requestFocusInWindow();
         addKeyListener(this);
@@ -29,19 +25,20 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
             }
         });
 
-        JPanel customTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        customTopPanel.setOpaque(false);
+        JPanel topPanelLocal = new JPanel(new BorderLayout());
+        topPanelLocal.setOpaque(false);
 
         RoundCloseButton closeButton = new RoundCloseButton();
         closeButton.setListener(() -> {
-            if (menuNavigationListener != null) {
-                menuNavigationListener.onReturnMainMenu();
-            } else if (controller != null) {
-                controller.showMainMenu();
-            }
+            onReturnMainMenu();
         });
-        customTopPanel.add(closeButton);
-        add(customTopPanel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(closeButton);
+        topPanelLocal.add(buttonPanel, BorderLayout.EAST);
+
+        add(topPanelLocal, BorderLayout.NORTH);
 
         setOpaque(false);
         addComponentListener(new ComponentAdapter() {
@@ -62,7 +59,6 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
                         hitDrum = drum.label;
                         if (drum.isKick) kickPedalPressed = true;
 
-                        // Ajoutez ces trois lignes ici
                         if (controller != null && hitDrum != null) {
                             controller.onDrumHit(hitDrum);
                         }
@@ -184,21 +180,6 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
             int beaterY = kickPedalPressed ? kick.y + kick.height - 5 : kick.y + kick.height - 15;
             g2.fillRect(kick.x - 10, beaterY, 20, 30);
         }
-    }
-
-    @Override
-    public JPanel getPanel() {
-        return this;
-    }
-
-    @Override
-    public void setListener(IMenuNavigationListener listener) {
-        this.menuNavigationListener = listener;
-    }
-
-    @Override
-    public void setController(final IController controller) {
-        this.controller = controller;
     }
 
     @Override
@@ -334,5 +315,12 @@ public class DrumsFrame extends JPanel implements IDrumsFrame, KeyListener {
                 return Math.abs(dx) <= width / 2 && Math.abs(dy) <= height / 2;
             }
         }
+    }
+    public void setListener(IMenuNavigationListener listener) {
+        this.menuNavigationListener = listener;
+    }
+
+    public void setController(IController controller) {
+        this.controller = controller;
     }
 }

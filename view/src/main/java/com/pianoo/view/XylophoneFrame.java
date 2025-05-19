@@ -12,7 +12,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.Timer;
 
-public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListener, IMenuNavigationListener {
+public class XylophoneFrame extends InstrumentFrame implements IXylophoneFrame, KeyListener {
 
     private static final String[] NOTES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] COLORS = {
@@ -21,18 +21,13 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     };
 
     private final JPanel xylophonePanel;
-    private IMenuNavigationListener menuNavigationListener;
-    private IController controller;
     private final List<JButton> noteButtons = new ArrayList<>();
-    private RecordButton recordButton;
-    private TopPanel topPanel;
 
     public XylophoneFrame() {
-        setLayout(new BorderLayout());
+        super();
         setFocusable(true);
         requestFocusInWindow();
 
-        // Ajouter cette ligne pour activer la détection des touches
         addKeyListener(this);
         addFocusListener(new FocusAdapter() {
             @Override
@@ -108,39 +103,8 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     }
 
     @Override
-    public JPanel getPanel() {
-        return this;
-    }
-
-    @Override
-    public void addKeyListenerToFrame(KeyListener listener) {
-        this.addKeyListener(listener);
-        xylophonePanel.addKeyListener(listener);
-    }
-
-    @Override
     public void setKeyListener(final IController controller) {
         this.controller = controller;
-    }
-
-    @Override
-    public void setController(final IController controller) {
-        this.controller = controller;
-        if (this.menuNavigationListener != null) {
-            this.topPanel = new TopPanel(this.controller, this.menuNavigationListener);
-            add(this.topPanel, BorderLayout.NORTH);
-            this.recordButton = this.topPanel.getRecordButtonInstance();
-            revalidate();
-            repaint();
-        } else if (this instanceof IMenuNavigationListener) {
-            this.topPanel = new TopPanel(this.controller, this);
-            add(this.topPanel, BorderLayout.NORTH);
-            this.recordButton = this.topPanel.getRecordButtonInstance();
-            revalidate();
-            repaint();
-        } else {
-            System.err.println("IMenuNavigationListener not set for XylophoneFrame before controller. TopPanel not created.");
-        }
     }
 
     @Override
@@ -157,35 +121,6 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
         }
     }
 
-    public void setListener(IMenuNavigationListener listener) {
-        this.menuNavigationListener = listener;
-        if (this.controller != null && this.topPanel == null) {
-            this.topPanel = new TopPanel(this.controller, this.menuNavigationListener);
-            add(this.topPanel, BorderLayout.NORTH);
-            this.recordButton = this.topPanel.getRecordButtonInstance();
-            revalidate();
-            repaint();
-        }
-    }
-
-    @Override
-    public void onReturnMainMenu() {
-        if (menuNavigationListener != null && menuNavigationListener != this) {
-            menuNavigationListener.onReturnMainMenu();
-        } else {
-            System.out.println("XylophoneFrame: onReturnMainMenu called.");
-            if (controller != null) {
-                // controller.showMainMenu(); // This line will be addressed later
-            }
-        }
-    }
-
-    public void updateRecordButtonState(boolean isRecording) {
-        if (recordButton != null) {
-            recordButton.setVisualRecordingState(isRecording);
-        }
-    }
-
     @Override
     public void keyTyped(final KeyEvent e) {
     }
@@ -194,31 +129,24 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     public void keyPressed(final KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:
-                // highlightNote(0); // Moved to playNote
                 playNote(0);
                 break;
             case KeyEvent.VK_S:
-                // highlightNote(1); // Moved to playNote
                 playNote(1);
                 break;
             case KeyEvent.VK_D:
-                // highlightNote(2); // Moved to playNote
                 playNote(2);
                 break;
             case KeyEvent.VK_F:
-                // highlightNote(3); // Moved to playNote
                 playNote(3);
                 break;
             case KeyEvent.VK_G:
-                // highlightNote(4); // Moved to playNote
                 playNote(4);
                 break;
             case KeyEvent.VK_H:
-                // highlightNote(5); // Moved to playNote
                 playNote(5);
                 break;
             case KeyEvent.VK_J:
-                // highlightNote(6); // Moved to playNote
                 playNote(6);
                 break;
         }
@@ -226,7 +154,6 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
 
     @Override
     public void keyReleased(final KeyEvent e) {
-        // Rétablir l'apparence normale de la touche
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A: resetNote(0); break;
             case KeyEvent.VK_S: resetNote(1); break;
@@ -242,5 +169,4 @@ public class XylophoneFrame extends JPanel implements IXylophoneFrame, KeyListen
     public String[] getNotes() {
         return NOTES;
     }
-
 }

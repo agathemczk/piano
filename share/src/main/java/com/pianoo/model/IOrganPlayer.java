@@ -1,7 +1,5 @@
 package com.pianoo.model;
 
-import java.util.Set;
-
 public interface IOrganPlayer {
     void playNote(int midiNote, int velocity);
 

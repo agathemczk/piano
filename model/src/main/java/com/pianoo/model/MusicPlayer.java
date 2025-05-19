@@ -37,28 +37,4 @@ public class MusicPlayer implements IMusicPlayer {
         }
         return NOTE_NAMES_ARRAY[noteValue] + octave;
     }
-
-    @Override
-    public void setInstrument(String instrument) {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public void addEffect() {
-    }
-
-    @Override
-    public void silenceAllNotes() {
-        if (channel != null) {
-            channel.allNotesOff();
-            // For a more robust solution, especially if notes could be on other channels
-            // or if allNotesOff() isn't sufficient, you might iterate through all MIDI notes:
-            // for (int i = 0; i < 128; i++) {
-            //     channel.noteOff(i);
-            // }
-        }
-    }
 }

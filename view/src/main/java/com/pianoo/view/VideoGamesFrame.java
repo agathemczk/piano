@@ -1,19 +1,9 @@
 package com.pianoo.view;
 
-import com.pianoo.controller.IController;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class VideoGamesFrame extends JPanel implements IVideoGamesFrame, IMenuNavigationListener {
-
-    private IController controller;
-    private IMenuNavigationListener menuNavigationListener;
-    private TopPanel topPanel;
-    private RecordButton recordButton;
-
+public class VideoGamesFrame extends InstrumentFrame implements IInstrumentFrame {
 
     private static final String[] NOTE_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final Color[] NOTE_COLORS = {
@@ -27,13 +17,11 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame, IMenuNa
     };
 
     public VideoGamesFrame() {
-        setLayout(new BorderLayout());
+        super();
 
-        // Remplacer FlowLayout par GridBagLayout pour un meilleur contrôle
         JPanel notesPanel = new JPanel(new GridBagLayout());
         notesPanel.setOpaque(false);
 
-        // Créer un sous-panel pour contenir uniquement les boutons
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -55,8 +43,6 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame, IMenuNa
             buttonsPanel.add(noteButton);
         }
 
-        // Ajouter le panel de boutons au panel principal avec GridBagLayout
-        // pour le centrer verticalement et horizontalement
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -67,55 +53,5 @@ public class VideoGamesFrame extends JPanel implements IVideoGamesFrame, IMenuNa
 
         notesPanel.add(buttonsPanel, gbc);
         add(notesPanel, BorderLayout.CENTER);
-    }
-
-
-    private void initializeTopPanel() {
-        if (this.controller == null || (this.menuNavigationListener == null && !(this instanceof IMenuNavigationListener))) {
-            return;
-        }
-        if (this.topPanel != null) return;
-
-        IMenuNavigationListener actualListener = (this.menuNavigationListener != null) ? this.menuNavigationListener : this;
-        this.topPanel = new TopPanel(this.controller, actualListener);
-
-        // Récupérer la référence au bouton d'enregistrement
-        this.recordButton = this.topPanel.getRecordButtonInstance();
-
-        add(this.topPanel, BorderLayout.NORTH);
-        revalidate();
-        repaint();
-    }
-
-    @Override
-    public JPanel getPanel() {
-        return this;
-    }
-
-    @Override
-    public void setListener(IMenuNavigationListener listener) {
-        this.menuNavigationListener = listener;
-        initializeTopPanel();
-    }
-
-    @Override
-    public void setController(IController controller) {
-        this.controller = controller;
-        initializeTopPanel();
-    }
-
-    @Override
-    public void onReturnMainMenu() {
-        if (menuNavigationListener != null && menuNavigationListener != this) {
-            menuNavigationListener.onReturnMainMenu();
-        } else if (controller != null) {
-            controller.onReturnMainMenu();
-        }
-    }
-
-    public void updateRecordButtonState(boolean isRecording) {
-        if (recordButton != null) {
-            recordButton.setVisualRecordingState(isRecording);
-        }
     }
 }

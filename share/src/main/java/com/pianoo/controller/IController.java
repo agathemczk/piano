@@ -16,17 +16,10 @@ public interface IController {
 
     int getMidiNoteForKeyCode(int keyCode);
 
-    void onPlayCat();
-
     void toggleRecording();
 
-    void onReturnMainMenu();
 
     void showMainMenu();
-
-    void start();
-
-    void stop();
 
     void onKeyPressed(int noteValue, int octave);
 
@@ -37,8 +30,6 @@ public interface IController {
     void onVideoGameNotePressed(String noteName);
 
     void setPianoFrame(IPianoFrame pianoFrame);
-
-    void setXylophoneFrame(IXylophoneFrame xylophoneFrame);
 
     void onNotePlayed(String note);
 
