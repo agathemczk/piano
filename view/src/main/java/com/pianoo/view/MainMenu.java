@@ -11,9 +11,10 @@ public class MainMenu extends JFrame implements IMainMenu {
 
     public MainMenu() {
         setTitle("MusicaLau - Menu Principal");
-        setSize(800, 600);
+        setSize(800, 600); // Cette ligne peut être conservée comme taille par défaut si la maximisation échoue
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Ajout pour maximiser la fenêtre
         setLayout(new BorderLayout()); // Assurez-vous d'utiliser BorderLayout
 
 
