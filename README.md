@@ -61,9 +61,8 @@ Pour compiler et exécuter ce projet Java, vous aurez besoin de :
 2. **Maven**: Assurez-vous qu'il soit installé et configuré.
 3. **IDE (Environnement de Développement Intégré) ou Ligne de Commande** :
     * **Avec un IDE (IntelliJ IDEA, Eclipse, NetBeans)** :
-        1. Clonez ce dépôt : `git clone (https://github.com/agathemczk/piano)`
+        1. Clonez ce dépôt : `git clone <https://github.com/agathemczk/piano>`
         2. Ouvrez le projet dans votre IDE. L'IDE devrait détecter la structure Maven si applicable.
-        3. Localisez la classe principale (probablement dans le module `main` ou `view`, par exemple
-           `com.pianoo.view.MainMenu`) et exécutez-la.
+        3. Localisez la classe principale (dans le module `main` `com.pianoo.main.Main`) et exécutez-la.
     * **En Ligne de Commande (avec Maven, si applicable)** :
       En vous plaçant à la racine du projet (où se trouve le `pom.xml` principal) :
