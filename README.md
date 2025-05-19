@@ -51,6 +51,7 @@ partie sera également évaluée sur les apports et améliorations que vous fere
   `.txt` respectant le même format que les partitions fournies (`note durée`). Cela permet de rejouer facilement les
   créations de l'utilisateur avec n'importe quel instrument de l'application.
 - **Visualisation graphique des notes jouées** : Dans chaque instrument.
+- **Création de nouvelles partitions** : Pour plus de fun, jouer `au_clair_de_la_lune.txt` ou encore `fur_elise.txt`
 
 ## 🚀 Comment Exécuter le Projet
 
