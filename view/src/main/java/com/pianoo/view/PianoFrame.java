@@ -108,6 +108,15 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener, IMen
                 }
             }
         });
+
+        // Focus listener pour réinitialiser les touches si le panel perd le focus
+        this.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                System.out.println("PianoFrame: Focus lost. Resetting all key states.");
+                resetAllKeyStates();
+            }
+        });
     }
 
     @Override
@@ -234,6 +243,27 @@ public class PianoFrame extends JPanel implements IPianoFrame, KeyListener, IMen
         NoteKey noteKey = new NoteKey(note, octave);
         activeKeys.put(noteKey, false);
         pianoPanel.repaint();
+    }
+
+    // Méthode pour réinitialiser l'état visuel de toutes les touches
+    public void resetAllKeyStates() {
+        if (!activeKeys.isEmpty()) {
+            boolean needsRepaint = false;
+            for (Boolean isActive : activeKeys.values()) {
+                if (isActive) {
+                    needsRepaint = true;
+                    break;
+                }
+            }
+            // Efface la map pour que getOrDefault retourne false partout,
+            // ou met explicitement toutes les valeurs à false.
+            // Effacer est plus simple si la map ne sert qu'à ça.
+            activeKeys.clear();
+            if (needsRepaint) {
+                System.out.println("PianoFrame: Resetting all key visuals and repainting.");
+                pianoPanel.repaint();
+            }
+        }
     }
 
     private boolean isBlackKey(int note) {
