@@ -4,6 +4,8 @@ import com.pianoo.controller.*;
 import com.pianoo.model.*;
 import com.pianoo.view.*;
 
+import java.awt.event.KeyListener;
+
 public class Main {
     public static void main(String[] args) {
         IMusicPlayer musicPlayer = new MusicPlayer();
@@ -13,12 +15,11 @@ public class Main {
         IRecordPlayer recordPlayer = new RecordPlayer();
         MainMenu mainMenu = new MainMenu();
         IPianoFrame pianoFrame = new PianoFrame();
-        IOrganFrame organFrame = new OrganFrame();
+        IInstrumentFrame organFrame = new OrganFrame();
         IXylophoneFrame xylophoneFrame = new XylophoneFrame();
-        IVideoGamesFrame videoGamesFrame = new VideoGamesFrame();
+        IInstrumentFrame videoGamesFrame = new VideoGamesFrame();
         IVideoGamesSoundModel videoGamesPlayer = new VideoGamesSoundModel();
         IDrumsFrame drumsFrame = new DrumsFrame();
-        IRoundCloseButton roundCloseButton = new RoundCloseButton();
         IKeyboardMapping keyboardMapping = new KeyboardMapping(false);
         ICatFrame catFrame = new CatFrame();
         ICatPlay catPlay = new CatPlay();
@@ -30,13 +31,9 @@ public class Main {
 
 
         IController controller = new Controller(musicPlayer, xylophonePlayer, drumsPlayer, organPlayer, recordPlayer, videoGamesPlayer, mainMenu, pianoFrame, organFrame, xylophoneFrame, videoGamesFrame, drumsFrame, catFrame, catPlay, keyboardMapping, scoreReader, scoreChooserView);
-        IPianoController pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
+        KeyListener pianoController = new PianoController(pianoFrame, controller, keyboardMapping); //pour jouer avec le clavier
 
 
-        //controller.setMainMenu(mainMenu);
         controller.setPianoFrame(pianoFrame);
-        controller.setXylophoneFrame(xylophoneFrame);
-
-        controller.start();
     }
 }

@@ -1,8 +1,5 @@
 package com.pianoo.model;
 
-// Utilise l'interface du module share
-// import com.pianoo.model.IScoreEvent;
-
 public class ScoreEvent implements IScoreEvent {
 
     private final int midiNote;
