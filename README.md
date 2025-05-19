@@ -38,9 +38,8 @@ MusicaLau de toucher un plus large éventail d’acheteurs avec une solution num
 
 ## 💡 Nos Innovations
 
-Les éléments demandés dans les consignes initiales ne constituent pas l’intégralité de la note pour ce projet. Une
-partie sera également évaluée sur les apports et améliorations que vous ferez. Nous avons déjà implémenté ou prévoyons
-d'implémenter les innovations suivantes :
+Les éléments demandés dans les consignes initiales ne constituent pas l’intégralité de notre projet. Une
+partie sera également évaluée sur les apports et améliorations que vous ferez. Nous avons implémenté les innovations suivantes :
 
 - **Ajout d’instruments supplémentaires** : En plus du Piano, Xylophone et "Video Game", nous avons ajouté :
     - Tambour (Drums)
