@@ -107,8 +107,7 @@ Pour compiler et exécuter ce projet Java, vous aurez besoin de :
 │
 ├── 📁 share/
 │   ├── 📁 controller/
-│   │   ├── IController.java
-│   │   └── IPianoController.java
+│   │   └── IController.java
 │   ├── 📁 model/
 │   │   ├── ICatPlay.java
 │   │   ├── IDrumsPlayer.java
@@ -124,20 +123,20 @@ Pour compiler et exécuter ce projet Java, vous aurez besoin de :
 │       ├── ICatFrame.java
 │       ├── ICatListener.java
 │       ├── IDrumsFrame.java
+│       ├── IInstrumentFrame.java
 │       ├── IMainMenu.java
 │       ├── IMenuNavigationListener.java
 │       ├── IOnChoiceSelectedListener.java
-│       ├── IOrganFrame.java
 │       ├── IPianoFrame.java
 │       ├── IPlayCatButton.java
 │       ├── IRoundCloseButton.java
 │       ├── IScoreChooserView.java
-│       ├── IVideoGamesFrame.java
 │       └── IXylophoneFrame.java
 │
 ├── 📁 view/
 │   ├── CatFrame.java
 │   ├── DrumsFrame.java
+│   ├── InstrumentFrame.java
 │   ├── OrganFrame.java
 │   ├── MainMenu.java
 │   ├── PianoFrame.java
